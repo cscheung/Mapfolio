@@ -1,6 +1,14 @@
 function start_tracking()
 {
     
+	var accelerometer_x;  
+	var accelerometer_y;
+	var accelerometer_z;
+
+	var gyro_x;  
+	var gyro_y;
+	var gyro_z;
+
     window.addEventListener("orientationchange", function() 
         {
             document.getElementById("orientation").innerHTML = "orientation: " + (window.orientation);
