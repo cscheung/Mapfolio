@@ -26,6 +26,7 @@ class FloorplansController < ApplicationController
   def create
     @floorplan = Floorplan.new(floorplan_params)
 
+
     respond_to do |format|
       if @floorplan.save
         format.html { redirect_to @floorplan, notice: 'Floorplan was successfully created.' }
