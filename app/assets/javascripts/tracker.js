@@ -12,7 +12,7 @@ function start_tracking()
     false);
     
     
-    gyro.frequency = 100;
+    gyro.frequency = 10;
     count = 0;
     avg_x = 0;
     avg_y = 0;
