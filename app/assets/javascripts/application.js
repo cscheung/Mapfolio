@@ -15,6 +15,7 @@
 //= require turbolinks
 //= require_tree .
 
-//= require tracker
 //= require fabric
+//= require tracker
+
 
