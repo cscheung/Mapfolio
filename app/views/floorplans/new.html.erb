@@ -1,0 +1,36 @@
+<h1>New Floorplan</h1>
+
+<button onclick="start_tracking()">Actively track values</button>
+<button onclick="stop_tracking()">Stop tracking</button>
+<button onclick="put_values_in_article()">Enter values</button>
+
+<div id="values">
+    <p id="orientation"></p>
+    <p id="f_x"></p>
+    <p id="f_y"></p>
+    <p id="f_z"></p>
+    <p id="accelerometer_x"></p>
+    <p id="accelerometer_y"></p>
+    <p id="accelerometer_z"></p>
+    <p id="gyroscope_alpha"></p>
+    <p id="gyroscope_beta"></p>
+    <p id="gyroscope_gamma"></p>
+    <p id="vel_x"></p>
+    <p id="vel_y"></p>
+    <p id="vel_z"></p>
+    <p id="avg_x"></p>
+    <p id="avg_y"></p>
+    <p id="avg_z"></p>
+    <p id="a_x"></p>
+    <p id="a_y"></p>
+    <p id="a_z"></p>
+    <p id="distance_x"></p>
+    <p id="distance_x2"></p>
+    <p id="distance_y"></p>
+    <p id="distance_z"></p>
+    <p id="time"></p>
+</div>
+
+<%= render 'form' %>
+
+<%= link_to 'Back', floorplans_path %>
