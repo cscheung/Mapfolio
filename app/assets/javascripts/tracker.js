@@ -1,4 +1,13 @@
-var count, avg_x, avg_y, avg_z, distance_x, distance_y, time0, timeT;
+var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y;
+
+var prev_acc_x, prev_acc_y;
+
+var interpolated_x, interpolated_y;
+
+var compensate_acc_x = 0; 
+var compensate_acc_y = 0;
+
+//var time_start, time_finish;
 
 
 function start_tracking()
@@ -12,47 +21,71 @@ function start_tracking()
     false);
     
     
-    gyro.frequency = 10;
-    count = 0;
-    avg_x = 0;
-    avg_y = 0;
-    avg_z = 0;
-    distance_x = 0;
-    distance_y = 0;
-    var d = new Date();
-    time0 = d.getTime();
+    gyro.frequency = 10; // 100 Hz sampling frequency
+    
+    acc_x = 0;
+    acc_y = 0;
+
+    prev_acc_x = 0;
+    prev_acc_y = 0;
+
+    pos_x = 0;
+    pos_y = 0;
+
+    velocity_x = 0;
+    velocity_y = 0;
+
+    var t = gyro.frequency * 0.001;
+
 
     gyro.startTracking(function(o) 
         {
+             
+            //document.getElementById("gyroscope_alpha").innerHTML = 
+            //"gyroscope_alpha: " + Number((o.alpha).toFixed(1));
+                        
+            //document.getElementById("gyroscope_beta").innerHTML = 
+            // "gyroscope_beta: " + Number((o.beta).toFixed(1));
+            
+            // document.getElementById("gyroscope_gamma").innerHTML = 
+            // "gyroscope_gamma: " + Number((o.gamma).toFixed(1));
+
+            acc_x = Math.round((o.x - compensate_acc_x)*100)/100;
+            acc_y = Math.round((o.y - compensate_acc_y)*100)/100;
+
             document.getElementById("accelerometer_x").innerHTML = 
-            "accelerometer_x: " + Number(o.x);
+            "accelerometer_x: " + Number(acc_x);
             
             document.getElementById("accelerometer_y").innerHTML = 
-            "accelerometer_y: " + Number(o.y);
+            "accelerometer_y: " + Number(acc_y);
             
             document.getElementById("accelerometer_z").innerHTML = 
             "accelerometer_z: " + Number(o.z);
-             
-            document.getElementById("gyroscope_alpha").innerHTML = 
-            "gyroscope_alpha: " + Number((o.alpha).toFixed(1));
-                        
-            document.getElementById("gyroscope_beta").innerHTML = 
-            "gyroscope_beta: " + Number((o.beta).toFixed(1));
-            
-            document.getElementById("gyroscope_gamma").innerHTML = 
-            "gyroscope_gamma: " + Number((o.gamma).toFixed(1));
 
-            document.getElementById("avg_x").innerHTML = 
-            "avg_x: " + Number(avg_x);
-            document.getElementById("avg_y").innerHTML = 
-            "avg_y: " + Number(avg_y);
-            document.getElementById("avg_z").innerHTML = 
-            "avg_z: " + Number(avg_z);
+            interpolated_x = (prev_acc_x + acc_x) / 2;
+            interpolated_y = (prev_acc_y + acc_y) / 2;
 
-            avg_x = ((o.x + avg_x*count) / (count + 1)).toFixed(2);
-            avg_y = ((o.y + avg_y*count) / (count + 1)).toFixed(2);
-            avg_z = ((o.z + avg_z*count) / (count + 1)).toFixed(2);
-            count++;
+            pos_x += (0.5*interpolated_x*t*t) + velocity_x*t;
+            pos_y += (0.5*interpolated_y*t*t) + velocity_y*t;
+
+            velocity_x += interpolated_x * t;
+            velocity_y += interpolated_y * t;
+
+            prev_acc_x = acc_x;
+            prev_acc_y = acc_y;
+
+            document.getElementById("velocity_x").innerHTML = 
+            "velocity_x: " + Number(velocity_x);
+            document.getElementById("velocity_y").innerHTML = 
+            "velocity_y: " + Number(velocity_y);
+            document.getElementById("pos_x").innerHTML = 
+            "pos_x: " + Number(pos_x);
+            document.getElementById("pos_y").innerHTML = 
+            "pos_y: " + Number(pos_y);
+            document.getElementById("compensate_acc_x").innerHTML = 
+            "compensate_acc_x: " + Number(compensate_acc_x);
+            document.getElementById("compensate_acc_y").innerHTML = 
+            "compensate_acc_y: " + Number(compensate_acc_y);
         }
     );
 }
@@ -60,66 +93,20 @@ function start_tracking()
 function stop_tracking()
 {
     gyro.stopTracking();
-    var d = new Date();
-    timeT = d.getTime();
-    timeT = (timeT - time0) / 1000
-    distance_x = (0.5) * avg_x * timeT * timeT;
-    distance_y = (0.5) * avg_y * timeT * timeT;
-    document.getElementById("distance_x").innerHTML = 
-            "distance_x: " + Number(distance_x);
-    document.getElementById("distance_y").innerHTML = 
-            "distance_y: " + Number(distance_y);
-            document.getElementById("time").innerHTML = 
-            "Time elapsed: " + Number(timeT);
-
 }
 
-function put_values_in_article()
+function calibrate()
 {
-    
-    document.getElementById("article_title").value = get_date();
-    
-    document.getElementById("article_text").value = 
-        document.getElementById("orientation").innerHTML +
-        "\n" +
-        document.getElementById("accelerometer_x").innerHTML +
-        "\n" +
-        document.getElementById("accelerometer_y").innerHTML +
-        "\n" +
-        document.getElementById("accelerometer_z").innerHTML +
-        "\n" +
-        document.getElementById("accelerometer_x").innerHTML +
-        "\n" +
-        document.getElementById("gyroscope_alpha").innerHTML +
-        "\n" +
-        document.getElementById("gyroscope_beta").innerHTML +
-        "\n" +
-        document.getElementById("gyroscope_gamma").innerHTML ;
-   
-}
-
-function get_date() {
-
-    var date = new Date();
-
-    var hour = date.getHours();
-    hour = (hour < 10 ? "0" : "") + hour;
-
-    var min  = date.getMinutes();
-    min = (min < 10 ? "0" : "") + min;
-
-    var sec  = date.getSeconds();
-    sec = (sec < 10 ? "0" : "") + sec;
-
-    var year = date.getFullYear();
-
-    var month = date.getMonth() + 1;
-    month = (month < 10 ? "0" : "") + month;
-
-    var day  = date.getDate();
-    day = (day < 10 ? "0" : "") + day;
-
-    return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
-
+    gyro.frequency = 10; 
+    gyro.startTracking(function(o) 
+        {
+            compensate_acc_x = o.x; 
+            compensate_acc_y = o.y;
+            document.getElementById("compensate_acc_x").innerHTML = 
+            "compensate_acc_x: " + Number(compensate_acc_x);
+            document.getElementById("compensate_acc_y").innerHTML = 
+            "compensate_acc_y: " + Number(compensate_acc_y);    
+        }
+    );
 }
 

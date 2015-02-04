@@ -2,7 +2,8 @@
 
 <button onclick="start_tracking()">Actively track values</button>
 <button onclick="stop_tracking()">Stop tracking</button>
-<button onclick="put_values_in_article()">Enter values</button>
+<button onclick="calibrate()">Calibrate</button>
+<button onclick="stop_tracking()">Stop calibration</button>
 
 <div id="values">
     <p id="orientation"></p>
@@ -12,12 +13,12 @@
     <p id="gyroscope_alpha"></p>
     <p id="gyroscope_beta"></p>
     <p id="gyroscope_gamma"></p>
-    <p id="avg_x"></p>
-    <p id="avg_y"></p>
-    <p id="avg_z"></p>
-    <p id="distance_x"></p>
-    <p id="distance_y"></p>
-    <p id="time"></p>
+    <p id="velocity_x"></p>
+    <p id="velocity_y"></p>
+    <p id="pos_x"></p>
+    <p id="pos_y"></p>
+    <p id="compensate_acc_x"></p>
+    <p id="compensate_acc_y"></p>
 </div>
 
 <%= render 'form' %>
