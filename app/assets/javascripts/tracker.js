@@ -7,10 +7,12 @@ $( document ).ready(function()
 //Objects to store values
 var accelerometer_active = {x:0, y:0, z:0};
 var gyroscope_active = {alpha:0, beta:0, gamma:0}; 
-//Tese will be set once to hold the origin position
+//These will be set once to hold the origin position
 var accelerometer_origin = {x:0, y:0, z:0};
 var gyroscope_origin = {alpha:0, beta:0, gamma:0}; 
 
+//Simple tracking function that outputs values to the js
+//variables instead of directly shoing onto HTML page
 function start_tracking()
 {
     gyro.frequency = 100;
@@ -34,6 +36,8 @@ function stop_tracking()
     gyro.stopTracking();
 }
 
+//Take a 'snapshot', save current values as origin
+//ment to be done once at beginning
 function calibrate()
 {
     gyroscope_origin.alpha = gyroscope_active.alpha;
@@ -45,19 +49,40 @@ function calibrate()
     accelerometer_origin.z = accelerometer_active.z;
 }
 
+//Getter for th js variables of gyro and acc.
 function get_values()
 {
 	 return [accelerometer_active, gyroscope_active];	
 }
 
+//Simple output, will eventually put everythign into a MODEL
+//Note that its output is the current values subtrated from the origin
 function put_values_in_view()
 {
+
+	put_single_value_in_view(0, "x");
+	put_single_value_in_view(0, "y");
+	put_single_value_in_view(0, "z");
+
+	put_single_value_in_view(1, "alpha");
+	put_single_value_in_view(1, "beta");
+	put_single_value_in_view(1, "gamma");
+}
+
+//Helper function for put_values_in_view, but both of these are
+//just for output unti we figure out a more ruby-esque way to
+//make the elements and talk to them
+function put_single_value_in_view(gyro_or_acc, element_name)
+{
+
 	var current_values = get_values();
-	document.getElementById("x").innerHTML=current_values[0].x;
-	document.getElementById("y").innerHTML=current_values[0].y;
-	document.getElementById("z").innerHTML=current_values[0].z;
-	document.getElementById("alpha").innerHTML=current_values[1].alpha;
-	document.getElementById("beta").innerHTML=current_values[1].beta;
-	document.getElementById("gamma").innerHTML=current_values[1].gamma;
+	var difference = accelerometer_origin.x - current_values[gyro_or_acc][element_name];
+	
+	if (-.3 < difference < .3)
+	{
+		difference = 0;
+	}
+
+	document.getElementById(element_name).innerHTML = difference;
 }
 	
