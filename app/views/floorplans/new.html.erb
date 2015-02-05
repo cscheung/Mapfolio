@@ -5,16 +5,30 @@
 <button onclick="put_values_in_article()">Enter values</button>
 
 <div id="values">
+    <p><u>Data</u></p>
+    <p>F1 shows the initial acceleration numbers, which are used as calibration constants for the rest of the calculations. The other data represents the values gathered from the phone's accelerometer and gyroscope.</p>
     <p id="orientation"></p>
-    <p id="f_x"></p>
-    <p id="f_y"></p>
-    <p id="f_z"></p>
+    <p id="f1_x"></p>
+    <p id="f1_y"></p>
+    <p id="f1_z"></p>
     <p id="accelerometer_x"></p>
+    <p id="accelerometer_y"></p>
+    <p id="accelerometer_z"></p>
+    <p id="totaccel"></p>
+    <p id="avg_a"></p>
     <p id="accelerometer_y"></p>
     <p id="accelerometer_z"></p>
     <p id="gyroscope_alpha"></p>
     <p id="gyroscope_beta"></p>
     <p id="gyroscope_gamma"></p>
+    <p id="count"></p>
+    <p id="time"></p>
+    <br>
+    <p><u>Method 1: 0.5*A*T^2</u></p>
+    <p>Distance calcuates distance after tracking has been stopped. Uses the average acceration and the formula 0.5*a*t^2.</p>
+    <p id="f_x"></p>
+    <p id="f_y"></p>
+    <p id="f_z"></p>
     <p id="vel_x"></p>
     <p id="vel_y"></p>
     <p id="vel_z"></p>
@@ -25,10 +39,28 @@
     <p id="a_y"></p>
     <p id="a_z"></p>
     <p id="distance_x"></p>
-    <p id="distance_x2"></p>
     <p id="distance_y"></p>
     <p id="distance_z"></p>
-    <p id="time"></p>
+    <br>
+    <p><u>Method 2:Calibrate at using inital acceleration. Updates velocity and distance at each tick.</u></p>
+    <p id="a2_x"></p>
+    <p id="a2_y"></p>
+    <p id="a2_z"></p>
+    <p id="vel2_x"></p>
+    <p id="vel2_y"></p>
+    <p id="vel2_z"></p>
+    <p id="dist2_x"></p>
+    <p id="dist2_y"></p>
+    <p id="dist2_z"></p>
+    <br>
+    <p><u>Method 3:Uses gyroscope angles to determine effect of gravity. Updates at each tick.</u></p>
+    <p id="vel3_x"></p>
+    <p id="vel3_y"></p>
+    <p id="vel3_z"></p>
+    <p id="gr_x"></p>
+    <p id="gr_y"></p>
+    <p id="gr_z"></p>
+    
 </div>
 
 <%= render 'form' %>

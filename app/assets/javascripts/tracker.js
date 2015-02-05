@@ -13,7 +13,7 @@ function start_tracking()
     
     
     
-    gyro.frequency = 100;
+    gyro.frequency = 10;
     count = 0;
     avg_x = 0;
     avg_y = 0;
@@ -25,12 +25,45 @@ function start_tracking()
     distance_y = 0;
     var d = new Date();
     time0 = d.getTime();
-
+    vel2_x = 0;
+    vel2_y = 0;
+    vel2_z = 0;
+    dist2_x=0;
+    dist2_y=0;
+    dist2_z=0;
+    first =0;
+    f1_x=0;
+    f1_y=0;
+    f1_z=0;
+    totaccel=0;
+    avg_a=0;
+    cal_x=0;
+    cal_y=0;
+    cal_z=0;
     gyro.startTracking(function(o) 
         {
+            if (first<10)    {
+                f1_x=Number(o.x);
+                f1_y=Number(o.y);
+                f1_z=Number(o.z);
+                first=first+1;
+            }
+            document.getElementById("f1_x").innerHTML = 
+            "f1_x: " + Number(f1_x);
+            document.getElementById("f1_y").innerHTML = 
+                    "f1_y: " + Number(f1_y);
+            document.getElementById("f1_z").innerHTML = 
+                    "f1_z: " + Number(f1_z);
             f_x=Number(o.x);
             f_y=Number(o.y);
             f_z=Number(o.z);
+            totaccel=Math.pow(f_x,2)+Math.pow(f_y,2)+Math.pow(f_z,2);
+            totaccel=Math.sqrt(totaccel);
+            avg_a = ((totaccel + avg_a*count) / (count + 1)).toFixed(7);
+            document.getElementById("totaccel").innerHTML = 
+            "totaccel: " + totaccel;
+            document.getElementById("avg_a").innerHTML = 
+            "avg_a: " + avg_a;
             document.getElementById("accelerometer_x").innerHTML = 
             "accelerometer_x: " + Number(o.x);
             
@@ -62,8 +95,48 @@ function start_tracking()
             a_y=avg_y-f_y;
             avg_z = ((o.z + avg_z*count) / (count + 1)).toFixed(7);
             a_z=avg_z-f_z;
+            a2_x=f_x-f1_x;
+            a2_y=f_y-f1_y;
+            a2_z=f_z-f1_z;
             count++;
+            vel2_x = a2_x/100 + vel2_x;
+            vel2_y = a2_y/100 + vel2_y;
+            vel2_z = a2_z/100 + vel2_z;
+            dist2_x = vel2_x/100 + dist2_x;
+            dist2_y = vel2_y/100 + dist2_y;
+            dist2_z = vel2_z/100 + dist2_z;
+            
+            document.getElementById("a_x").innerHTML = 
+            "a_x: " + Number(a_x);
+            document.getElementById("a_y").innerHTML = 
+                    "a_y: " + Number(a_y);
+            document.getElementById("a_z").innerHTML = 
+                    "a_z: " + Number(a_z);
+                    document.getElementById("a2_x").innerHTML = 
+            "a2_x: " + Number(a2_x);
+            document.getElementById("a2_y").innerHTML = 
+                    "a2_y: " + Number(a2_y);
+            document.getElementById("a2_z").innerHTML = 
+                    "a2_z: " + Number(a2_z);
+            document.getElementById("vel2_x").innerHTML = 
+                    "vel2_x: " + Number(vel2_x);
+            document.getElementById("vel2_y").innerHTML = 
+                    "vel2_y: " + Number(vel2_y);
+            document.getElementById("vel2_z").innerHTML = 
+                    "vel2_z: " + Number(vel2_z);
 
+            document.getElementById("dist2_x").innerHTML = 
+                    "dist2_x: " + Number(dist2_x);
+            document.getElementById("dist2_y").innerHTML = 
+                    "dist2_y: " + Number(dist2_y);
+            document.getElementById("dist2_z").innerHTML = 
+                    "dist2_z: " + Number(dist2_z);
+            document.getElementById("count").innerHTML = 
+                    "count " + Number(count);
+            //f = 0.5;
+            //a2_x=f*Math.round((avg_x-f_x)/f);
+            document.getElementById("a2_x").innerHTML = 
+                    "a2_x " + Number(a2_x);
         }
     );
 }
@@ -78,12 +151,7 @@ function stop_tracking()
             "f_y: " + Number(f_y);
     document.getElementById("f_z").innerHTML = 
             "f_z: " + Number(f_z);
-    document.getElementById("a_x").innerHTML = 
-            "a_x: " + Number(a_x);
-    document.getElementById("a_y").innerHTML = 
-            "a_y: " + Number(a_y);
-    document.getElementById("a_z").innerHTML = 
-            "a_z: " + Number(a_z);
+    
     var d = new Date();
     timeT = d.getTime();
     timeT = (timeT - time0) / 1000
@@ -100,9 +168,7 @@ function stop_tracking()
     document.getElementById("vel_z").innerHTML = 
             "vel_z: " + Number(vel_z);
     document.getElementById("distance_x").innerHTML = 
-            "distance_xx: " + Number(distance_x);
-    document.getElementById("distance_x2").innerHTML = 
-            "distance_x2: " + Number(distance_x);
+            "distance_x: " + Number(distance_x);
     document.getElementById("distance_y").innerHTML = 
             "distance_y: " + Number(distance_y);
     document.getElementById("distance_z").innerHTML = 
