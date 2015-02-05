@@ -49,6 +49,26 @@ function calibrate()
     accelerometer_origin.z = accelerometer_active.z;
 }
 
+//Andrew's function
+function rotateVector(x, y, z, alpha, beta, gamma)
+{
+    var s = Math.PI / 180;
+    var cos_a = Math.cos(alpha*s);
+    var sin_a = Math.sin(alpha*s);
+
+    var cos_b = Math.cos(beta*s);
+    var sin_b = Math.sin(beta*s);
+
+    var cos_g = Math.cos(gamma*s);
+    var sin_g = Math.sin(gamma*s);
+
+    var new_x = x*(cos_a*cos_g) + y*(-1.0*sin_a*cos_g) + z*(sin_g);
+    var new_y = x*(sin_b*sin_g*cos_a + cos_b*sin_a) + y*(-1*sin_a*sin_b*sin_g + cos_a*cos_b) + z*(-1.0*sin_b*cos_g);
+    var new_z = x*(-1.0*cos_a*cos_b*sin_g + sin_a*sin_b) + y*(sin_a*cos_b*sin_g + sin_b*cos_a) + z*(cos_b*cos_g);
+
+    return [new_x, new_y, new_z];
+}
+
 //Getter for th js variables of gyro and acc.
 function get_values()
 {
