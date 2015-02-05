@@ -61,7 +61,7 @@ function start_tracking()
             interpolated_y = (prev_acc_y + acc_y) / 2;
             interpolated_z = (prev_acc_z + acc_z) / 2;
 
-            var reoriented_values = rotateVector (interpolated_x, interpolated_y, interpolated_z, o.alpha, o.beta, o.gamma); 
+            var reoriented_values = rotateVector (interpolated_x, interpolated_y, interpolated_z, -1.0*o.alpha, -1.0*o.beta, -1.0*o.gamma); 
             var r_acc_x = reoriented_values[0]
             var r_acc_y = reoriented_values[1]
             var r_acc_z = reoriented_values[2]
