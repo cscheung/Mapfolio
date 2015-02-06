@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  x: 1.5
+  'y': 1.5
+  z: 1.5
+  alpha: 1.5
+  beta: 1.5
+  gamma: 1.5
+
+two:
+  x: 1.5
+  'y': 1.5
+  z: 1.5
+  alpha: 1.5
+  beta: 1.5
+  gamma: 1.5

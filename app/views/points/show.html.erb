@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>X:</strong>
+  <%= @point.x %>
+</p>
+
+<p>
+  <strong>Y:</strong>
+  <%= @point.y %>
+</p>
+
+<p>
+  <strong>Z:</strong>
+  <%= @point.z %>
+</p>
+
+<p>
+  <strong>Alpha:</strong>
+  <%= @point.alpha %>
+</p>
+
+<p>
+  <strong>Beta:</strong>
+  <%= @point.beta %>
+</p>
+
+<p>
+  <strong>Gamma:</strong>
+  <%= @point.gamma %>
+</p>
+
+<%= link_to 'Edit', edit_point_path(@point) %> |
+<%= link_to 'Back', points_path %>
