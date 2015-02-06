@@ -15,5 +15,10 @@
 //= require turbolinks
 //= require_tree .
 
-//= require tracker
+// Vendor Assets
 //= require gyro
+//= require fabric
+
+// Our Assets
+//= require tracker
+
