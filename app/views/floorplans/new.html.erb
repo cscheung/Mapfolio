@@ -23,9 +23,23 @@
     <p id="gyroscope_gamma"></p>
     <p id="count"></p>
     <p id="time"></p>
-    <br>
-    <p><u>Method 1: 0.5*A*T^2</u></p>
-    <p>Distance calcuates distance after tracking has been stopped. Uses the average acceration and the formula 0.5*a*t^2.</p>
+    <p><u>Version 5: Stops velocity drift.</u></p>
+    <p id="tota3"></p>
+    <p id="tota3xy"></p>
+    <p id="a5_x"></p>
+    <p id="a5_y"></p>
+    <p id="a5_z"></p>
+    <p id="vel5_x"></p>
+    <p id="vel5_y"></p>
+    <p id="vel5_z"></p>
+    <p id="dist5_x"></p>
+    <p id="dist5_y"></p>
+    <p id="dist5_z"></p>
+    <p id="dist5xy"></p>
+    <p id="dist5xyz"></p>
+    <br><br><br><br><br>
+    <p><u>Version 1: 0.5*A*T^2</u></p>
+    
     <p id="f_x"></p>
     <p id="f_y"></p>
     <p id="f_z"></p>
@@ -42,7 +56,7 @@
     <p id="distance_y"></p>
     <p id="distance_z"></p>
     <br>
-    <p><u>Method 2:Calibrate at using inital acceleration. Updates velocity and distance at each tick.</u></p>
+    <p><u>Version 2:Calibrate at using inital acceleration. Updates velocity and distance at each tick.</u></p>
     <p id="a2_x"></p>
     <p id="a2_y"></p>
     <p id="a2_z"></p>
@@ -53,13 +67,42 @@
     <p id="dist2_y"></p>
     <p id="dist2_z"></p>
     <br>
-    <p><u>Method 3:Uses gyroscope angles to determine effect of gravity. Updates at each tick.</u></p>
-    <p id="vel3_x"></p>
-    <p id="vel3_y"></p>
-    <p id="vel3_z"></p>
+    <p><u>Version 3:Uses gyroscope angles to determine effect of gravity. </u></p>
+    
     <p id="gr_x"></p>
     <p id="gr_y"></p>
     <p id="gr_z"></p>
+    <p id="gr2_x"></p>
+    <p id="gr2_y"></p>
+    <p id="gr2_z"></p>
+    <p id="dif_agx"></p>
+    <p id="dif_agy"></p>
+    <p id="dif_agz"></p>
+    <p id="a3_x"></p>
+    <p id="a3_y"></p>
+    <p id="a3_z"></p>
+    <p id="vel3_x"></p>
+    <p id="vel3_y"></p>
+    <p id="vel3_z"></p>
+    <p id="dist3_x"></p>
+    <p id="dist3_y"></p>
+    <p id="dist3_z"></p>
+    <p id="totdist3"></p>
+    <p><u>Version 4:Rounds accelerations to nearest 0.1.</u></p>
+    <p id="avga3x"></p>
+    <p id="avga3y"></p>
+    <p id="avga3z"></p>
+    <p id="a4_x"></p>
+    <p id="a4_y"></p>
+    <p id="a4_z"></p>
+    <p id="vel4_x"></p>
+    <p id="vel4_y"></p>
+    <p id="vel4_z"></p>
+    <p id="dist4_x"></p>
+    <p id="dist4_y"></p>
+    <p id="dist4_z"></p>
+    
+
     
 </div>
 

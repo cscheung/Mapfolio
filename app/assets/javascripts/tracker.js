@@ -13,7 +13,7 @@ function start_tracking()
     
     
     
-    gyro.frequency = 10;
+    gyro.frequency = 5;
     count = 0;
     avg_x = 0;
     avg_y = 0;
@@ -25,21 +25,24 @@ function start_tracking()
     distance_y = 0;
     var d = new Date();
     time0 = d.getTime();
-    vel2_x = 0;
-    vel2_y = 0;
-    vel2_z = 0;
-    dist2_x=0;
-    dist2_y=0;
-    dist2_z=0;
+    vel2_x = 0;vel2_y = 0;vel2_z = 0; dist2_x=0; dist2_y=0; dist2_z=0;
+    dist3_x=dist3_y=dist3_z=0; vel3_x = 0;vel3_y = 0;vel3_z = 0; a3_x=a3_y=a3_z=0;
+    dist4_x=dist4_y=dist4_z=0; vel4_x = 0;vel4_y = 0;vel4_z = 0; a4_x=a4_y=a4_z=0;
+    dist5_x=dist5_y=dist5_z=0; vel5_x = 0;vel5_y = 0;vel5_z = 0; a5_x=a5_y=a5_z=0;
     first =0;
     f1_x=0;
     f1_y=0;
     f1_z=0;
     totaccel=0;
     avg_a=0;
+    avga3x=avga3y=avga3z=0;
     cal_x=0;
     cal_y=0;
     cal_z=0;
+    tota3=0;
+    rv = 0.1;
+
+    divfactor=1000/gyro.frequency;
     gyro.startTracking(function(o) 
         {
             if (first<10)    {
@@ -65,14 +68,16 @@ function start_tracking()
             document.getElementById("avg_a").innerHTML = 
             "avg_a: " + avg_a;
             document.getElementById("accelerometer_x").innerHTML = 
-            "accelerometer_x: " + Number(o.x);
+            "accelerometer_x: " + f_x;
             
             document.getElementById("accelerometer_y").innerHTML = 
-            "accelerometer_y: " + Number(o.y);
+            "accelerometer_y: " + f_y;
             
             document.getElementById("accelerometer_z").innerHTML = 
-            "accelerometer_z: " + Number(o.z);
-             
+            "accelerometer_z: " + f_z;
+            gyr_x=o.alpha;
+            gyr_y=o.beta;
+            gyr_z=o.gamma;
             document.getElementById("gyroscope_alpha").innerHTML = 
             "gyroscope_alpha: " + Number((o.alpha).toFixed(1));
                         
@@ -99,12 +104,13 @@ function start_tracking()
             a2_y=f_y-f1_y;
             a2_z=f_z-f1_z;
             count++;
-            vel2_x = a2_x/100 + vel2_x;
-            vel2_y = a2_y/100 + vel2_y;
-            vel2_z = a2_z/100 + vel2_z;
-            dist2_x = vel2_x/100 + dist2_x;
-            dist2_y = vel2_y/100 + dist2_y;
-            dist2_z = vel2_z/100 + dist2_z;
+            
+            vel2_x = a2_x/divfactor + vel2_x;
+            vel2_y = a2_y/divfactor + vel2_y;
+            vel2_z = a2_z/divfactor + vel2_z;
+            dist2_x = vel2_x/divfactor + dist2_x;
+            dist2_y = vel2_y/divfactor + dist2_y;
+            dist2_z = vel2_z/divfactor + dist2_z;
             
             document.getElementById("a_x").innerHTML = 
             "a_x: " + Number(a_x);
@@ -137,6 +143,151 @@ function start_tracking()
             //a2_x=f*Math.round((avg_x-f_x)/f);
             document.getElementById("a2_x").innerHTML = 
                     "a2_x " + Number(a2_x);
+            new_values = rotateVector(f_x,f_y,f_z, -1.0*gyr_x, -1.0*gyr_y, -1.0*gyr_z);
+gr_x = new_values[0];
+gr_y = new_values[1];
+gr_z = new_values[2];
+new_values2 = rotateVector(0,0,10, -1.0*gyr_x, -1.0*gyr_y, -1.0*gyr_z);
+gr2_x = new_values2[0];
+gr2_y = new_values2[1];
+gr2_z = new_values2[2];
+document.getElementById("gr_x").innerHTML = 
+                    "gr_x " + Number(gr_x);
+                    document.getElementById("gr_y").innerHTML = 
+                    "gr_y " + Number(gr_y);
+                    document.getElementById("gr_z").innerHTML = 
+                    "gr_z " + Number(gr_z);
+                    document.getElementById("gr2_x").innerHTML = 
+                    "gr2_x " + Number(gr2_x);
+                    document.getElementById("gr2_y").innerHTML = 
+                    "gr2_y " + Number(gr2_y);
+                    document.getElementById("gr2_z").innerHTML = 
+                    "gr2_z " + Number(gr2_z);
+                    dif_agx=f_x+gr2_x;
+                    dif_agy=f_y+gr2_y;
+                    dif_agz=f_z+gr2_z;
+                    new_values3 = rotateVector(dif_agx,dif_agy,dif_agz, -1.0*gyr_x, -1.0*gyr_y, -1.0*gyr_z);
+                    a3_x=new_values3[0];
+                    a3_y=new_values3[1];
+                    a3_z=new_values3[2];
+                    tota3=Math.pow(a3_x,2)+Math.pow(a3_y,2)+Math.pow(a3_z,2);
+                    tota3=Math.sqrt(tota3);
+                    document.getElementById("dif_agx").innerHTML = 
+                    "dif_agx " + Number(dif_agx);
+                    document.getElementById("dif_agy").innerHTML = 
+                    "dif_agy " + Number(dif_agy);
+                    document.getElementById("dif_agz").innerHTML = 
+                    "dif_agz " + Number(dif_agz);
+                    document.getElementById("a3_x").innerHTML = 
+                    "a3_x " + Number(a3_x);
+                    document.getElementById("a3_y").innerHTML = 
+                    "a3_y " + Number(a3_y);
+                    document.getElementById("a3_z").innerHTML = 
+                    "a3_z " + Number(a3_z);
+                    vel3_x = a3_x/divfactor + vel3_x;
+                    vel3_y = a3_y/divfactor + vel3_y;
+                    vel3_z = a3_z/divfactor + vel3_z;
+                    dist3_x = vel3_x/divfactor + dist3_x;
+                    dist3_y = vel3_y/divfactor + dist3_y;
+                    dist3_z = vel3_z/divfactor + dist3_z;
+                    document.getElementById("vel3_x").innerHTML = 
+                            "vel3_x: " + Number(vel3_x);
+                    document.getElementById("vel3_y").innerHTML = 
+                            "vel3_y: " + Number(vel3_y);
+                    document.getElementById("vel3_z").innerHTML = 
+                            "vel3_z: " + Number(vel3_z);
+
+                    document.getElementById("dist3_x").innerHTML = 
+                            "dist3_x: " + Number(dist3_x);
+                    document.getElementById("dist3_y").innerHTML = 
+                            "dist3_y: " + Number(dist3_y);
+                    document.getElementById("dist3_z").innerHTML = 
+                            "dist3_z: " + Number(dist3_z);
+                    avga3x = ((Math.abs(a3_x) + avga3x*count) / (count + 1)).toFixed(7);
+                    document.getElementById("avga3x").innerHTML = 
+                            "avga3x: " + Number(avga3x);
+                    a4_x = rv * Math.round(a3_x/rv);
+                    a4_y = rv * Math.round(a3_y/rv);
+                    a4_z = rv * Math.round(a3_z/rv);
+                    document.getElementById("a4_x").innerHTML = 
+                    "a4_x " + Number(a4_x);
+                    document.getElementById("a4_y").innerHTML = 
+                    "a4_y " + Number(a4_y);
+                    document.getElementById("a4_z").innerHTML = 
+                    "a4_z " + Number(a4_z);
+                    
+                    vel4_x = a4_x/divfactor + vel4_x;
+                    vel4_y = a4_y/divfactor + vel4_y;
+                    vel4_z = a4_z/divfactor + vel4_z;
+                    dist4_x = vel4_x/divfactor + dist4_x;
+                    dist4_y = vel4_y/divfactor + dist4_y;
+                    dist4_z = vel4_z/divfactor + dist4_z;
+                    document.getElementById("vel4_x").innerHTML = 
+                            "vel4_x: " + Number(vel4_x);
+                    document.getElementById("vel4_y").innerHTML = 
+                            "vel4_y: " + Number(vel4_y);
+                    document.getElementById("vel4_z").innerHTML = 
+                            "vel4_z: " + Number(vel4_z);
+
+                    document.getElementById("dist4_x").innerHTML = 
+                            "dist4_x: " + Number(dist4_x);
+                    document.getElementById("dist4_y").innerHTML = 
+                            "dist4_y: " + Number(dist4_y);
+                    document.getElementById("dist4_z").innerHTML = 
+                            "dist4_z: " + Number(dist4_z);
+
+                    
+                    document.getElementById("tota3").innerHTML = 
+                    "tota3 " + Number(tota3);
+                    //if(tota3>0.5)   {
+                        tota3xyz=Math.pow(a3_x,2)+Math.pow(a3_y,2);
+                    tota3xyz=Math.sqrt(tota3xyz);
+                        a5_x=a3_x;
+                        a5_y=a3_y;
+                        a5_z=a3_z;
+                    //}
+                    //else{
+                     //   a5_x=a5_y=a5_z=0;
+                    //}
+                            document.getElementById("a5_x").innerHTML = 
+                    "a5_x " + Number(a5_x);
+                    document.getElementById("a5_y").innerHTML = 
+                    "a5_y " + Number(a5_y);
+                    document.getElementById("a5_z").innerHTML = 
+                    "a5_z " + Number(a5_z);
+                    
+                    vel5_x = a5_x/divfactor + vel5_x;
+                    vel5_y = a5_y/divfactor + vel5_y;
+                    vel5_z = a5_z/divfactor + vel5_z;
+                    if(tota3xyz<0.13)   {
+                        vel5_x=vel5_y=vel5_z=0;
+                    }
+                    dist5_x = vel5_x/divfactor + dist5_x;
+                    dist5_y = vel5_y/divfactor + dist5_y;
+                    dist5_z = vel5_z/divfactor + dist5_z;
+                    document.getElementById("vel5_x").innerHTML = 
+                            "vel5_x: " + Number(vel5_x);
+                    document.getElementById("vel5_y").innerHTML = 
+                            "vel5_y: " + Number(vel5_y);
+                    document.getElementById("vel5_z").innerHTML = 
+                            "vel5_z: " + Number(vel5_z);
+
+                    document.getElementById("dist5_x").innerHTML = 
+                            "dist5_x: " + Number(dist5_x);
+                    document.getElementById("dist5_y").innerHTML = 
+                            "dist5_y: " + Number(dist5_y);
+                    document.getElementById("dist5_z").innerHTML = 
+                            "dist5_z: " + Number(dist5_z);
+                            dist5xy=Math.pow(dist5_x,2)+Math.pow(dist5_y,2);
+            dist5xy=Math.sqrt(dist5xy);
+            document.getElementById("dist5xy").innerHTML = 
+                            "dist5xy: " + Number(dist5xy);
+                            dist5xyz=Math.pow(dist5_x,2)+Math.pow(dist5_y,2)+Math.pow(dist5_z,2);
+            dist5xyz=Math.sqrt(dist5xyz);
+            document.getElementById("dist5xyz").innerHTML = 
+                            "dist5xyz: " + Number(dist5xyz);
+            
+
         }
     );
 }
@@ -177,7 +328,19 @@ function stop_tracking()
             "Time elapsed: " + Number(timeT);
 
 }
-
+function rotateVector(x, y, z, alpha, beta, gamma){
+    var s = Math.PI / 180;
+    var cos_a = Math.cos(alpha*s);
+    var sin_a = Math.sin(alpha*s);
+    var cos_b = Math.cos(beta*s);
+    var sin_b = Math.sin(beta*s);
+    var cos_g = Math.cos(gamma*s);
+    var sin_g = Math.sin(gamma*s);
+    var new_x = x*(cos_a*cos_g) + y*(-1.0*sin_a*cos_g) + z*(sin_g);
+    var new_y = x*(sin_b*sin_g*cos_a + cos_b*sin_a) + y*(-1*sin_a*sin_b*sin_g + cos_a*cos_b) + z*(-1.0*sin_b*cos_g);
+    var new_z = x*(-1.0*cos_a*cos_b*sin_g + sin_a*sin_b) + y*(sin_a*cos_b*sin_g + sin_b*cos_a) + z*(cos_b*cos_g);
+    return [new_x, new_y, new_z];
+}
 function put_values_in_article()
 {
     
