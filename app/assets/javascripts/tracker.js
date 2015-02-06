@@ -79,7 +79,18 @@ function get_values()
 //Note that its output is the current values subtrated from the origin
 function put_values_in_view()
 {
+	var new_values = rotateVector(accelerometer_active.x, 
+								  accelerometer_active.y, 
+							      accelerometer_active.z,
+							 	-1.0*gyroscope_active.alpha,
+							 	-1.0*gyroscope_active.beta,
+							 	-1.0*gyroscope_active.gamma);
 
+
+	document.getElementById("x").innerHTML = new_values[0];
+	document.getElementById("y").innerHTML = new_values[1];
+	document.getElementById("z").innerHTML = new_values[2];
+/*
 	put_single_value_in_view(0, "x");
 	put_single_value_in_view(0, "y");
 	put_single_value_in_view(0, "z");
@@ -87,6 +98,7 @@ function put_values_in_view()
 	put_single_value_in_view(1, "alpha");
 	put_single_value_in_view(1, "beta");
 	put_single_value_in_view(1, "gamma");
+	*/
 }
 
 //Helper function for put_values_in_view, but both of these are
