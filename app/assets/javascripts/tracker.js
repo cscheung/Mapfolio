@@ -37,7 +37,7 @@ function start_tracking()
             acc_y = o.y;
             acc_z = o.z;
 
-            var reoriented_values = rotateVector (acc_x, acc_y, acc_y, -1.0*o.alpha, -1.0*o.beta, -1.0*o.gamma); 
+            var reoriented_values = rotateVector (acc_x, acc_y, acc_z, -1.0*o.alpha, -1.0*o.beta, -1.0*o.gamma); 
             var r_acc_x = reoriented_values[0]
             var r_acc_y = reoriented_values[1]
             var r_acc_z = reoriented_values[2]
@@ -107,9 +107,13 @@ function rotateVector(x, y, z, alpha, beta, gamma) {
     var cos_g = Math.cos(gamma*s);
     var sin_g = Math.sin(gamma*s);
 
-    var new_x = x*(cos_a*cos_g) + y*(-1.0*sin_a*cos_g) + z*(sin_g);
-    var new_y = x*(sin_b*sin_g*cos_a + cos_b*sin_a) + y*(-1*sin_a*sin_b*sin_g + cos_a*cos_b) + z*(-1.0*sin_b*cos_g);
-    var new_z = x*(-1.0*cos_a*cos_b*sin_g + sin_a*sin_b) + y*(sin_a*cos_b*sin_g + sin_b*cos_a) + z*(cos_b*cos_g);
+    var new_x = x*(cos_a*cos_g) + y*(sin_b*sin_g*cos_a + cos_b*sin_a) + z*(-1.0*cos_a*cos_b*sin_g + sin_a*sin_b);
+    var new_y = x*(-1.0*sin_a*cos_g) + y*(-1*sin_a*sin_b*sin_g + cos_a*cos_b) + z*(sin_a*cos_b*sin_g + sin_b*cos_a);
+    var new_z = x*(sin_g) + y*(-1.0*sin_b*cos_g) + z*(cos_b*cos_g);
+
+    // var new_x = x*(cos_a*cos_g) + y*() + z*(sin_g);
+    // var new_y = x*(sin_b*sin_g*cos_a + cos_b*sin_a) + y*(-1*sin_a*sin_b*sin_g + cos_a*cos_b) + z*(-1.0*sin_b*cos_g);
+    // var new_z = x*(-1.0*cos_a*cos_b*sin_g + sin_a*sin_b) + y*(sin_a*cos_b*sin_g + sin_b*cos_a) + z*(cos_b*cos_g);
 
     return [new_x, new_y, new_z];
 }
