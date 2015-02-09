@@ -1,3 +1,8 @@
+$( document ).ready(function() 
+{
+    document.getElementById('intake_points').onclick=function(){intake_points()};
+});
+
 //Farthest left origin
 var x1 = 0; 
 var y1 = 0;
@@ -46,6 +51,12 @@ var rect = new fabric.Rect({
   height: 20,
   angle: 45
 });
+
+
+function intake_points()
+{
+    
+}
 
 
 

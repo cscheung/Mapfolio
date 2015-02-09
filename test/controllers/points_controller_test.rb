@@ -18,7 +18,7 @@ class PointsControllerTest < ActionController::TestCase
 
   test "should create point" do
     assert_difference('Point.count') do
-      post :create, point: { alpha: @point.alpha, beta: @point.beta, gamma: @point.gamma, x: @point.x, y: @point.y, z: @point.z }
+      post :create, point: { alpha: @point.alpha, beta: @point.beta, gamma: @point.gamma, wall_id: @point.wall_id, x: @point.x, y: @point.y, z: @point.z }
     end
 
     assert_redirected_to point_path(assigns(:point))
@@ -35,7 +35,7 @@ class PointsControllerTest < ActionController::TestCase
   end
 
   test "should update point" do
-    patch :update, id: @point, point: { alpha: @point.alpha, beta: @point.beta, gamma: @point.gamma, x: @point.x, y: @point.y, z: @point.z }
+    patch :update, id: @point, point: { alpha: @point.alpha, beta: @point.beta, gamma: @point.gamma, wall_id: @point.wall_id, x: @point.x, y: @point.y, z: @point.z }
     assert_redirected_to point_path(assigns(:point))
   end
 

@@ -5,6 +5,7 @@
 <table>
   <thead>
     <tr>
+      <th>Wall</th>
       <th>X</th>
       <th>Y</th>
       <th>Z</th>
@@ -18,6 +19,7 @@
   <tbody>
     <% @points.each do |point| %>
       <tr>
+        <td><%= point.wall_id %></td>
         <td><%= point.x %></td>
         <td><%= point.y %></td>
         <td><%= point.z %></td>
