@@ -1,6 +1,6 @@
 <h1>New Wall (Points with wall_id=0 are listed)</h1>
 
-<table>
+<table id='points_table'>
   <thead>
     <tr>
       <th>Wall</th>
@@ -13,7 +13,7 @@
       <th colspan="3"></th>
     </tr>
   </thead>
-    <tbody>
+    <tbody>  
 <% @points.each do |point| %>
       <tr>
         <td><%= point.wall_id %></td>
