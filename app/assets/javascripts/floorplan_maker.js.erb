@@ -50,28 +50,9 @@ var rect = new fabric.Rect({
 
 function intake_points()
 {
-    var oTable = document.getElementById('points_table');
-
-    //gets rows of table
-    var rowLength = oTable.rows.length;
-    
-    //loops through rows    
-    for (i = 0; i < rowLength; i++){
-    
-       //gets cells of current row
-       var oCells = oTable.rows.item(i).cells;
-    
-       //gets amount of cells of current row
-       var cellLength = oCells.length;
-    
-       //loops through each cell in current row
-       for(var j = 0; j < cellLength; j++){
-          /* get your cell info here */
-          /* var cellVal = oCells.item(j).innerHTML; */
-          console.log(oCells.item(j).innerHTML);
-       }
-    }
-    
+<% @points.each do |point| %>
+    console.log(<%= point.x %>)
+    <% end %>
 }
 
 
