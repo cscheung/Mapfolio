@@ -47,15 +47,9 @@ var rect = new fabric.Rect({
   angle: 45
 });
 
-
 function intake_points()
 {
-<% @points.each do |point| %>
-    console.log(<%= point.x %>)
-    <% end %>
+    points = $('.points_class').data('points');
+    console.log(points);
 }
-
-
-
-
 
