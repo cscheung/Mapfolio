@@ -9,7 +9,9 @@ var y2 = 200;
 
 
 $(document).ready(function(){
-    document.getElementById('intake_points').onclick=function(){intake_points()};
+    
+        
+    //document.getElementById('intake_points').onclick=function(){intake_points()};
         
 	var canvas = new fabric.Canvas('c');
 	canvas.setDimensions({
@@ -30,6 +32,7 @@ $(document).ready(function(){
 
 function draw_line_from_points(x1, y1, x2, y2) {
 	
+	//Implicit translation of OUR points to FABRIC'S points
 	var line = new fabric.Line([x1, y1, x2, y2], {
 		strokeWidth: '5',
 		stroke: 'black', });
@@ -46,10 +49,3 @@ var rect = new fabric.Rect({
   height: 20,
   angle: 45
 });
-
-function intake_points()
-{
-    points = $('.points_class').data('points');
-    console.log(points);
-}
-

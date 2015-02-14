@@ -1,41 +1,4 @@
-<h1>New Wall (Points with wall_id=0 are listed)</h1>
-
-<table id='points_table'>
-  <thead>
-    <tr>
-      <th>Wall</th>
-      <th>X</th>
-      <th>Y</th>
-      <th>Z</th>
-      <th>Alpha</th>
-      <th>Beta</th>
-      <th>Gamma</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-    <tbody>  
-<% @points.each do |point| %>
-      <tr>
-        <td><%= point.wall_id %></td>
-        <td><%= point.x %></td>
-        <td><%= point.y %></td>
-        <td><%= point.z %></td>
-        <td><%= point.alpha %></td>
-        <td><%= point.beta %></td>
-        <td><%= point.gamma %></td>
-        <p/>
-      </tr>
-<% end %>
-  </tbody>
-</table>
-
-
-
-<%= content_tag :div, class: "points_class", data: {points: @points} do %>
-<% end %>
-
-<p/>
-<div id = 'intake_points'>Intake Points</div>  
+<h1>New Wall (Points with wall_id=0 are listed)</h1> 
 
 <%= render 'form' %>
 

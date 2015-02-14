@@ -117,4 +117,7 @@ function put_single_value_in_view(gyro_or_acc, element_name)
 
 	document.getElementById(element_name).innerHTML = difference;
 }
-	
+
+
+
+

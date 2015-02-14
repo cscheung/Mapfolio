@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150209065326) do
+ActiveRecord::Schema.define(version: 20150214005255) do
 
   create_table "floorplans", force: :cascade do |t|
     t.string   "name"
@@ -21,13 +21,9 @@ ActiveRecord::Schema.define(version: 20150209065326) do
   end
 
   create_table "points", force: :cascade do |t|
-    t.integer  "wall_id"
-    t.float    "x"
-    t.float    "y"
-    t.float    "z"
-    t.float    "alpha"
-    t.float    "beta"
-    t.float    "gamma"
+    t.integer  "x"
+    t.integer  "y"
+    t.float    "angle"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
