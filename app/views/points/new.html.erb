@@ -1,9 +1,17 @@
+
 <h1>New Point</h1>
 
-<div id = "calibrate">Calibrate</div>
-<div id = "start_tracking">Start Tracking</div>
-<div id = "save">Test Save</div>
+<button onclick="start_tracking()">Start Tracking</button>
+<button onclick="save()">Save</button>
 
-<%= render 'form' %>
+<div id="values">
+    <p id="accelerometer_x"></p>
+    <p id="accelerometer_y"></p>
+    <p id="accelerometer_z"></p>
+    <p id="gyroscope_alpha"></p>
+    <p id="gyroscope_beta"></p>
+    <p id="gyroscope_gamma"></p>
+</div>
+
 
 <%= link_to 'Back', points_path %>

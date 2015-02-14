@@ -20,5 +20,5 @@
 //= require fabric
 
 // Our Assets
-//= require tracker
+
 
