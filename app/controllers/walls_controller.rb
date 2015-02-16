@@ -15,7 +15,7 @@ class WallsController < ApplicationController
   # GET /walls/new
   def new
     @wall = Wall.new
-    @points = Point.where(:wall_id => 0)
+    @points = Point.all
   end
 
   # GET /walls/1/edit
