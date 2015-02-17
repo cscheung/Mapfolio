@@ -1,5 +1,11 @@
 <h1>New Floorplan</h1>
 
+<button onclick="load_points()">Load Points</button>
+<button onclick="show_points()">Show Points</button>
+
+<%= content_tag :div, class: "points_class", data: {points: @points} do %>
+<% end %>
+
 <%= render 'form' %>
 
 <%= link_to 'Back', floorplans_path %>
