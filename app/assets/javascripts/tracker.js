@@ -6,20 +6,6 @@ var interpolated_x, interpolated_y, t, time0, timeT;
 
 var deviceMotion;
 
-function printDataValue(input) {
-	if( input === undefined )
-		return "undefined";
-	if( input === null )
-		return "null";
-	if( input === true )
-		return "true";
-	if( input === false )
-		return "false";
-	if( Object.prototype.toString.call(input) === "[object Number]" )
-		return Math.round((input + 0.00001) * 100) / 100; // return to 2 decimal places
-
-	return (input + ""); // force stringify
-}
 
 function start_tracking() {
 
@@ -45,8 +31,6 @@ function start_tracking() {
 
 			t = (timeT - time0) * 0.001;
 
-			// Display calculated screen-adjusted devicemotion
-
 			var screenAcc = motionData.getScreenAdjustedAcceleration() || {};
 
 			acc_x = Math.round((screenAcc.x)*100)/100;
@@ -66,9 +50,9 @@ function start_tracking() {
 
             time0 = timeT;
 
-            document.getElementById("accelerometer_x").innerHTML = "acc X = " + printDataValue(screenAcc.x);
-			document.getElementById("accelerometer_y").innerHTML = "acc Y = " + printDataValue(screenAcc.y);
-			document.getElementById("accelerometer_z").innerHTML = "acc Z = " + printDataValue(screenAcc.z);
+            document.getElementById("accelerometer_x").innerHTML = "acc X = " + interpolated_x;
+			document.getElementById("accelerometer_y").innerHTML = "acc Y = " + interpolated_y;
+			document.getElementById("accelerometer_z").innerHTML = "acc Z = " + screenAcc.z;
 			document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
 			document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
             document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
