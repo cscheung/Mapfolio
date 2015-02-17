@@ -2,13 +2,13 @@ var points_array = [];
 
 function load_points()
 {
-    players = $('.points_class').data('points');
-    for(i=0; i < players.length; i++)
+    points = $('.points_class').data('points');
+    for(i=0; i < points.length; i++)
     {
         var new_point = {
-            angle: players[i].angle, 
-            x: players[i].x, 
-            y: players[i].y};
+            angle: points[i].angle, 
+            x: points[i].x, 
+            y: points[i].y};
             
         points_array.push(new_point);
     }
