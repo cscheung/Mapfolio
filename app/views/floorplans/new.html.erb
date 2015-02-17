@@ -2,8 +2,6 @@
 
 <button onclick="start_tracking()">Actively track values</button>
 <button onclick="stop_tracking()">Stop tracking</button>
-<button onclick="calibrate()">Calibrate</button>
-<button onclick="stop_tracking()">Stop calibration</button>
 
 <div id="values">
     <p id="orientation"></p>
@@ -17,9 +15,7 @@
     <p id="velocity_y"></p>
     <p id="pos_x"></p>
     <p id="pos_y"></p>
-    <p id="compensate_acc_x"></p>
-    <p id="compensate_acc_y"></p>
-    <p id="compensate_acc_z"></p>
+    <p id="t"></p>
 </div>
 
 <%= render 'form' %>
