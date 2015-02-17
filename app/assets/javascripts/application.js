@@ -16,5 +16,5 @@
 //= require_tree .
 
 //= require tracker
-//= require gyro
+//= require fulltilt
 
