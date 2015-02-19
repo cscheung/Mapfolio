@@ -6,6 +6,9 @@ var interpolated_x, interpolated_y, t, time0, timeT;
 
 var deviceMotion;
 
+var alpha = 0.1;
+var consec_stops = 0;
+
 
 function start_tracking() {
 
@@ -17,6 +20,7 @@ function start_tracking() {
     pos_y = 0;
     velocity_x = 0;
     velocity_y = 0;
+
 
 	var d = new Date();
     time0 = d.getTime();
@@ -35,23 +39,58 @@ function start_tracking() {
 
 			acc_x = Math.round((screenAcc.x)*100)/100;
 			acc_y = Math.round((screenAcc.y)*100)/100;
+			//acc_x = (prev_acc_x * alpha) + (acc_x * (1 - alpha));
 
-			interpolated_x = (prev_acc_x + acc_x) / 2;
-            interpolated_y = (prev_acc_y + acc_y) / 2;
+			//interpolated_x = (prev_acc_x + acc_x) / 2;
+            //interpolated_y = (prev_acc_y + acc_y) / 2;
 
-            pos_x += (0.5*interpolated_x*t*t) + velocity_x*t;
-            pos_y += (0.5*interpolated_y*t*t) + velocity_y*t;
+			if (acc_x > 0.005) {
+				consec_stops = 0;
+				//velocity_x += interpolated_x * t;
+				//velocity_y += interpolated_y * t;
+				velocity_x += acc_x*t;
+				velocity_y += acc_x*t;
+				//if (acc_x < prev_acc_x) {
+					//velocity_x *= (1-alpha);
+				//}
+			}
+			else {
+				consec_stops += 1;
+				if (consec_stops > 5) {
+					velocity_x = 0;
+				}
+				acc_x = 0;
+			}
 
-            velocity_x += interpolated_x * t;
-            velocity_y += interpolated_y * t;
+			if (velocity_x > 0.001) {
+				//pos_x += (0.5*interpolated_x*t*t) + velocity_x*t;
+				//pos_y += (0.5*interpolated_y*t*t) + velocity_y*t;
+				pos_x += (0.5*acc_x*t*t) + velocity_x*t;
+				pos_y += (0.5*acc_y*t*t) + velocity_y*t;
+			}
+			else {
+				velocity_x = 0;
+			}
+
+/*
+			if (acc_x > 0.1) {
+				velocity_x += interpolated_x * t;
+				velocity_y += interpolated_y * t;
+			}
+			else {
+				acc_x = 0;
+			}
+*/
 
             prev_acc_x = acc_x;
             prev_acc_y = acc_y;
 
             time0 = timeT;
 
-            document.getElementById("accelerometer_x").innerHTML = "acc X = " + interpolated_x;
-			document.getElementById("accelerometer_y").innerHTML = "acc Y = " + interpolated_y;
+            //document.getElementById("accelerometer_x").innerHTML = "acc X = " + interpolated_x;
+            document.getElementById("accelerometer_x").innerHTML = "acc X = " + acc_x;
+			document.getElementById("accelerometer_y").innerHTML = "acc Y = " + acc_y;
+			//document.getElementById("accelerometer_y").innerHTML = "acc Y = " + interpolated_y;
 			document.getElementById("accelerometer_z").innerHTML = "acc Z = " + screenAcc.z;
 			document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
 			document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
