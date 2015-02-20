@@ -1,48 +1,129 @@
+var screenAcc;
+var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y;
 
-var accelerometer_x = 30;
-var accelerometer_y = 30;
-var accelerometer_z = 30;
-var gyroscope_alpha = 30;
-var gyroscope_beta = 30;
-var gyroscope_gamma = 30;
+var prev_acc_x, prev_acc_y;
 
-function start_tracking()
-{
-    gyro.frequency = 100;
-    
-    gyro.startTracking(function(o) 
-    {
-   		accelerometer_x = Number((o.x).toFixed(1));
-        accelerometer_y = Number((o.y).toFixed(1));
-        accelerometer_z = Number((o.z).toFixed(1));
-   
-        gyroscope_alpha = Number((o.alpha).toFixed(1));
-        gyroscope_beta = Number((o.beta).toFixed(1));
-        gyroscope_gamma = Number((o.gamma).toFixed(1));
+var interpolated_x, interpolated_y, t, time0, timeT;
 
-		put_values_in_view();     
-    });
+var deviceMotion;
+
+var alpha = 0.1;
+var consec_stops = 0;
+
+
+function start_tracking() {
+
+	acc_x = 0;
+    acc_y = 0;
+    prev_acc_x = 0;
+    prev_acc_y = 0;
+    pos_x = 0;
+    pos_y = 0;
+    velocity_x = 0;
+    velocity_y = 0;
+
+
+	var d = new Date();
+    time0 = d.getTime();
+
+    deviceMotion = FULLTILT.getDeviceMotion();
+	deviceMotion.then(function(motionData) {
+
+		motionData.listen(function() {
+
+			var d2 = new Date();
+			timeT = d2.getTime();
+
+			t = (timeT - time0) * 0.001;
+
+			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
+
+			acc_x = Math.round((screenAcc.x)*100)/100;
+			acc_y = Math.round((screenAcc.y)*100)/100;
+			//acc_x = (prev_acc_x * alpha) + (acc_x * (1 - alpha));
+
+			//interpolated_x = (prev_acc_x + acc_x) / 2;
+            //interpolated_y = (prev_acc_y + acc_y) / 2;
+
+			if (acc_x > 0.005) {
+				consec_stops = 0;
+				//velocity_x += interpolated_x * t;
+				//velocity_y += interpolated_y * t;
+				velocity_x += acc_x*t;
+				velocity_y += acc_x*t;
+				//if (acc_x < prev_acc_x) {
+					//velocity_x *= (1-alpha);
+				//}
+			}
+			else {
+				consec_stops += 1;
+				if (consec_stops > 5) {
+					velocity_x = 0;
+				}
+				acc_x = 0;
+			}
+
+			if (velocity_x > 0.001) {
+				//pos_x += (0.5*interpolated_x*t*t) + velocity_x*t;
+				//pos_y += (0.5*interpolated_y*t*t) + velocity_y*t;
+				pos_x += (0.5*acc_x*t*t) + velocity_x*t;
+				pos_y += (0.5*acc_y*t*t) + velocity_y*t;
+			}
+			else {
+				velocity_x = 0;
+			}
+
+/*
+			if (acc_x > 0.1) {
+				velocity_x += interpolated_x * t;
+				velocity_y += interpolated_y * t;
+			}
+			else {
+				acc_x = 0;
+			}
+*/
+
+            prev_acc_x = acc_x;
+            prev_acc_y = acc_y;
+
+            time0 = timeT;
+
+            put_values_in_view();
+            
+		});
+
+	});
 }
 
 function stop_tracking()
 {
-    gyro.stopTracking();
+	deviceMotion.then(function(motionData) {
+
+		motionData.stop();
+
+	});
 }
+
+
 
 function put_values_in_view()
 {
-	document.getElementById("accelerometer_x").innerHTML = accelerometer_x;
-	document.getElementById("accelerometer_y").innerHTML = accelerometer_y;
-	document.getElementById("accelerometer_z").innerHTML = accelerometer_z;
-	document.getElementById("gyroscope_alpha").innerHTML = gyroscope_alpha;
-	document.getElementById("gyroscope_beta").innerHTML = gyroscope_beta;
-	document.getElementById("gyroscope_gamma").innerHTML = gyroscope_gamma;
+	//document.getElementById("accelerometer_x").innerHTML = "acc X = " + interpolated_x;
+    document.getElementById("accelerometer_x").innerHTML = "acc X = " + acc_x;
+	document.getElementById("accelerometer_y").innerHTML = "acc Y = " + acc_y;
+	//document.getElementById("accelerometer_y").innerHTML = "acc Y = " + interpolated_y;
+	document.getElementById("accelerometer_z").innerHTML = "acc Z = " + screenAcc.z;
+	document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
+	document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
+    document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
+	document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
+	document.getElementById("t").innerHTML = "t = " + t;
 }
 
 var save = function save()
 {
     //DO fancy math to convert this into x, y, angle
-    enter_into_database(gyroscope_alpha, gyroscope_beta, gyroscope_gamma);
+    enter_into_database(pos_x, pos_y, 90);
 }
 
 function enter_into_database(x_in, y_in, angle_in)
