@@ -5,9 +5,11 @@ var prev_acc_x, prev_acc_y;
 
 var interpolated_x, interpolated_y, t, time0, timeT;
 
-var deviceMotion;
+var alpha;
 
-var alpha = 0.1;
+var deviceMotion, deviceOrientation;
+
+var rate = 0.1;
 var consec_stops = 0;
 
 
@@ -21,6 +23,23 @@ function start_tracking() {
     pos_y = 0;
     velocity_x = 0;
     velocity_y = 0;
+
+
+	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
+	deviceOrientation.then(function(orientationData) {	
+
+
+		orientationData.listen(function() {
+
+			// Display calculated screen-adjusted deviceorientation
+
+			var screenAdjustedEvent = orientationData.getFixedFrameEuler();
+
+			alpha = screenAdjustedEvent.alpha;
+
+		});
+
+	});
 
 
 	var d = new Date();
@@ -40,7 +59,7 @@ function start_tracking() {
 
 			acc_x = Math.round((screenAcc.x)*100)/100;
 			acc_y = Math.round((screenAcc.y)*100)/100;
-			//acc_x = (prev_acc_x * alpha) + (acc_x * (1 - alpha));
+			//acc_x = (prev_acc_x * rate) + (acc_x * (1 - rate));
 
 			//interpolated_x = (prev_acc_x + acc_x) / 2;
             //interpolated_y = (prev_acc_y + acc_y) / 2;
@@ -52,7 +71,7 @@ function start_tracking() {
 				velocity_x += acc_x*t;
 				velocity_y += acc_x*t;
 				//if (acc_x < prev_acc_x) {
-					//velocity_x *= (1-alpha);
+					//velocity_x *= (1-rate);
 				//}
 			}
 			else {
@@ -109,6 +128,7 @@ function stop_tracking()
 function put_values_in_view()
 {
 	//document.getElementById("accelerometer_x").innerHTML = "acc X = " + interpolated_x;
+    document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
     document.getElementById("accelerometer_x").innerHTML = "acc X = " + acc_x;
 	document.getElementById("accelerometer_y").innerHTML = "acc Y = " + acc_y;
 	//document.getElementById("accelerometer_y").innerHTML = "acc Y = " + interpolated_y;
@@ -123,7 +143,7 @@ function put_values_in_view()
 var save = function save()
 {
     //DO fancy math to convert this into x, y, angle
-    enter_into_database(pos_x, pos_y, 90);
+    enter_into_database(pos_x, pos_y, alpha);
 }
 
 function enter_into_database(x_in, y_in, angle_in)
