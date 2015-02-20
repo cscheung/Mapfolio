@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>X:</strong>
+  <%= @point.x %>
+</p>
+
+<p>
+  <strong>Y:</strong>
+  <%= @point.y %>
+</p>
+
+<p>
+  <strong>Angle:</strong>
+  <%= @point.angle %>
+</p>
+
+<%= link_to 'Edit', edit_point_path(@point) %> |
+<%= link_to 'Back', points_path %>
