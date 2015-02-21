@@ -40,21 +40,21 @@ function find_intersection()
 	else
 	{	
 		//find the slopes for the two points
-		m0 = Math.tan(points_array[0].angle); 
-		m1 = Math.tan(points_array[1].angle);
+		m0 = Math.tan(points_array[0].angle*Math.PI/180); 
+		m1 = Math.tan(points_array[1].angle*Math.PI/180);
 		
 		//find the y intercepts for each 
 		b0 = points_array[0].y - m0*points_array[0].x;
-		b1 = points_array[1].y - m1*points_array[0].x;
+		b1 = points_array[1].y - m1*points_array[1].x;
 		
 		//now solve for the x intersection 
-		x_intersection = (b1 - b0)/(m1 - m0);
+		x_intersection = (b1 - b0)/(m0 - m1);
 		
 		//now solve for the y intersection 
 		y_intersection = m0 * x_intersection + b0;
 	}
 
-	console.log(x_intersection, y_intersection); 
+	console.log((x_intersection).toFixed(2), (y_intersection).toFixed(2)); 
 	
 }
 
