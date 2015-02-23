@@ -1,8 +1,7 @@
-var x1 = 0; 
-var y1 = 0;
-
-var x2 = 300;
-var y2 = 200;
+var HEIGHT = 500;
+var WIDTH = 500;
+var SCALING_FACTOR = 1;	
+    
 points_array = [];
 var canvas;
 
@@ -10,22 +9,11 @@ $(document).ready(function(){
     
 	canvas = new fabric.Canvas('c');
 	canvas.setDimensions({
-		width: 500,
-		height:500
+		width: WIDTH,
+		height:HEIGHT
 	})
 });
 
-function show_plan()
-{
-	var line = draw_line_from_points(x1, y1, x2, y1);
-	canvas.add(line);
-	line = draw_line_from_points(x2, y1, x2, y2);
-	canvas.add(line);
-	line = draw_line_from_points(x2, y2, x1, y2);
-	canvas.add(line);
-	line = draw_line_from_points(x1, y2, x1, y1);
-	canvas.add(line);
-}
 
 function load_points()
 {
@@ -42,60 +30,82 @@ function load_points()
 
 }
 
-function show_points()
-{
-   console.log(points_array); 
-}
-
-function find_intersection()
+function find_intersection(p1, p2)
 {
 	var x_intersection;
 	var y_intersection;
 	
-	if(points_array[0].angle == 90)
+	//Reorganization so I can better understand the angle
+	p1.angle = 90 - p1.angle;
+	p2.angle = 90 - p2.angle;
+	
+	
+	m0 = Math.tan(p1.angle*Math.PI/180); 
+	m1 = Math.tan(p2.angle*Math.PI/180);
+	
+	//find the y intercepts for each 
+	b0 = p1.y - m0*p1.x;
+	b1 = p2.y - m1*p2.x;
+	
+	if(p1.angle == 90)
 	{
 		//x = value for all y
-		x_intersection = points_array[0].x;
-		y_intersection = points_array[1].y; 
+		x_intersection = p1.x; 
+		y_intersection = m1 * x_intersection + b1;
 	}
-	else if(points_array[1].angle == 90)
+	
+	if(p2.angle == 90)
 	{
 		//x = value for all y
-		x_intersection = points_array[1].x;
-		y_intersection = points_array[0].y; 
+		x_intersection = p2.x; 
+        	y_intersection = m0 * x_intersection + b0;
 	}
+	
 	else
 	{	
-		//find the slopes for the two points
-		m0 = Math.tan(points_array[0].angle*Math.PI/180); 
-		m1 = Math.tan(points_array[1].angle*Math.PI/180);
-		
-		//find the y intercepts for each 
-		b0 = points_array[0].y - m0*points_array[0].x;
-		b1 = points_array[1].y - m1*points_array[1].x;
-		
-		//now solve for the x intersection 
-		x_intersection = (b1 - b0)/(m0 - m1);
-		
-		//now solve for the y intersection 
-		y_intersection = m0 * x_intersection + b0;
+        	x_intersection = (b1 - b0)/(m0 - m1); 
+        	y_intersection = m0 * x_intersection + b0;
 	}
 
-	console.log((x_intersection).toFixed(2), (y_intersection).toFixed(2)); 
-    
-    var wall = draw_line_from_points(points_array[0].x*10, points_array[0].y*10, x_intersection*10, y_intersection*10);
-	canvas.add(wall);
+    return {x: x_intersection, y: y_intersection};
+}
 	
-	var wall2 = draw_line_from_points(points_array[1].x*10, points_array[1].y*10, x_intersection*10, y_intersection*10);
-	canvas.add(wall2);
+function draw_walls()
+{
+    /*
+    console.log("All of the points in order:");
+    for (i = 0; i < points_array.length; i++) 
+    {
+        console.log(points_array[i]);
+    }
+    */
+    for (i = 0; i < points_array.length; i++) 
+    {
+        var p1 = points_array[i];
+        var p2 = points_array[(i+1)%points_array.length];
+        var p3 = find_intersection(p1, p2);
+
+        console.log(p1.x,p1.y, "and", p2.x,p2.y, "meet at", p3.x, p3.y);
+        /*
+        var p1_wall = draw_line_from_points(p1.x, p1.y, p3.x, p3.y);
+        canvas.add(p1_wall);
+        var p2_wall = draw_line_from_points(p2.x, p2.y, p3.x, p3.y);
+        canvas.add(p2_wall);
+        */
+    }
 }
 
-function draw_line_from_points(x1, y1, x2, y2) {
-	
-	//Implicit translation of OUR points to FABRIC'S points
-	var line = new fabric.Line([x1, y1, x2, y2], {
-		strokeWidth: '5',
-		stroke: 'black', });
+function draw_line_from_points(x1, y1, x2, y2) 
+{    
+	var line = new fabric.Line([(HEIGHT-x1)*SCALING_FACTOR, 
+	y1*SCALING_FACTOR, 
+	x2*SCALING_FACTOR, 
+	y2*SCALING_FACTOR], 
+	{
+		strokeWidth: '1',
+		stroke: 'black', 
+    });
+    
 	return line;
 }
 
