@@ -2,12 +2,13 @@
 
 <button onclick="load_points()">Load Points</button>
 <button onclick="show_points()">Show Points</button>
+<button onclick="show_plan()">Show Plan</button>
 <button onclick="find_intersection()">Find Intersection</button>
 
 
 <%= content_tag :div, class: "points_class", data: {points: @points} do %>
 <% end %>
 
-<%= render 'form' %>
+<canvas id="c"></canvas>
 
 <%= link_to 'Back', floorplans_path %>
