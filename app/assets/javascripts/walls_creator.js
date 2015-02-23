@@ -1,3 +1,7 @@
+//Were still not really doing anything with this file
+//This stuff is done in the floorplan maker
+ 
+/*
 var points_array = [];
 
 function load_points()
@@ -19,4 +23,4 @@ function show_points()
 {
    console.log(points_array); 
 }
-
+*/
