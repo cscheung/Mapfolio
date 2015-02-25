@@ -1,6 +1,8 @@
 var HEIGHT = 500;
 var WIDTH = 500;
-var SCALING_FACTOR = 1;	
+var SCALING_FACTOR = 1;
+var X_TRANSLATION = 100;
+var Y_TRANSLATION = 100;	
     
 points_array = [];
 intersections_array = [];
@@ -90,10 +92,13 @@ function draw_walls()
 
 function draw_line_from_points(x1, y1, x2, y2) 
 {    
-	var line = new fabric.Line([(HEIGHT - x1)*SCALING_FACTOR, 
-	y1*SCALING_FACTOR, 
-	(HEIGHT - x2)*SCALING_FACTOR, 
-	y2*SCALING_FACTOR], 
+	var line = new fabric.Line(
+	[
+	x1*SCALING_FACTOR + X_TRANSLATION, 
+	(WIDTH - y1)*SCALING_FACTOR - Y_TRANSLATION, 
+	x2*SCALING_FACTOR + X_TRANSLATION, 
+	(WIDTH - y2)*SCALING_FACTOR - Y_TRANSLATION
+	], 
 	{
 		strokeWidth: '1',
 		stroke: 'black', 
