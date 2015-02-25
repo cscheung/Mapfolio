@@ -77,7 +77,6 @@ function draw_walls()
         var p2 = find_intersection(p0, p1);
 
         intersections_array.push(p2);
-        console.log(p2);
     }
     
     for (i = 0; i < intersections_array.length; i++) 
