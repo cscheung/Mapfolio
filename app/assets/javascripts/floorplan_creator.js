@@ -82,6 +82,7 @@ function previewFile() {
   var reader  = new FileReader();
 
   reader.onloadend = function () {
+  	a=a+500;
     preview.src = reader.result;
   }
 

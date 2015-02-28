@@ -4,14 +4,15 @@
 <button onclick="draw_walls()">Draw Walls</button>
 <br><br>
 <button onclick="displayAsImage()">Display Image</button>
-<br><br>
 
+
+<br><br>
+<br><br>
 <form action="server.cgi" method="post" enctype="multipart/form-data">
-  <input type="file" name="image" accept="image/*" capture>
+  <input type="file" onchange="previewFile()" name="image" accept="image/*" capture>
   <input type="submit" value="Upload">
 </form>
-<br><br>
-<input type="file" onchange="previewFile()"><br>
+
 <img src="" height="200" alt="Image preview...">
 <div id="values">    
     <p id="a"></p>
