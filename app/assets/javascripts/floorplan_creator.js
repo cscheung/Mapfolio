@@ -35,9 +35,10 @@ $(document).ready(function(){
 /*camera code*/
 function show_camera_icon()
 {
-fabric.Image.fromURL('../images/camera.png', function(oImg) {
-canvas.add(oImg);
-});
+    fabric.Image.fromURL('camera.png', function(oImg) 
+    {
+        canvas.add(oImg);
+    });
 }
 function previewFile() {
 
@@ -61,8 +62,6 @@ preview.src = "";
 
 function load_points()
 {
-	document.getElementById("a").innerHTML = 
-            "a: " + 1;
     points = $('.points_class').data('points');
     for(i=0; i < points.length; i++)
     {
