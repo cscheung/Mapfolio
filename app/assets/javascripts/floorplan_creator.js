@@ -33,84 +33,31 @@ $(document).ready(function(){
 
 
 /*camera code*/
-a=0;
-var input = document.querySelector('input[type=file]'); // see Example 4
-
-input.onchange = function () {
-  var file = input.files[0];
-
-  upload(file);
-  drawOnCanvas(file);   // see Example 6
-  displayAsImage(file); // see Example 7
-};
-
-function upload(file) {
-  var form = new FormData(),
-      xhr = new XMLHttpRequest();
-
-  form.append('image', file);
-  xhr.open('post', 'server.php', true);
-  xhr.send(form);
-}
-function drawOnCanvas(file) {
-  var reader = new FileReader();
-
-  reader.onload = function (e) {
-    var dataURL = e.target.result,
-        c = document.querySelector('canvas'), // see Example 4
-        ctx = c.getContext('2d'),
-        img = new Image();
-
-    img.onload = function() {
-      c.width = img.width;
-      c.height = img.height;
-      ctx.drawImage(img, 0, 0);
-    };
-
-    img.src = dataURL;
-  };
-
-  reader.readAsDataURL(file);
-}
-function displayAsImage(file) {
-	a=a+1;
-	document.getElementById("a").innerHTML = 
-            "a: " + a;
-
-  var imgURL = URL.createObjectURL(file),
-      img = document.createElement('img');
-
-  img.onload = function() {
-    URL.revokeObjectURL(imgURL);
-  };
-
-  img.src = imgURL;
-  document.body.appendChild(img);
+function show_camera_icon()
+{
+fabric.Image.fromURL('../images/camera.png', function(oImg) {
+canvas.add(oImg);
+});
 }
 function previewFile() {
-	//a=a+5;
-	
-  var preview = document.querySelector('img');
-  var file    = document.querySelector('input[type=file]').files[0];
-  var reader  = new FileReader();
 
-  reader.onloadend = function () {
-  	a=a+500;
-    preview.src = reader.result;
-  }
+show_camera_icon();
 
-  if (file) {
-  	a=a+5;
-    reader.readAsDataURL(file);
-  } else {
-  	a=a+50;
-    preview.src = "";
-  }
-  document.getElementById("a").innerHTML = 
-            "a: " + a;
+var preview = document.querySelector('img');
+var file = document.querySelector('input[type=file]').files[0];
+var reader = new FileReader();
+
+reader.onloadend = function () {
+preview.src = reader.result;
+}
+
+if (file) {
+reader.readAsDataURL(file);
+} else {
+preview.src = "";
+}
 }
 /*camera code*/
-
 
 function load_points()
 {
