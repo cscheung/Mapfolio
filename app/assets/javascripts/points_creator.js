@@ -1,4 +1,4 @@
-var screenAcc; //motion data passed by fulltilt
+var rawEvent, acc; //motion data passed by fulltilt
 
 var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y; 
 
@@ -56,10 +56,12 @@ function start_tracking() {
 			timeT = d.getTime();
 			t = (timeT - time0) * 0.001;
 
-			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
+			rawEvent = motionData.getLastRawEventData();
 
-			acc_x = (Math.abs(screenAcc.x) > 0.1) ? screenAcc.x : 0;
-			acc_y = (Math.abs(screenAcc.y) > 0.1) ? screenAcc.y : 0;
+			acc = rawEvent.acceleration || {};
+
+			acc_x = (Math.abs(acc.x) > 0.1) ? acc.x : 0;
+			acc_y = (Math.abs(acc.y) > 0.1) ? acc.y : 0;
 
 			recentX.push(acc_x);
 			recentY.push(acc_y);
