@@ -4,9 +4,14 @@ var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y;
 
 var t, time0, timeT;
 
-var alpha; //our wall angle
 
-var deviceMotion, deviceOrientation; //fulltilt objects
+var alpha;
+
+var deviceMotion, deviceOrientation;
+
+var rate = 0.1;
+var consec_stops = 0;
+
 
 var recentX = [];
 var recentY = [];
@@ -122,6 +127,7 @@ function put_values_in_view()
 	document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
 	document.getElementById("t").innerHTML = "Distance = " + distance;
 }
+
 
 var save = function save()
 {

@@ -19,6 +19,3 @@
 //= require fulltilt
 //= require fabric
 
-// Our Assets
-
-
