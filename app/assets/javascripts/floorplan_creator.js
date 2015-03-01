@@ -15,8 +15,21 @@ $(document).ready(function(){
 	canvas.setDimensions({
 		width: WIDTH,
 		height:HEIGHT
-	})
+	});
+	
+	
+	canvas.on('mouse:down', function(e) {
+    if(e.target)
+    {
+        //Call a js function
+        console.log("toggle!");   
+        canvas.renderAll();
+    }
+  });
+
+	  
 });
+
 
 
 /*camera code*/
@@ -172,6 +185,9 @@ function draw_walls()
         var line = draw_line_from_points(a.x, a.y, b.x, b.y);
         canvas.add(line);
     }
+    
+    
+    
 }
 
 function draw_line_from_points(x1, y1, x2, y2) 
