@@ -132,7 +132,7 @@ function put_values_in_view()
 var save = function save()
 {
     //DO fancy math to convert this into x, y, angle
-    enter_into_database(pos_x, pos_y, alpha);
+    enter_into_database(pos_x*100, pos_y*100, alpha);
 }
 
 function enter_into_database(x_in, y_in, angle_in)
