@@ -1,4 +1,5 @@
 var rawEvent, acc; //motion data passed by fulltilt
+var screenAcc; //motion data passed by fulltilt
 
 var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y; 
 
@@ -9,8 +10,8 @@ var alpha;
 
 var deviceMotion, deviceOrientation;
 
-var rate = 0.1;
-var consec_stops = 0;
+//var rate = 0.1;
+var consec_stopsX, consec_stopsY;
 
 
 var recentX = [];
@@ -18,9 +19,7 @@ var recentY = [];
 
 var medianX, medianY;
 
-var MedianBufferLength = 7;
-
-var distance;
+var MedianBufferLength = 3;
 
 function start_tracking() {
 
@@ -30,7 +29,8 @@ function start_tracking() {
     pos_y = 0;
     velocity_x = 0;
     velocity_y = 0;
-
+    consec_stopsX = 0;
+    consec_stopsY = 0;
 
 	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
 	deviceOrientation.then(function(orientationData) {	
@@ -57,16 +57,39 @@ function start_tracking() {
 
 		motionData.listen(function() {			
 
-			var d = new Date();
-			timeT = d.getTime();
+			var d2 = new Date();
+			timeT = d2.getTime();
 			t = (timeT - time0) * 0.001;
 
-			rawEvent = motionData.getLastRawEventData();
+			//rawEvent = motionData.getLastRawEventData();
 
-			acc = rawEvent.acceleration || {};
+			//acc = rawEvent.acceleration || {};
 
-			acc_x = (Math.abs(acc.x) > 0.1) ? acc.x : 0;
-			acc_y = (Math.abs(acc.y) > 0.1) ? acc.y : 0;
+			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
+
+			if (Math.abs(screenAcc.x) > 0.1) 
+				acc_x = screenAcc.x;
+			else {
+				acc_x = 0; 
+				consec_stopsX++;
+			} 
+			
+			if (Math.abs(screenAcc.y) > 0.1) 
+				acc_y = screenAcc.y;
+			else {
+				acc_y = 0; 
+				consec_stopsY++;
+			} 
+
+			if (consec_stopsX == 5) {
+				velocity_x = 0;
+				consec_stopsX = 0;
+			}
+			
+			if (consec_stopsY == 5) {
+				velocity_y = 0;
+				consec_stopsY = 0;
+			}
 
 			recentX.push(acc_x);
 			recentY.push(acc_y);
@@ -79,19 +102,12 @@ function start_tracking() {
 
 			medianX = tempRecentX.sort(compareNumbers)[Math.floor(recentX.length/2)];
     		medianY = tempRecentY.sort(compareNumbers)[Math.floor(recentY.length/2)];
-
-    		if ((medianX == 0) && (medianY == 0)) { //at least MedianBufferLength/2 + 1 consequtive values of acceleration in x and y direction are 0 - the phone is still?
-    			velocity_x = 0;
-    			velocity_y = 0;
-    		}
  
 			velocity_x += medianX*t;
 			velocity_y += medianY*t;
 
 			pos_x += (0.5*medianX*t*t) + velocity_x*t;
 			pos_y += (0.5*medianY*t*t) + velocity_y*t;
-
-			distance = Math.sqrt(pos_x*pos_x+pos_y*pos_y);
 
             time0 = timeT;
 
@@ -112,7 +128,7 @@ function stop_tracking()
 }
 
 function compareNumbers(a, b) {
-  return b - a;
+  return a - b;
 }
 
 
@@ -125,13 +141,16 @@ function put_values_in_view()
 	document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
     document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
 	document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
-	document.getElementById("t").innerHTML = "Distance = " + distance;
+	document.getElementById("t").innerHTML = "t = " + t;
 }
 
 
 var save = function save()
 {
-    //DO fancy math to convert this into x, y, angle
+    //clear arrays between points 
+    recentX = [];
+    recentY = [];
+
     enter_into_database(pos_x*100, pos_y*100, alpha);
 }
 
