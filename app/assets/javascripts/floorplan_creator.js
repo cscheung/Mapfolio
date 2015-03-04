@@ -4,6 +4,7 @@ var SCALING_FACTOR = 1;
 var X_TRANSLATION = 75;
 var Y_TRANSLATION = 75;	
 var VERTEX_RADIUS = 10;
+var WALL_THRESH = 50.0;
 
 points_array = [];
 intersections_array = [];
@@ -11,7 +12,8 @@ walls_array = [];
 verticies_array = [];
 var canvas;
 
-$(document).ready(function(){
+$(document).ready(function()
+{
     
     hide_update_button();
 	canvas = new fabric.Canvas('c');
@@ -20,6 +22,8 @@ $(document).ready(function(){
 		width: WIDTH,
 		height:HEIGHT
 	});
+	
+    draw_floorplan();
 	
     canvas.on('mouse:down', function(e) 
     {
@@ -48,14 +52,26 @@ $(document).ready(function(){
             var left = p.left + VERTEX_RADIUS;
             var top = p.top + VERTEX_RADIUS;
             
-            p.wall1.set({'x2' : left, 'y2' : top});
-            p.wall2.set({'x1' : left, 'y1' : top});
-            canvas.renderAll();
-            
-        }
-    });
+            if(!wall_threshold_hit(p))
+            {
+                p.wall1.set({'x2' : left, 'y2' : top});
+                p.wall2.set({'x1' : left, 'y1' : top});
+                canvas.renderAll();
+            }            
+            else
+            {
+                p.left = p.wall1.get('x2') - VERTEX_RADIUS;
+                p.top = p.wall1.get('y2') - VERTEX_RADIUS;
 
-	  
+                canvas.renderAll();
+                
+                console.log("Too close!");
+
+                
+                return;
+            }
+        }
+    });	  
 });
 
 /*camera code*/
@@ -251,5 +267,31 @@ function show_update_button()
 function update_floorplan()
 {
     hide_update_button();
+}
+
+function wall_threshold_hit(vertex)
+{
+    var a = vertex.wall1.get('x2') - vertex.wall1.get('x1');
+    var b = vertex.wall1.get('y2') - vertex.wall1.get('y1');
+    var a_sqr = Math.pow(a, 2);
+    var b_sqr = Math.pow(b, 2);
+        
+    if (Math.sqrt(a_sqr + b_sqr) < WALL_THRESH)
+    {
+        return true;
+    }
+    
+    a = vertex.wall2.get('x2') - vertex.wall2.get('x1');
+    b = vertex.wall2.get('y2') - vertex.wall2.get('y1');
+    a_sqr = Math.pow(a, 2);
+    b_sqr = Math.pow(b, 2);
+    
+    if (Math.sqrt(a_sqr + b_sqr) < WALL_THRESH)
+    {
+        return true;
+    }
+    
+    
+    return false;
 }
 
