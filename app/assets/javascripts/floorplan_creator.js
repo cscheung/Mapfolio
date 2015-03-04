@@ -4,20 +4,23 @@ var SCALING_FACTOR = 1;
 var X_TRANSLATION = 75;
 var Y_TRANSLATION = 75;	
 var VERTEX_RADIUS = 10;
+var WALL_THRESH = 1;
 
 points_array = [];
 intersections_array = [];
 walls_array = [];
+verticies_array = [];
 var canvas;
 
 $(document).ready(function(){
     
+    hide_update_button();
 	canvas = new fabric.Canvas('c');
 	canvas.setDimensions({
+        backgroundColor: '#e2e5e5',
 		width: WIDTH,
 		height:HEIGHT
 	});
-	
 	
     canvas.on('mouse:down', function(e) 
     {
@@ -29,14 +32,29 @@ $(document).ready(function(){
         }
     });
   
+    canvas.on('mouse:up', function(e) 
+    {
+        if(e.target.name == 'vertex')
+        {
+            var p = e.target;
+            show_update_button();   
+        }
+    });
+  
     canvas.on('object:moving', function(e) 
     {
         if(e.target.name == 'vertex')
         {
             var p = e.target;
-            p.wall1.set({'x2' : p.left + VERTEX_RADIUS, 'y2' : p.top + VERTEX_RADIUS});
-            p.wall2.set({'x1' : p.left + VERTEX_RADIUS, 'y1' : p.top + VERTEX_RADIUS});    
-            canvas.renderAll();
+            var left = p.left + VERTEX_RADIUS;
+            var top = p.top + VERTEX_RADIUS;
+            
+            if (!wall_threshold_hit(p))
+            {
+                p.wall1.set({'x2' : left, 'y2' : top});
+                p.wall2.set({'x1' : left, 'y1' : top});
+                canvas.renderAll();
+            }
         }
     });
 
@@ -142,6 +160,7 @@ function draw_walls()
         walls_array[i], 
         walls_array[(i+1)%points_array.length]);
         
+        verticies_array.push(vertex);
         canvas.add(vertex);
     } 
 }
@@ -220,5 +239,42 @@ function translate_points(points)
     points[3] = (WIDTH - points[3])*SCALING_FACTOR - Y_TRANSLATION;
     
     return points;
+}
+
+function hide_update_button()
+{
+    document.getElementById("update_walls").style.visibility = 'hidden';
+}
+
+function show_update_button()
+{
+    document.getElementById("update_walls").style.visibility = 'visible';
+}
+
+function update_floorplan()
+{
+    hide_update_button();
+}
+
+function wall_threshold_hit(vertex)
+{
+    var a = Math.abs(vertex.wall1.get('x1') - vertex.wall1.get('x2'));
+    var b = Math.abs(vertex.wall1.get('y1') - vertex.wall1.get('y2'));
+    
+    if (Math.sqrt(a^2 + b^2) < WALL_THRESH)
+    {
+        return true;
+    }
+    
+    var a = Math.abs(vertex.wall2.get('x1') - vertex.wall2.get('x2'));
+    var b = Math.abs(vertex.wall2.get('y1') - vertex.wall2.get('y2'));
+    
+    if (Math.sqrt(a^2 + b^2) < WALL_THRESH)
+    {
+        return true;
+    }
+    
+    
+    return false;
 }
 

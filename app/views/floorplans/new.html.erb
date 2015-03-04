@@ -1,6 +1,7 @@
 <h1>New Floorplan</h1>
 
 <button onclick="draw_floorplan()">Draw Floorplan</button>
+<button id="update_walls" onclick="update_floorplan()">Update Floorplan</button>
 
 <form action="server.cgi" method="post" enctype="multipart/form-data">
 <input type="file" onchange="previewFile()" name="image" accept="image/*" capture>
@@ -13,5 +14,6 @@
 <% end %>
 
 <canvas id="c"></canvas>
+
 
 <%= link_to 'Back', floorplans_path %>
