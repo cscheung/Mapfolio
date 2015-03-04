@@ -4,7 +4,6 @@ var SCALING_FACTOR = 1;
 var X_TRANSLATION = 75;
 var Y_TRANSLATION = 75;	
 var VERTEX_RADIUS = 10;
-var WALL_THRESH = 1;
 
 points_array = [];
 intersections_array = [];
@@ -49,12 +48,10 @@ $(document).ready(function(){
             var left = p.left + VERTEX_RADIUS;
             var top = p.top + VERTEX_RADIUS;
             
-            if (!wall_threshold_hit(p))
-            {
-                p.wall1.set({'x2' : left, 'y2' : top});
-                p.wall2.set({'x1' : left, 'y1' : top});
-                canvas.renderAll();
-            }
+            p.wall1.set({'x2' : left, 'y2' : top});
+            p.wall2.set({'x1' : left, 'y1' : top});
+            canvas.renderAll();
+            
         }
     });
 
@@ -254,27 +251,5 @@ function show_update_button()
 function update_floorplan()
 {
     hide_update_button();
-}
-
-function wall_threshold_hit(vertex)
-{
-    var a = Math.abs(vertex.wall1.get('x1') - vertex.wall1.get('x2'));
-    var b = Math.abs(vertex.wall1.get('y1') - vertex.wall1.get('y2'));
-    
-    if (Math.sqrt(a^2 + b^2) < WALL_THRESH)
-    {
-        return true;
-    }
-    
-    var a = Math.abs(vertex.wall2.get('x1') - vertex.wall2.get('x2'));
-    var b = Math.abs(vertex.wall2.get('y1') - vertex.wall2.get('y2'));
-    
-    if (Math.sqrt(a^2 + b^2) < WALL_THRESH)
-    {
-        return true;
-    }
-    
-    
-    return false;
 }
 
