@@ -12,6 +12,9 @@ walls_array = [];
 verticies_array = [];
 var canvas;
 
+var last_left = 0.0;
+var last_top = 0.0;
+
 $(document).ready(function()
 {
     
@@ -43,31 +46,34 @@ $(document).ready(function()
             show_update_button();   
         }
     });
+    
   
     canvas.on('object:moving', function(e) 
     {
         if(e.target.name == 'vertex')
         {
             var p = e.target;
-            var left = p.left + VERTEX_RADIUS;
-            var top = p.top + VERTEX_RADIUS;
             
             if(!wall_threshold_hit(p))
             {
-                p.wall1.set({'x2' : left, 'y2' : top});
-                p.wall2.set({'x1' : left, 'y1' : top});
+                last_left = p.left;
+                last_top = p.top;
+                
+                p.wall1.set({'x2' : p.left + VERTEX_RADIUS, 
+                    'y2' : p.top + VERTEX_RADIUS});
+                    
+                p.wall2.set({'x1' : p.left + VERTEX_RADIUS, 
+                    'y1' : p.top + VERTEX_RADIUS});
                 canvas.renderAll();
             }            
             else
             {
-                p.left = p.wall1.get('x2') - VERTEX_RADIUS;
-                p.top = p.wall1.get('y2') - VERTEX_RADIUS;
-
+                p.left = last_left;
+                p.top = last_top;
                 canvas.renderAll();
                 
                 console.log("Too close!");
 
-                
                 return;
             }
         }
@@ -300,17 +306,5 @@ function wall_threshold_hit(vertex)
 
 function save_floorplan_to_database()
 {
-    <% f = Floorplan.new %>
     
-    for (i = 0; i < walls_array.length; i++)
-    { 
-        <% f.walls.build(
-        	:x1 => walls_array[i].get('x1'), 
-        	:y1 => walls_array[i].get('y1'),
-        	:x2 => walls_array[i].get('x2'), 
-        	:y2 => walls_array[i].get('y2')
-        ) %>
-    }
-
-    <% f.save %>
 }
