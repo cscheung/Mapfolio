@@ -244,6 +244,7 @@ function make_vertex(left, top, wall1, wall2)
     return c;
 }
 
+
 function translate_points(points)
 {
     points[0] = points[0]*SCALING_FACTOR + X_TRANSLATION;
@@ -256,18 +257,20 @@ function translate_points(points)
 
 function hide_update_button()
 {
-    document.getElementById("update_walls").style.visibility = 'hidden';
+    document.getElementById("save_floorplan").style.visibility = 'hidden';
 }
 
 function show_update_button()
 {
-    document.getElementById("update_walls").style.visibility = 'visible';
+    document.getElementById("save_floorplan").style.visibility = 'visible';
 }
 
-function update_floorplan()
+function save_floorplan()
 {
     hide_update_button();
+    save_floorplan_to_database();
 }
+
 
 function wall_threshold_hit(vertex)
 {
@@ -295,3 +298,19 @@ function wall_threshold_hit(vertex)
     return false;
 }
 
+function save_floorplan_to_database()
+{
+    <% f = Floorplan.new %>
+    
+    for (i = 0; i < walls_array.length; i++)
+    { 
+        <% f.walls.build(
+        	:x1 => walls_array[i].get('x1'), 
+        	:y1 => walls_array[i].get('y1'),
+        	:x2 => walls_array[i].get('x2'), 
+        	:y2 => walls_array[i].get('y2')
+        ) %>
+    }
+
+    <% f.save %>
+}
