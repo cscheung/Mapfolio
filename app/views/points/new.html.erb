@@ -6,7 +6,7 @@
 <button onclick="save()">Save</button>
 
 <div id="values">    
-    <p id="alpha"></p>
+    <p id="alpha">Idle</p>
     <p id="accelerometer_x"></p>
     <p id="accelerometer_y"></p>
     <p id="accelerometer_z"></p>
@@ -18,4 +18,4 @@
 </div>
 
 
-<%= link_to 'Back', points_path %>
+<%= button_to "Create Floorplan", new_floorplan_path(@floorplan), :method => "get" %>
