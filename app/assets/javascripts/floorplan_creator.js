@@ -12,9 +12,6 @@ walls_array = [];
 verticies_array = [];
 var canvas;
 
-var last_left = 0.0;
-var last_top = 0.0;
-
 $(document).ready(function()
 {
     
@@ -40,10 +37,13 @@ $(document).ready(function()
   
     canvas.on('mouse:up', function(e) 
     {
-        if(e.target.name == 'vertex')
+        if(e.target)
         {
-            var p = e.target;
-            show_update_button();   
+            if(e.target.name == 'vertex')
+            {
+                var p = e.target;
+                show_update_button();   
+            }
         }
     });
     
@@ -52,33 +52,49 @@ $(document).ready(function()
     {
         if(e.target.name == 'vertex')
         {
-            var p = e.target;
-            
-            if(!wall_threshold_hit(p))
-            {
-                last_left = p.left;
-                last_top = p.top;
-                
-                p.wall1.set({'x2' : p.left + VERTEX_RADIUS, 
-                    'y2' : p.top + VERTEX_RADIUS});
-                    
-                p.wall2.set({'x1' : p.left + VERTEX_RADIUS, 
-                    'y1' : p.top + VERTEX_RADIUS});
-                canvas.renderAll();
-            }            
-            else
-            {
-                p.left = last_left;
-                p.top = last_top;
-                canvas.renderAll();
-                
-                console.log("Too close!");
-
-                return;
-            }
+            move_walls_with_vertex(e.target); 
+        }
+        else if (e.target.name == 'wall')
+        {
+            move_vertecies_with_wall(e.target); 
         }
     });	  
 });
+
+function move_walls_with_vertex(vertex)
+{            
+    //Want to check this eventaully            
+    //if(!wall_threshold_hit(p))
+    
+    vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS, 
+        'y2' : vertex.top + VERTEX_RADIUS});
+        
+    vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS, 
+        'y1' : vertex.top + VERTEX_RADIUS});
+    canvas.renderAll();
+}
+
+function move_vertecies_with_wall(wall)
+{     
+    //Not workig right now      
+    /*
+    console.log(wall.get('x2'));
+    for(i=0; i < verticies_array.length; i++)
+    {
+        if (verticies_array[i].wall1.id == wall.id)
+        {
+            console.log(wall.get('y2') - VERTEX_RADIUS);
+            console.log(wall.get('x2') - VERTEX_RADIUS);
+            
+            verticies_array[i].set({'top' : wall.get('y2') - VERTEX_RADIUS,
+                'left' : wall.get('x2') - VERTEX_RADIUS});
+                return;
+        }
+    }
+    
+    canvas.renderAll();
+    */
+}
 
 /*camera code*/
 function display_photo(canvas_object)
@@ -95,7 +111,7 @@ function create_camera_icon()
     {
         oImg.name = "camera";
         oImg.scale(0.5);
-        oImg.set('selectable', false);
+      selectable: 'false'
         canvas.add(oImg);
     });
 }
@@ -160,7 +176,7 @@ function draw_walls()
         var b = intersections_array[(i+1)%intersections_array.length];
         
         var translated_points = translate_points([a.x, a.y, b.x, b.y]);
-        walls_array.push(make_wall(translated_points));
+        walls_array.push(make_wall(i, translated_points));
     }
     
     //Put on walls    
@@ -173,11 +189,13 @@ function draw_walls()
     //Put them on canvas
     for (i = 0; i < walls_array.length; i++)
     {
+        var wall1_id = i;
+        var wall2_id = (i+1)%points_array.length;
         var vertex = make_vertex(
         walls_array[i].x2, 
         walls_array[i].y2, 
-        walls_array[i], 
-        walls_array[(i+1)%points_array.length]);
+        walls_array[wall1_id], 
+        walls_array[wall2_id]);
         
         verticies_array.push(vertex);
         canvas.add(vertex);
@@ -220,15 +238,19 @@ function find_intersection(p0, p1)
     return {x: x_intersection, y: y_intersection};
 }
 
-function make_wall(coords) 
+function make_wall(id, coords) 
 {
-    return new fabric.Line(coords, 
+    var c = new fabric.Line(coords, 
     {
       fill: 'black',
       stroke: 'black',
       strokeWidth: 5,
-      selectable: false
+      name: 'wall'
     });
+    
+    c.selectable =  'false';
+    c.id = id;
+    return c;
 }
 
 function make_vertex(left, top, wall1, wall2) 
@@ -249,7 +271,6 @@ function make_vertex(left, top, wall1, wall2)
     c.hasControls = c.hasBorders = false;
     return c;
 }
-
 
 function translate_points(points)
 {
@@ -276,7 +297,6 @@ function save_floorplan()
     hide_update_button();
     save_floorplan_to_database();
 }
-
 
 function wall_threshold_hit(vertex)
 {
