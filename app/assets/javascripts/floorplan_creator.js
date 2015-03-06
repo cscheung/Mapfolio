@@ -2,40 +2,58 @@ var HEIGHT = 500;
 var WIDTH = 500;
 var SCALING_FACTOR = 1;
 var X_TRANSLATION = 75;
-var Y_TRANSLATION = 75;	
+var Y_TRANSLATION = 75; 
 var VERTEX_RADIUS = 10;
-var WALL_THRESH = 50.0;
 
+butnum=0;
+imgnum=0;
+var button = new Array();
+var imgArray = new Array();
 points_array = [];
 intersections_array = [];
 walls_array = [];
-verticies_array = [];
 var canvas;
+function showImage() {
+    var img = document.getElementById('loadingImage');
 
-$(document).ready(function()
-{
+    if (img.style.visibility == 'visible') {
+        img.style.visibility = 'hidden';
+    }
+    else    {
+        img.style.visibility = 'visible';
+    }
+}
+$(document).ready(function(){
     
-    hide_update_button();
-	canvas = new fabric.Canvas('c');
-	canvas.setDimensions({
-        backgroundColor: '#e2e5e5',
-		width: WIDTH,
-		height:HEIGHT
-	});
-	
+    canvas = new fabric.Canvas('c');
+    canvas.setDimensions({
+        width: WIDTH,
+        height:HEIGHT
+    });
+    
     draw_floorplan();
-	
+    
     canvas.on('mouse:down', function(e) 
     {
         if(e.target)
         {
             //Call a js function
             display_photo(e.target);
+
             canvas.renderAll();
         }
     });
-  
-    canvas.on('mouse:up', function(e) 
+      canvas.on('object:scaling', function(e) 
+        {
+            if(e.target)
+            {
+                //Call a js function
+                lock_camera(e.target);
+                canvas.renderAll();
+            }
+        });
+        
+    canvas.on('object:moving', function(e) 
     {
         if(e.target)
         {
@@ -95,43 +113,119 @@ function move_vertecies_with_wall(wall)
     canvas.renderAll();
     */
 }
+      
+
+/*dog*/
+b=0;
+var canvas = new fabric.Canvas('d');
+fabric.Image.fromURL('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg', function(img) {
+  img.scale(0.5).set({
+    left: 150,
+    top: 150,
+    angle: -15
+  });
+  canvas.add(img).setActiveObject(img);
+});
+var info = document.getElementById('info');
+canvas.on({
+  'touch:drag': function() {
+    //document.getElementById("b").innerHTML = "b: " + b;
+    //var text = document.createTextNode(' Dragging ');
+    //info.insertBefore(text, info.firstChild);
+  },
+  
+});
+////
+
+
+/*------------------------------------*/
 
 /*camera code*/
 function display_photo(canvas_object)
 {
     if (canvas_object.name == "camera")
     {
+        
         console.log("camera clicked");
+        if (imgnum==canvas_object.number) {
+            showImage();
+        }
+        else {
+            imgnum=canvas_object.number;
+            var img = document.getElementById('loadingImage');
+            img.style.visibility = 'visible';
+            showPhoto2();
+            
+        }
     }
+        
+        console.log("number of button clicked is %d",canvas_object.number);
+         console.log("imgnum is %d",imgnum);
+       
+    
 }
+function lock_camera(canvas_object)  {
+    if (canvas_object.name == "camera")
+    {
+        canvas_object.set('selectable', false);
+        console.log("locking camera");
+        
+    }
 
+}
 function create_camera_icon()
 {
+    console.log("CAMERA created");
     fabric.Image.fromURL('camera.png', function(oImg) 
     {
         oImg.name = "camera";
-        oImg.scale(0.5);
-      selectable: 'false'
+        oImg.number = butnum-1;
+        oImg.scale(0.8);
+        oImg.set('selectable', true);
+        oImg.set('hasRotatingPoint', false);
         canvas.add(oImg);
     });
 }
 function previewFile() {
 
-create_camera_icon();
-
-var preview = document.querySelector('img');
-var file = document.querySelector('input[type=file]').files[0];
-var reader = new FileReader();
-
-reader.onloadend = function () {
-preview.src = reader.result;
+    button[butnum]=create_camera_icon();
+    
+    showPhoto();
+    imgnum=butnum;
+    
+    
+    
 }
+function showPhoto()    {
+    var preview = document.querySelector('img');
+    imgArray[butnum]=document.querySelector('input[type=file]').files[0];
+    console.log("imgarray %d assigned", butnum);
+    //var file = document.querySelector('input[type=file]').files[0];
+    var reader = new FileReader();
+    reader.onloadend = function () {
+    preview.src = reader.result;
+    }
 
-if (file) {
-reader.readAsDataURL(file);
-} else {
-preview.src = "";
+    if (imgArray[butnum]) {
+       reader.readAsDataURL(imgArray[butnum]);
+    } else {
+        preview.src = "";
+    }
+    butnum++;
 }
+function showPhoto2()    {
+    var preview = document.querySelector('img');
+    //var file = document.querySelector('input[type=file]').files[0];
+    var reader = new FileReader();
+    reader.onloadend = function () {
+    preview.src = reader.result;
+    }
+
+    if (imgArray[imgnum]) {
+       reader.readAsDataURL(imgArray[imgnum]);
+    } else {
+       // preview.src = "";
+    }
 }
 /*camera code*/
 
@@ -197,43 +291,42 @@ function draw_walls()
         walls_array[wall1_id], 
         walls_array[wall2_id]);
         
-        verticies_array.push(vertex);
         canvas.add(vertex);
     } 
 }
 
 function find_intersection(p0, p1)
 {
-	var x_intersection;
-	var y_intersection;
-	
-	m0 = Math.tan(p0.angle*Math.PI/180); 
-	m1 = Math.tan(p1.angle*Math.PI/180);
-	
-	//find the y intercepts for each 
-	b0 = p0.y - m0*p0.x;
-	b1 = p1.y - m1*p1.x;
-	
-	//Cannot do tan(p0.angle)
-	if(p0.angle == 90)
-	{
-		//x = value for all y
-		x_intersection = p0.x; 
-		y_intersection = m1 * x_intersection + b1;
-	}
-	//Cannot do tan(p1.angle)
-	else if(p1.angle == 90)
-	{
-		//x = value for all y
-		x_intersection = p1.x; 
-        	y_intersection = m0 * x_intersection + b0;
-	}
-	//Both tan are ok, so can use either eq.
-	else
-	{	
-        	x_intersection = (b1 - b0)/(m0 - m1); 
-        	y_intersection = m0 * x_intersection + b0;
-	}
+    var x_intersection;
+    var y_intersection;
+    
+    m0 = Math.tan(p0.angle*Math.PI/180); 
+    m1 = Math.tan(p1.angle*Math.PI/180);
+    
+    //find the y intercepts for each 
+    b0 = p0.y - m0*p0.x;
+    b1 = p1.y - m1*p1.x;
+    
+    //Cannot do tan(p0.angle)
+    if(p0.angle == 90)
+    {
+        //x = value for all y
+        x_intersection = p0.x; 
+        y_intersection = m1 * x_intersection + b1;
+    }
+    //Cannot do tan(p1.angle)
+    else if(p1.angle == 90)
+    {
+        //x = value for all y
+        x_intersection = p1.x; 
+            y_intersection = m0 * x_intersection + b0;
+    }
+    //Both tan are ok, so can use either eq.
+    else
+    {   
+            x_intersection = (b1 - b0)/(m0 - m1); 
+            y_intersection = m0 * x_intersection + b0;
+    }
 
     return {x: x_intersection, y: y_intersection};
 }
