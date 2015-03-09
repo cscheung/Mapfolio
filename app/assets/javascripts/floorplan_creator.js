@@ -12,6 +12,7 @@ var imgArray = new Array();
 points_array = [];
 intersections_array = [];
 walls_array = [];
+verticies_array = [];
 var canvas;
 function showImage() {
     var img = document.getElementById('loadingImage');
@@ -27,6 +28,7 @@ $(document).ready(function(){
     
     canvas = new fabric.Canvas('c');
     canvas.setDimensions({
+        backgroundColor: '#d1d1d1',
         width: WIDTH,
         height:HEIGHT
     });
@@ -292,6 +294,7 @@ function draw_walls()
         walls_array[wall2_id]);
         
         canvas.add(vertex);
+        verticies_array.push(vertex);
     } 
 }
 
@@ -388,7 +391,21 @@ function show_update_button()
 function save_floorplan()
 {
     hide_update_button();
+    //Dummy function for actually putting the values into the db
     save_floorplan_to_database();
+    //Hide the verticies
+    for(i=0; i < verticies_array.length; i++)
+    {
+        console.log(verticies_array[i]);
+        verticies_array[i].set('visible', false);
+    }
+    //Make the walls unselectable
+    for (i = 0; i < walls_array.length; i++)
+    {
+        walls_array[i].set('selectable', false);
+    }
+
+    canvas.renderAll();
 }
 
 function wall_threshold_hit(vertex)
