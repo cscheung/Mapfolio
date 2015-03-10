@@ -15,5 +15,7 @@
 //= require turbolinks
 //= require_tree .
 
-//= require tracker
+// Vendor Assets
+//= require fulltilt
+//= require fabric
 

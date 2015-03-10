@@ -15,6 +15,7 @@ class FloorplansController < ApplicationController
   # GET /floorplans/new
   def new
     @floorplan = Floorplan.new
+    @points = Point.all
   end
 
   # GET /floorplans/1/edit

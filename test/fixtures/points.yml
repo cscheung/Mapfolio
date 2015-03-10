@@ -1,0 +1,31 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  x: 1
+  'y': 1
+  angle: 1.5
+
+two:
+  x: 1
+  'y': 1
+  angle: 1.5
+
+three:
+  x: 100
+  'y': 350
+  angle: 10.0
+  
+four:
+  x: 200
+  'y': 400
+  angle: 80.0
+  
+five:
+  x: 240
+  'y': 300
+  angle: 10.0
+  
+six:
+  x: 260
+  'y': 240
+  angle: 80.0
