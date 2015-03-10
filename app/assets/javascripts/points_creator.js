@@ -1,29 +1,36 @@
-var screenAcc;
-var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y;
+var rawEvent, acc; //motion data passed by fulltilt
+var screenAcc; //motion data passed by fulltilt
 
-var prev_acc_x, prev_acc_y;
+var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y; 
 
-var interpolated_x, interpolated_y, t, time0, timeT;
+var t, time0, timeT;
+
 
 var alpha;
 
 var deviceMotion, deviceOrientation;
 
-var rate = 0.1;
-var consec_stops = 0;
+//var rate = 0.1;
+var consec_stopsX, consec_stopsY;
 
+
+var recentX = [];
+var recentY = [];
+
+var medianX, medianY;
+
+var MedianBufferLength = 3;
 
 function start_tracking() {
 
 	acc_x = 0;
     acc_y = 0;
-    prev_acc_x = 0;
-    prev_acc_y = 0;
     pos_x = 0;
     pos_y = 0;
     velocity_x = 0;
     velocity_y = 0;
-
+    consec_stopsX = 0;
+    consec_stopsY = 0;
 
 	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
 	deviceOrientation.then(function(orientationData) {	
@@ -43,67 +50,64 @@ function start_tracking() {
 
 
 	var d = new Date();
-    time0 = d.getTime();
+    time0 = d.getTime(); 
 
     deviceMotion = FULLTILT.getDeviceMotion();
 	deviceMotion.then(function(motionData) {
 
-		motionData.listen(function() {
+		motionData.listen(function() {			
 
 			var d2 = new Date();
 			timeT = d2.getTime();
-
 			t = (timeT - time0) * 0.001;
+
+			//rawEvent = motionData.getLastRawEventData();
+
+			//acc = rawEvent.acceleration || {};
 
 			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
 
-			acc_x = Math.round((screenAcc.x)*100)/100;
-			acc_y = Math.round((screenAcc.y)*100)/100;
-			//acc_x = (prev_acc_x * rate) + (acc_x * (1 - rate));
-
-			//interpolated_x = (prev_acc_x + acc_x) / 2;
-            //interpolated_y = (prev_acc_y + acc_y) / 2;
-
-			if (acc_x > 0.005) {
-				consec_stops = 0;
-				//velocity_x += interpolated_x * t;
-				//velocity_y += interpolated_y * t;
-				velocity_x += acc_x*t;
-				velocity_y += acc_x*t;
-				//if (acc_x < prev_acc_x) {
-					//velocity_x *= (1-rate);
-				//}
-			}
+			if (Math.abs(screenAcc.x) > 0.1) 
+				acc_x = screenAcc.x;
 			else {
-				consec_stops += 1;
-				if (consec_stops > 5) {
-					velocity_x = 0;
-				}
-				acc_x = 0;
-			}
-
-			if (velocity_x > 0.001) {
-				//pos_x += (0.5*interpolated_x*t*t) + velocity_x*t;
-				//pos_y += (0.5*interpolated_y*t*t) + velocity_y*t;
-				pos_x += (0.5*acc_x*t*t) + velocity_x*t;
-				pos_y += (0.5*acc_y*t*t) + velocity_y*t;
-			}
+				acc_x = 0; 
+				consec_stopsX++;
+			} 
+			
+			if (Math.abs(screenAcc.y) > 0.1) 
+				acc_y = screenAcc.y;
 			else {
+				acc_y = 0; 
+				consec_stopsY++;
+			} 
+
+			if (consec_stopsX == 5) {
 				velocity_x = 0;
+				consec_stopsX = 0;
+			}
+			
+			if (consec_stopsY == 5) {
+				velocity_y = 0;
+				consec_stopsY = 0;
 			}
 
-/*
-			if (acc_x > 0.1) {
-				velocity_x += interpolated_x * t;
-				velocity_y += interpolated_y * t;
-			}
-			else {
-				acc_x = 0;
-			}
-*/
+			recentX.push(acc_x);
+			recentY.push(acc_y);
+			
+			if (recentX.length > MedianBufferLength) recentX.shift();
+			if (recentY.length > MedianBufferLength) recentY.shift();
 
-            prev_acc_x = acc_x;
-            prev_acc_y = acc_y;
+			var tempRecentX = recentX.slice(0);
+			var tempRecentY = recentY.slice(0);	//clone array to preserve unsorted values
+
+			medianX = tempRecentX.sort(compareNumbers)[Math.floor(recentX.length/2)];
+    		medianY = tempRecentY.sort(compareNumbers)[Math.floor(recentY.length/2)];
+ 
+			velocity_x += medianX*t;
+			velocity_y += medianY*t;
+
+			pos_x += (0.5*medianX*t*t) + velocity_x*t;
+			pos_y += (0.5*medianY*t*t) + velocity_y*t;
 
             time0 = timeT;
 
@@ -123,16 +127,16 @@ function stop_tracking()
 	});
 }
 
+function compareNumbers(a, b) {
+  return a - b;
+}
 
 
 function put_values_in_view()
 {
-	//document.getElementById("accelerometer_x").innerHTML = "acc X = " + interpolated_x;
     document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
-    document.getElementById("accelerometer_x").innerHTML = "acc X = " + acc_x;
-	document.getElementById("accelerometer_y").innerHTML = "acc Y = " + acc_y;
-	//document.getElementById("accelerometer_y").innerHTML = "acc Y = " + interpolated_y;
-	document.getElementById("accelerometer_z").innerHTML = "acc Z = " + screenAcc.z;
+    document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
+	document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
 	document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
 	document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
     document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
@@ -143,8 +147,11 @@ function put_values_in_view()
 
 var save = function save()
 {
-    //DO fancy math to convert this into x, y, angle
-    enter_into_database(pos_x, pos_y, alpha);
+    //clear arrays between points 
+    recentX = [];
+    recentY = [];
+
+    enter_into_database(pos_x*100, pos_y*100, alpha);
 }
 
 function enter_into_database(x_in, y_in, angle_in)
