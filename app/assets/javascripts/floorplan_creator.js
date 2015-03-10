@@ -119,25 +119,6 @@ function move_vertecies_with_wall(wall)
 
 /*dog*/
 b=0;
-var canvas = new fabric.Canvas('d');
-fabric.Image.fromURL('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg', function(img) {
-  img.scale(0.5).set({
-    left: 150,
-    top: 150,
-    angle: -15
-  });
-  canvas.add(img).setActiveObject(img);
-});
-var info = document.getElementById('info');
-canvas.on({
-  'touch:drag': function() {
-    //document.getElementById("b").innerHTML = "b: " + b;
-    //var text = document.createTextNode(' Dragging ');
-    //info.insertBefore(text, info.firstChild);
-  },
-  
-});
-////
 
 
 /*------------------------------------*/
