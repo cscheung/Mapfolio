@@ -74,6 +74,7 @@ $(document).ready(function(){
         }
         else if (e.target.name == 'wall')
         {
+            /*
             console.log("left, top");
             console.log(e.target.left, e.target.top);
             console.log("x1, y1");
@@ -81,6 +82,20 @@ $(document).ready(function(){
             console.log("x2, y2");
             console.log(e.target.get("x2"), e.target.get("y2"));
             console.log("--------");
+            */
+            
+            //This sets the x,y vars of the wall when you move it
+            //when you move, you only change the left,top vars
+            delta_x = e.target.left - e.target.old_left;
+            delta_y = e.target.top - e.target.old_top;
+                        
+            e.target.set({'x1' : e.target.get('x1') + delta_x});
+            e.target.set({'x2' : e.target.get('x2') + delta_x});
+            e.target.set({'y1' : e.target.get('y1') + delta_y});
+            e.target.set({'y2' : e.target.get('y2') + delta_y});
+            
+            e.target.old_left = e.target.left;
+            e.target.old_top = e.target.top;
             
             move_vertecies_with_wall(e.target); 
         }
@@ -107,14 +122,15 @@ function move_vertecies_with_wall(wall)
     for(i=0; i < verticies_array.length; i++)
     {
         if (verticies_array[i].wall2.id == wall.id)
-        {                        
-            verticies_array[i].set({'top' : wall.top - VERTEX_RADIUS,
-                'left' : wall.left - VERTEX_RADIUS});
+        {                      
+            verticies_array[i].set({'top' : wall.get('y1') - VERTEX_RADIUS});
+            verticies_array[i].set({'left' : wall.get('x1') - VERTEX_RADIUS}); 
         }
         
         if (verticies_array[i].wall1.id == wall.id)
         {
-            console.log("move this vetex as well");
+            verticies_array[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
+            verticies_array[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
         }
     }
     
@@ -270,13 +286,16 @@ function draw_walls()
         var b = intersections_array[(i+1)%intersections_array.length];
         
         var translated_points = translate_points([a.x, a.y, b.x, b.y]);
-        walls_array.push(make_wall(i, translated_points));
+        var wall = make_wall(i, translated_points);
+        walls_array.push(wall);
     }
     
     //Put on walls    
     for (i = 0; i < walls_array.length; i++)
     {
         canvas.add(walls_array[i]);
+        walls_array[i].old_left = walls_array[i].left;
+        walls_array[i].old_top = walls_array[i].top;
     }
     
     //Make intersections
@@ -342,6 +361,8 @@ function make_wall(id, coords)
       name: 'wall'
     });
     
+    c.old_left = 0;
+    c.old_top = 0;
     c.selectable =  'false';
     c.id = id;
     return c;
