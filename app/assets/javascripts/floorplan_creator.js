@@ -65,19 +65,7 @@ $(document).ready(function(){
             }
         });
         
-    canvas.on('object:moving', function(e) 
-    {
-        if(e.target)
-        {
-            if(e.target.name == 'vertex')
-            {
-                var p = e.target;
-                show_update_button();   
-            }
-        }
-    });
-    
-  
+         
     canvas.on('object:moving', function(e) 
     {
         if(e.target.name == 'vertex')
@@ -86,6 +74,14 @@ $(document).ready(function(){
         }
         else if (e.target.name == 'wall')
         {
+            console.log("left, top");
+            console.log(e.target.left, e.target.top);
+            console.log("x1, y1");
+            console.log(e.target.get("x1"), e.target.get("y1"));
+            console.log("x2, y2");
+            console.log(e.target.get("x2"), e.target.get("y2"));
+            console.log("--------");
+            
             move_vertecies_with_wall(e.target); 
         }
     });	 
@@ -108,23 +104,21 @@ function move_walls_with_vertex(vertex)
 function move_vertecies_with_wall(wall)
 {     
     //Not workig right now      
-    /*
-    console.log(wall.get('x2'));
     for(i=0; i < verticies_array.length; i++)
     {
+        if (verticies_array[i].wall2.id == wall.id)
+        {                        
+            verticies_array[i].set({'top' : wall.top - VERTEX_RADIUS,
+                'left' : wall.left - VERTEX_RADIUS});
+        }
+        
         if (verticies_array[i].wall1.id == wall.id)
         {
-            console.log(wall.get('y2') - VERTEX_RADIUS);
-            console.log(wall.get('x2') - VERTEX_RADIUS);
-            
-            verticies_array[i].set({'top' : wall.get('y2') - VERTEX_RADIUS,
-                'left' : wall.get('x2') - VERTEX_RADIUS});
-                return;
+            console.log("move this vetex as well");
         }
     }
     
     canvas.renderAll();
-    */
 }
       
 
@@ -160,9 +154,6 @@ function display_photo(canvas_object)
         }
         canvas.renderAll.bind(canvas);
     }
-        
-        console.log("number of button clicked is %d",canvas_object.number);
-         console.log("imgnum is %d",imgnum);
        
     
 }
@@ -403,7 +394,6 @@ function save_floorplan()
     //Hide the verticies
     for(i=0; i < verticies_array.length; i++)
     {
-        console.log(verticies_array[i]);
         verticies_array[i].set('visible', false);
     }
     //Make the walls unselectable
