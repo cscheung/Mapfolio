@@ -125,12 +125,26 @@ function move_vertecies_with_wall(wall)
         {                      
             verticies_array[i].set({'top' : wall.get('y1') - VERTEX_RADIUS});
             verticies_array[i].set({'left' : wall.get('x1') - VERTEX_RADIUS}); 
+            
+            verticies_array[i].wall1.set({'x2' : verticies_array[i].left + VERTEX_RADIUS, 
+        'y2' : verticies_array[i].top + VERTEX_RADIUS});
+        
+    verticies_array[i].wall2.set({'x1' : verticies_array[i].left + VERTEX_RADIUS, 
+        'y1' : verticies_array[i].top + VERTEX_RADIUS});
+        
         }
         
         if (verticies_array[i].wall1.id == wall.id)
         {
             verticies_array[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
             verticies_array[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
+            
+            verticies_array[i].wall1.set({'x2' : verticies_array[i].left + VERTEX_RADIUS, 
+        'y2' : verticies_array[i].top + VERTEX_RADIUS});
+        
+    verticies_array[i].wall2.set({'x1' : verticies_array[i].left + VERTEX_RADIUS, 
+        'y1' : verticies_array[i].top + VERTEX_RADIUS});
+
         }
     }
     
