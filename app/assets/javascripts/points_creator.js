@@ -3,6 +3,10 @@ var screenAcc; //motion data passed by fulltilt
 
 var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y; 
 
+var accel = [];
+var vel = [];
+var pos = [];
+
 var t, time0, timeT;
 
 
@@ -81,6 +85,9 @@ function start_tracking() {
 				consec_stopsY++;
 			} 
 
+			var a = {x:acc_x, y:acc_y};
+			accel.push(a);
+
 			if (consec_stopsX == 5) {
 				velocity_x = 0;
 				consec_stopsX = 0;
@@ -106,8 +113,13 @@ function start_tracking() {
 			velocity_x += medianX*t;
 			velocity_y += medianY*t;
 
+			var v = {x:velocity_x, y:velocity_y};
+			vel.push(v);
+
 			pos_x += (0.5*medianX*t*t) + velocity_x*t;
 			pos_y += (0.5*medianY*t*t) + velocity_y*t;
+			var p = {x:pos_x, y:pos_y};
+			vel.push(p);
 
             time0 = timeT;
 
@@ -125,7 +137,43 @@ function stop_tracking()
 		motionData.stop();
 
 	});
+	//draw_chart();
 }
+
+function draw_chart() {
+
+	var ctx = document.getElementById("myChart").getContext("2d");
+
+	var myLineChart = new Chart(ctx).Line(data, options);
+
+	var data = {
+		labels: ["January", "February", "March", "April", "May", "June", "July"],
+		datasets: [
+			{
+				label: "My First dataset",
+				fillColor: "rgba(220,220,220,0.2)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,1)",
+				data: [65, 59, 80, 81, 56, 55, 40]
+			},
+			{
+				label: "My Second dataset",
+				fillColor: "rgba(151,187,205,0.2)",
+				strokeColor: "rgba(151,187,205,1)",
+				pointColor: "rgba(151,187,205,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(151,187,205,1)",
+				data: [28, 48, 40, 19, 86, 27, 90]
+			}
+		]
+	};
+
+}
+
 
 function compareNumbers(a, b) {
   return a - b;
@@ -163,3 +211,4 @@ function enter_into_database(x_in, y_in, angle_in)
       });
  
 }
+
