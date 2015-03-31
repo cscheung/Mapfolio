@@ -55,7 +55,7 @@ $(document).ready(function(){
             }
             else if (e.target.name == 'wall')
             {
-                move_vertecies_with_wall(e.target);
+            
             }
         }
 
@@ -114,33 +114,34 @@ function move_walls_with_vertex(vertex)
 }
 
 function move_vertecies_with_wall(wall)
-{        
+{   
+    
     for(i=0; i < verticies_array.length; i++)
     {
         if (verticies_array[i].wall2.id == wall.id)
         {                      
-            verticies_array[i].set({'top' : wall.get('y1') - VERTEX_RADIUS});
-            verticies_array[i].set({'left' : wall.get('x1') - VERTEX_RADIUS}); 
+
+            verticies_array[i].top = wall.get('y1') - VERTEX_RADIUS;
+            verticies_array[i].left = wall.get('x1') - VERTEX_RADIUS;
+
+            //verticies_array[i].set({'top' : wall.get('y1') - VERTEX_RADIUS});
+            //verticies_array[i].set({'left' : wall.get('x1') - VERTEX_RADIUS}); 
             
             verticies_array[i].wall1.set({'x2' : verticies_array[i].left + VERTEX_RADIUS});
-            verticies_array[i].wall1.set({'y2' : verticies_array[i].top + VERTEX_RADIUS});
-        
-            verticies_array[i].wall2.set({'x1' : verticies_array[i].left + VERTEX_RADIUS}); 
-            verticies_array[i].wall2.set({'y1' : verticies_array[i].top + VERTEX_RADIUS});
+            verticies_array[i].wall1.set({'y2' : verticies_array[i].top + VERTEX_RADIUS});            
         }
         
         if (verticies_array[i].wall1.id == wall.id)
         {
             verticies_array[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
             verticies_array[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
-            
-            verticies_array[i].wall1.set({'x2' : verticies_array[i].left + VERTEX_RADIUS}); 
-            verticies_array[i].wall1.set({'y2' : verticies_array[i].top + VERTEX_RADIUS});
         
             verticies_array[i].wall2.set({'x1' : verticies_array[i].left + VERTEX_RADIUS});
             verticies_array[i].wall2.set({'y1' : verticies_array[i].top + VERTEX_RADIUS});
         }
+        
     }
+    
 }      
 
 /*dog*/
@@ -375,7 +376,7 @@ function make_wall(id, coords)
 }
 
 function make_vertex(left, top, wall1, wall2) 
-{
+{  
     var c = new fabric.Circle(
     {
         left: left - VERTEX_RADIUS,
@@ -389,8 +390,10 @@ function make_vertex(left, top, wall1, wall2)
     
     c.wall1 = wall1;
     c.wall2 = wall2;
+    
     c.hasBorders = false;
     c.hasControls = false;
+    
     return c;
 }
 
@@ -422,10 +425,33 @@ function save_floorplan()
     //Hide the verticies
     for(i=0; i < verticies_array.length; i++)
     {
-        verticies_array[i].set('visible', false);
+        //verticies_array[i].set('visible', false);
     }
 
     canvas.renderAll();
+    
+    
+    //Testing the fix of the verte moving
+    var c = new fabric.Circle({
+      left: 10,
+      top: 10,
+      strokeWidth: 5,
+      radius: 12,
+      fill: '#fff',
+      stroke: '#666'
+    });
+
+    canvas.add(c);
+    
+    //c.setLeft(50);
+        
+    //verticies_array[0].setTop(10);
+    
+    
+    //verticies_array[0].x = 100 - VERTEX_RADIUS;
+    //verticies_array[0].y = 100 - VERTEX_RADIUS;
+    canvas.renderAll();
+
 }
 
 function wall_threshold_hit(vertex)
