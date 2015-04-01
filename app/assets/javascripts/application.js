@@ -18,4 +18,5 @@
 // Vendor Assets
 //= require fulltilt
 //= require fabric
+//= requre Chart
 

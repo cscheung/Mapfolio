@@ -6,6 +6,8 @@ var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y;
 var accel = [];
 var vel = [];
 var pos = [];
+//var times = [0];
+var times = new Array();
 
 var t, time0, timeT;
 
@@ -70,6 +72,7 @@ function start_tracking() {
 			//acc = rawEvent.acceleration || {};
 
 			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
+			times.push(timeT);
 
 			if (Math.abs(screenAcc.x) > 0.1) 
 				acc_x = screenAcc.x;
@@ -144,10 +147,10 @@ function draw_chart() {
 
 	var ctx = document.getElementById("myChart").getContext("2d");
 
-	var myLineChart = new Chart(ctx).Line(data, options);
 
 	var data = {
-		labels: ["January", "February", "March", "April", "May", "June", "July"],
+		//labels: ["January", "February", "March", "April", "May", "June", "July"],
+		labels: times,
 		datasets: [
 			{
 				label: "My First dataset",
@@ -157,7 +160,8 @@ function draw_chart() {
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(220,220,220,1)",
-				data: [65, 59, 80, 81, 56, 55, 40]
+				//data: [65, 59, 80, 81, 56, 55, 40]
+				data: accel
 			},
 			{
 				label: "My Second dataset",
@@ -167,10 +171,12 @@ function draw_chart() {
 				pointStrokeColor: "#fff",
 				pointHighlightFill: "#fff",
 				pointHighlightStroke: "rgba(151,187,205,1)",
-				data: [28, 48, 40, 19, 86, 27, 90]
+				//data: [28, 48, 40, 19, 86, 27, 90]
+				data: vel
 			}
 		]
 	};
+	var myLineChart = new Chart(ctx).Line(data);
 
 }
 
