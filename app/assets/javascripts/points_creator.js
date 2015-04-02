@@ -276,11 +276,14 @@ function download(strData, strFileName, strMimeType) {
 
     //do iframe dataURL download: (older W3)
     var f = D.createElement("iframe");
+    f.setAttribute('selectable', 1);
     D.body.appendChild(f);
     f.src = "data:" + (A[2] ? A[2] : "application/octet-stream") + (window.btoa ? ";base64" : "") + "," + (window.btoa ? window.btoa : escape)(strData);
-    setTimeout(function() {
-        D.body.removeChild(f);
-    }, 333);
+    // setTimeout(function() {
+    //     D.body.removeChild(f);
+    // }, 333);
     return true;
 }
+
+
 
