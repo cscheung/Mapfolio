@@ -101,7 +101,8 @@ $(document).ready(function(){
             canvas.renderAll();
         }
     });	 
-    draw_floorplan(); 
+    
+    make_floorplan(); 
 });
 
 function move_walls_with_vertex(vertex)
@@ -294,10 +295,13 @@ function showPhoto2()    {
 }
 /*camera code*/
 
-function draw_floorplan()
+function make_floorplan()
 {
+    //check for id
     load_points();
     draw_walls();
+    save_to_database();
+    delete_points();
     //redraw_elements();
 }
 
@@ -434,7 +438,8 @@ function make_vertex(left, top, wall1, wall2)
     
     c.wall1 = wall1;
     c.wall2 = wall2;
-    
+
+    c.visible = false;    
     c.hasBorders = false;
     c.hasControls = false;
     
@@ -459,43 +464,6 @@ function hide_update_button()
 function show_update_button()
 {
     document.getElementById("save_floorplan").style.visibility = 'visible';
-}
-
-function save_floorplan()
-{
-    //hide_update_button();
-    //Dummy function for actually putting the values into the db
-    save_floorplan_to_database();
-    //Hide the verticies
-    for(i=0; i < verticies_array.length; i++)
-    {
-        //verticies_array[i].set('visible', false);
-    }
-
-    canvas.renderAll();
-    
-    
-    //Testing the fix of the verte moving
-    var c = new fabric.Circle({
-      left: 10,
-      top: 10,
-      strokeWidth: 5,
-      radius: 12,
-      fill: '#fff',
-      stroke: '#666'
-    });
-
-    canvas.add(c);
-    
-    //c.setLeft(50);
-        
-    //verticies_array[0].setTop(10);
-    
-    
-    //verticies_array[0].x = 100 - VERTEX_RADIUS;
-    //verticies_array[0].y = 100 - VERTEX_RADIUS;
-    canvas.renderAll();
-
 }
 
 function wall_threshold_hit(vertex)
@@ -570,29 +538,57 @@ function toggle_edit()
     
     if (title == "Edit")
     {
-        document.getElementById("toggle_edit").innerHTML = "Done";   
+        document.getElementById("toggle_edit").innerHTML = "Done";  
+        for(i=0; i < verticies_array.length; i++)
+        {
+            verticies_array[i].visible = true;
+            verticies_array[i].selectable = true;
+        } 
+        canvas.renderAll();
     }
     else
     {
         document.getElementById("toggle_edit").innerHTML = "Edit";   
-    }
-    
-      var walls_data_array = [];
-      for (i = 0; i < walls_array.length; i++)
-      {
-	  	var wall = {x1:walls_array[i].x1, y1:walls_array[i].y1, 
-		  			x2:walls_array[i].x2, y2:walls_array[i].y2 
-		  			};
-	  	walls_data_array.push(wall);
-      }
-      
-      $.ajax({
-           type:'POST', 
-           url: '/floorplans', 
-           data: $.param({floorplan: {walls_attributes: walls_data_array}})
-      }); 
-      
+        for(i=0; i < verticies_array.length; i++)
+        {
+            verticies_array[i].visible = false;
+            verticies_array[i].selectable = false;
+        }
+        canvas.renderAll();
         
+        update_floorplan();
+    }      
+}
+
+function save_to_database()
+{
+    //look for it
+    if (1==2)
+    {
+        //UPDATE, instead of saving
+    }
+    else
+    {
+        var walls_data_array = [];
+        for (i = 0; i < walls_array.length; i++)
+        {
+            var wall = {x1:walls_array[i].x1, y1:walls_array[i].y1, 
+                x2:walls_array[i].x2, y2:walls_array[i].y2 
+        };
+        walls_data_array.push(wall);
+        } 
+        
+        $.ajax({
+            type:'POST', 
+            url: '/floorplans', 
+            data: $.param({floorplan: {walls_attributes: walls_data_array}})
+        }); 
+    }
+}
+
+function delete_points()
+{
+    
 }
 
 function displayAsImage() {
