@@ -9,6 +9,8 @@ var pos = [];
 //var times = [0];
 var times = new Array();
 
+var filedata = []; //array for the data file
+
 var t, time0, timeT;
 
 
@@ -126,6 +128,8 @@ function start_tracking() {
 
             time0 = timeT;
 
+            filedata.push({acc_x: acc_x, acc_y: acc_y, velocity_x: velocity_x, velocity_y: velocity_y, t: t})
+
             put_values_in_view();
             
 		});
@@ -199,6 +203,16 @@ function put_values_in_view()
 }
 
 
+filedata.toString = function()
+{
+    var dataArray = new Array();
+    for (var i in this) {
+        dataArray[i] = this[i].acc_x + ", " + this[i].acc_y + ", t: " + t;
+    }
+    return dataArray.join('\n');
+}
+
+
 var save = function save()
 {
     //clear arrays between points 
@@ -206,6 +220,9 @@ var save = function save()
     recentY = [];
 
     enter_into_database(pos_x*100, pos_y*100, alpha);
+
+	download(filedata.toString(), "data.txt", "text/plain");
+	filedata.length = 0; //clear array
 }
 
 function enter_into_database(x_in, y_in, angle_in)
@@ -216,5 +233,50 @@ function enter_into_database(x_in, y_in, angle_in)
            data: $.param({ point: {x: x_in, y: y_in, angle: angle_in}})
       });
  
+}
+
+function download(strData, strFileName, strMimeType) {
+    var D = document,
+        A = arguments,
+        a = D.createElement("a"),
+        d = A[0],
+        n = A[1],
+        t = A[2] || "text/plain";
+
+    //build download link:
+    a.href = "data:" + strMimeType + "charset=utf-8," + escape(strData);
+
+
+    if (window.MSBlobBuilder) { // IE10
+        var bb = new MSBlobBuilder();
+        bb.append(strData);
+        return navigator.msSaveBlob(bb, strFileName);
+    } /* end if(window.MSBlobBuilder) */
+
+
+
+    if ('download' in a) { //FF20, CH19
+        a.setAttribute("download", n);
+        a.innerHTML = "downloading...";
+        D.body.appendChild(a);
+        setTimeout(function() {
+            var e = D.createEvent("MouseEvents");
+            e.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            a.dispatchEvent(e);
+            D.body.removeChild(a);
+        }, 66);
+        return true;
+    }; /* end if('download' in a) */
+
+
+
+    //do iframe dataURL download: (older W3)
+    var f = D.createElement("iframe");
+    D.body.appendChild(f);
+    f.src = "data:" + (A[2] ? A[2] : "application/octet-stream") + (window.btoa ? ";base64" : "") + "," + (window.btoa ? window.btoa : escape)(strData);
+    setTimeout(function() {
+        D.body.removeChild(f);
+    }, 333);
+    return true;
 }
 
