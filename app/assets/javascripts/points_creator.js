@@ -9,6 +9,7 @@ var pos = [];
 //var times = [0];
 var times = new Array();
 
+var point_num; //used in data file name creation 
 var filedata = []; //array for the data file
 
 var t, time0, timeT;
@@ -30,6 +31,8 @@ var medianX, medianY;
 var MedianBufferLength = 3;
 
 function start_tracking() {
+
+	point_num = 1; //used in data file name creation
 
 	acc_x = 0;
     acc_y = 0;
@@ -207,7 +210,7 @@ filedata.toString = function()
 {
     var dataArray = new Array();
     for (var i in this) {
-        dataArray[i] = this[i].acc_x + ", " + this[i].acc_y + ", t: " + t;
+        dataArray[i] = this[i].acc_x + ", " + this[i].acc_y + "," + this[i].velocity_x + "," + this[i].velocity_y + "," + this[i].t;
     }
     return dataArray.join('\n');
 }
@@ -221,8 +224,9 @@ var save = function save()
 
     enter_into_database(pos_x*100, pos_y*100, alpha);
 
-	download(filedata.toString(), "data.txt", "text/plain");
+	download(filedata.toString(), "point" + point_num + ".csv", "text/plain");
 	filedata.length = 0; //clear array
+	point_num++;
 }
 
 function enter_into_database(x_in, y_in, angle_in)
