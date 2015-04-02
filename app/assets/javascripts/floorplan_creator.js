@@ -480,8 +480,19 @@ function removeImage()   {
   // document.getElementById('loadingImage').src="";
     //canvas.remove(imgInstance);
 }
-function save_floorplan_to_database()
+function toggle_edit()
 {     
+    var title = document.getElementById("toggle_edit").innerHTML;
+    
+    if (title == "Edit")
+    {
+        document.getElementById("toggle_edit").innerHTML = "Done";   
+    }
+    else
+    {
+        document.getElementById("toggle_edit").innerHTML = "Edit";   
+    }
+    
       var walls_data_array = [];
       for (i = 0; i < walls_array.length; i++)
       {
@@ -497,14 +508,7 @@ function save_floorplan_to_database()
            data: $.param({floorplan: {walls_attributes: walls_data_array}})
       }); 
       
-      //How to properly format ajax call 
-      /*$.ajax({
-           type:'POST', 
-           url: '/floorplans', 
-           data: $.param({floorplan: {name:"Dood", walls_attributes:[
-	           	{x1: walls_array[0].x1, y1: walls_array[0].y1, x2: walls_array[0].x2, y2: walls_array[0].y2}, 
-	           	{x1: walls_array[1].x1, y1: walls_array[1].y1, x2: walls_array[1].x2, y2: walls_array[1].y2}]}})
-      }); */     
+        
 }
 
 function displayAsImage() {
