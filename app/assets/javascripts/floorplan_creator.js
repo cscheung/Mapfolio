@@ -51,11 +51,13 @@ $(document).ready(function(){
             //Fix the positionings
             if(e.target.name == 'vertex')
             {
-            
+                redraw_elements();
+                console.log("vertex done moving");
             }
             else if (e.target.name == 'wall')
             {
-            
+                redraw_elements();
+                console.log("wall done moving");            
             }
         }
 
@@ -77,12 +79,13 @@ $(document).ready(function(){
         if(e.target.name == 'vertex')
         {           
             move_walls_with_vertex(e.target); 
-            canvas.renderAll();
+            //canvas.renderAll();
         }
         else if (e.target.name == 'wall')
         {
             //This sets the x,y vars of the wall when you move it
             //when you move, you only change the left,top vars
+            
             delta_x = e.target.left - e.target.old_left;
             delta_y = e.target.top - e.target.old_top;
                         
@@ -105,6 +108,9 @@ function move_walls_with_vertex(vertex)
 {            
     //Want to check this eventaully            
     //if(!wall_threshold_hit(p))
+    console.log(vertex.wall1.get('top'));
+    console.log(vertex.wall1.get('left'));
+    console.log('--');
     
     vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
     vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
@@ -142,7 +148,44 @@ function move_vertecies_with_wall(wall)
         
     }
     
-}      
+}   
+
+function redraw_elements()
+{
+    /*
+    canvas.dispose();
+    
+    var c = new fabric.Line(
+    [
+        10,  
+        20,  
+        40,  
+        60
+    ],
+    {
+      fill: 'red',
+      stroke: 'red',
+      strokeWidth: 10,
+      name: 'wall'
+    });
+    
+
+    canvas.add(c);  
+*/
+    /*
+    for (i = 0; i < walls_array.length; i++) 
+    {
+        canvas.add(walls_array[i]);   
+    }
+    */
+    /*
+    for (i = 0; i < verticies_array.length; i++) 
+    {
+        canvas.add(verticies_array[i]);   
+    }
+    */
+    canvas.renderAll();
+}   
 
 /*dog*/
 b=0;
@@ -255,6 +298,7 @@ function draw_floorplan()
 {
     load_points();
     draw_walls();
+    //redraw_elements();
 }
 
 function load_points()
