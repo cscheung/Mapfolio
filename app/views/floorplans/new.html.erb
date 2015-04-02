@@ -1,24 +1,14 @@
-<h1>New Floorplan</h1>
+<img id="banner" src="http://i.imgur.com/SzFVJBp.jpg"/>
 
-<%= render 'form' %>
-
-<br>
-<form action="server.cgi" method="post" enctype="multipart/form-data">
-<input type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
-</form>
-
-
-<img id="loadingImage" height="200"  style="visibility:visible"/>
-<br>
-<button onclick="showImage()">Hide Image</button>
-<br>
-<br>
+<canvas id="c"></canvas>
 <button id="save_floorplan" onclick="save_floorplan()">Done With Edits</button>
-
+<button onclick="showImage()">Hide Image</button>
+<button onclick="placeImage()">Place Image</button>
+<button onclick="removeImage()">Remove Image</button>
+<button onclick="displayAsImage()">DisplayAsImage</button>
+<input type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
 
 <%= content_tag :div, class: "points_class", data: {points: @points} do %>
 <% end %>
-
-<canvas id="c"></canvas>
-
+<img id="loadingImage" height="1"  style="visibility:hidden"/>
 <%= link_to 'Back', floorplans_path %>

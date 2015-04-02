@@ -1,10 +1,11 @@
-var HEIGHT = 500;
-var WIDTH = 500;
+var HEIGHT = 450;
+var WIDTH = 650;
 var SCALING_FACTOR = 1;
 var X_TRANSLATION = 75;
 var Y_TRANSLATION = 75; 
 var VERTEX_RADIUS = 10;
 
+   
 butnum=0;
 imgnum=0;
 var button = new Array();
@@ -14,6 +15,9 @@ intersections_array = [];
 walls_array = [];
 verticies_array = [];
 var canvas;
+var imgInstance;
+var imgElement;
+
 function showImage() {
     var img = document.getElementById('loadingImage');
 
@@ -32,19 +36,25 @@ $(document).ready(function(){
         width: WIDTH,
         height:HEIGHT
     });
-    
-    draw_floorplan();
-    
-    canvas.on('mouse:down', function(e) 
+    /*
+    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
+        canvas.renderAll.bind(canvas), {
+  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
+*/
+    canvas.on('mouse:up', function(e) 
     {
         if(e.target)
         {
             //Call a js function
             display_photo(e.target);
-
+            
             canvas.renderAll();
+
+
         }
+
     });
+
       canvas.on('object:scaling', function(e) 
         {
             if(e.target)
@@ -78,7 +88,8 @@ $(document).ready(function(){
         {
             move_vertecies_with_wall(e.target); 
         }
-    });	  
+    });	 
+    draw_floorplan(); 
 });
 
 function move_walls_with_vertex(vertex)
@@ -126,20 +137,28 @@ b=0;
 /*camera code*/
 function display_photo(canvas_object)
 {
+    if (canvas_object.name == "photo")
+    {
+        canvas.remove(canvas_object);
+        console.log("photo clicked");
+    }
     if (canvas_object.name == "camera")
     {
-        
+        //changeImage();
         console.log("camera clicked");
         if (imgnum==canvas_object.number) {
-            showImage();
+            //showImage();
+            displayAsImage();
+
         }
         else {
             imgnum=canvas_object.number;
             var img = document.getElementById('loadingImage');
-            img.style.visibility = 'visible';
-            showPhoto2();
-            
+            //img.style.visibility = 'visible';
+            displayAsImage();
+
         }
+        canvas.renderAll.bind(canvas);
     }
         
         console.log("number of button clicked is %d",canvas_object.number);
@@ -150,7 +169,7 @@ function display_photo(canvas_object)
 function lock_camera(canvas_object)  {
     if (canvas_object.name == "camera")
     {
-        canvas_object.set('selectable', false);
+        //canvas_object.set('selectable', false);
         console.log("locking camera");
         
     }
@@ -163,9 +182,15 @@ function create_camera_icon()
     {
         oImg.name = "camera";
         oImg.number = butnum-1;
-        oImg.scale(0.8);
+        oImg.scale(0.5);
         oImg.set('selectable', true);
         oImg.set('hasRotatingPoint', false);
+        oImg.lockScalingY=true;
+        oImg.lockScalingX=true;
+        oImg.hasControls=false;
+        oImg.hasBorders=false;
+        //oImg.transparentCorners=true;
+        //oImg.set('hasBorders', false);
         canvas.add(oImg);
     });
 }
@@ -180,7 +205,7 @@ function previewFile() {
     
 }
 function showPhoto()    {
-    var preview = document.querySelector('img');
+    var preview = document.getElementById('loadingImage');
     imgArray[butnum]=document.querySelector('input[type=file]').files[0];
     console.log("imgarray %d assigned", butnum);
     //var file = document.querySelector('input[type=file]').files[0];
@@ -197,7 +222,7 @@ function showPhoto()    {
     butnum++;
 }
 function showPhoto2()    {
-    var preview = document.querySelector('img');
+    var preview = document.getElementById('loadingImage');
     //var file = document.querySelector('input[type=file]').files[0];
     var reader = new FileReader();
     reader.onloadend = function () {
@@ -209,6 +234,7 @@ function showPhoto2()    {
     } else {
        // preview.src = "";
     }
+
 }
 /*camera code*/
 
@@ -371,7 +397,7 @@ function show_update_button()
 
 function save_floorplan()
 {
-    hide_update_button();
+    //hide_update_button();
     //Dummy function for actually putting the values into the db
     save_floorplan_to_database();
     //Hide the verticies
@@ -414,7 +440,46 @@ function wall_threshold_hit(vertex)
     
     return false;
 }
+function placeImage()   {
+    imgElement = document.getElementById('loadingImage');
 
+    imgInstance = new fabric.Image(imgElement, {
+      //left: 0,
+      //top: 100,
+      //angle: 30,
+      //opacity: 0.85
+    });
+    /*
+    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
+        canvas.renderAll.bind(canvas), {
+  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
+*/
+    console.log("placeImage()");
+    canvas.add(imgInstance);
+}
+function changeImage()   {
+    //imgElement = document.getElementById('loadingImage');
+    //canvas.remove(imgInstance);
+ //imgInstance.setElement(document.getElementById('loadingImage'));
+    //imgInstance = new fabric.Image(imgElement, {
+      //left: 0,
+      //top: 100,
+      //angle: 30,
+      //opacity: 0.85
+    //});
+    /*
+    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
+        canvas.renderAll.bind(canvas), {
+  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
+*/
+    console.log("changeImage()");
+    
+    //canvas.add(imgInstance);
+}
+function removeImage()   {
+  // document.getElementById('loadingImage').src="";
+    //canvas.remove(imgInstance);
+}
 function save_floorplan_to_database()
 {     
       var walls_data_array = [];
@@ -440,4 +505,27 @@ function save_floorplan_to_database()
 	           	{x1: walls_array[0].x1, y1: walls_array[0].y1, x2: walls_array[0].x2, y2: walls_array[0].y2}, 
 	           	{x1: walls_array[1].x1, y1: walls_array[1].y1, x2: walls_array[1].x2, y2: walls_array[1].y2}]}})
       }); */     
+}
+
+function displayAsImage() {
+    //canvas.remove(imgInstance);
+    file =imgArray[imgnum];
+    console.log(imgnum);
+  var imgURL = URL.createObjectURL(file);
+  
+  /*
+      img = document.getElementById('loadingImage');
+
+  
+
+  img.src = imgURL;
+  */
+  //document.body.appendChild(img);
+  //canvas.renderAll.bind(canvas);
+  imgInstance=new fabric.Image.fromURL(imgURL, function(oImg) {
+        oImg.name="photo";
+        oImg.width=canvas.width;
+        oImg.height=canvas.height;
+      canvas.add(oImg);
+    });
 }
