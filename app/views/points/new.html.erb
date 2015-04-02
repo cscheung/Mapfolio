@@ -3,7 +3,7 @@
 
 <button onclick="start_tracking()">Start Tracking</button>
 <button onclick="stop_tracking()">Stop tracking</button>
-<button onclick="save()">Save</button>
+<button onclick="save()">Save Point</button>
 
 <div id="values">    
     <p id="alpha">Idle</p>
@@ -17,5 +17,6 @@
     <p id="t"></p>
 </div>
 
+<button onclick="done()">Done</button>
 
-<%= button_to "Create Floorplan", new_floorplan_path(@floorplan), :method => "get" %>
+

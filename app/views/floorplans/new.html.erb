@@ -8,7 +8,6 @@
 <button onclick="displayAsImage()">DisplayAsImage</button>
 <input type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
 
-<%= content_tag :div, class: "points_class", data: {points: @points} do %>
 <% end %>
 <img id="loadingImage" height="1"  style="visibility:hidden"/>
 <%= link_to 'Back', floorplans_path %>
