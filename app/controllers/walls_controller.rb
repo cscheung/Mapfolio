@@ -69,6 +69,6 @@ class WallsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def wall_params
-      params[:wall]
+      params.require(:wall).permit(:x1, :y1, :x2, :y2, :angle)
     end
 end

@@ -220,7 +220,7 @@ function draw_floorplan()
 
 function load_points()
 {
-    points = $('.points_class').data('points');
+    var points = $('.points_class').data('points');
     for(i=0; i < points.length; i++)
     {
         var new_point = 
@@ -416,6 +416,28 @@ function wall_threshold_hit(vertex)
 }
 
 function save_floorplan_to_database()
-{
-    
+{     
+      var walls_data_array = [];
+      for (i = 0; i < walls_array.length; i++)
+      {
+	  	var wall = {x1:walls_array[i].x1, y1:walls_array[i].y1, 
+		  			x2:walls_array[i].x2, y2:walls_array[i].y2 
+		  			};
+	  	walls_data_array.push(wall);
+      }
+      
+      $.ajax({
+           type:'POST', 
+           url: '/floorplans', 
+           data: $.param({floorplan: {walls_attributes: walls_data_array}})
+      }); 
+      
+      //How to properly format ajax call 
+      /*$.ajax({
+           type:'POST', 
+           url: '/floorplans', 
+           data: $.param({floorplan: {name:"Dood", walls_attributes:[
+	           	{x1: walls_array[0].x1, y1: walls_array[0].y1, x2: walls_array[0].x2, y2: walls_array[0].y2}, 
+	           	{x1: walls_array[1].x1, y1: walls_array[1].y1, x2: walls_array[1].x2, y2: walls_array[1].y2}]}})
+      }); */     
 }

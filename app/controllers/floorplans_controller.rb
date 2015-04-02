@@ -15,6 +15,10 @@ class FloorplansController < ApplicationController
   # GET /floorplans/new
   def new
     @floorplan = Floorplan.new
+    @floorplan.walls.build
+    
+    
+    
     @points = Point.all
   end
 
@@ -26,7 +30,7 @@ class FloorplansController < ApplicationController
   # POST /floorplans.json
   def create
     @floorplan = Floorplan.new(floorplan_params)
-
+	
     respond_to do |format|
       if @floorplan.save
         format.html { redirect_to @floorplan, notice: 'Floorplan was successfully created.' }
@@ -70,6 +74,6 @@ class FloorplansController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def floorplan_params
-      params.require(:floorplan).permit(:name, :created_by)
+      params.require(:floorplan).permit(:name, :created_by, walls_attributes:[:x1, :y1, :x2, :y2, :angle])
     end
 end

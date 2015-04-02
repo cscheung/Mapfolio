@@ -12,6 +12,11 @@
   <tbody>
     <% @walls.each do |wall| %>
       <tr>
+	    <td><%= wall.floorplan_id %></td>
+	    <td><%= wall.x1 %></td>
+        <td><%= wall.y1 %></td>
+		<td><%= wall.x2 %></td>
+        <td><%= wall.y2 %></td>
         <td><%= link_to 'Show', wall %></td>
         <td><%= link_to 'Edit', edit_wall_path(wall) %></td>
         <td><%= link_to 'Destroy', wall, method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -22,4 +22,17 @@
   <div class="actions">
     <%= f.submit %>
   </div>
+  
+<h2>Walls</h2>
+<%= f.fields_for :walls do |ff| %>
+  <div>
+    <%= ff.label :x1 %>
+    <%= ff.text_field :x1 %>
+ 
+    <% if ff.object.persisted? %>
+      <%= ff.check_box :_destroy %>
+      <%= ff.label :_destroy, "Destroy" %>
+    <% end %>
+  </div>
+<% end %>
 <% end %>
