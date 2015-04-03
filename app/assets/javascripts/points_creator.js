@@ -160,11 +160,11 @@ var save = function save()
     };
         
     points.push(new_point);
-    
-    
 }
 
 function done()
 {
     make_floorplan(points);
+    //redirect to edit page
+        //get the id, construct url
 }

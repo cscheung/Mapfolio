@@ -1,10 +1,5 @@
 walls = [];
 
-$(document).ready(function(){   
-    make_floorplan(); 
-});
-
-
 function make_floorplan(points)
 {
     make_walls(points);
@@ -31,31 +26,24 @@ function make_walls(points_array)
         var b = intersections[(i+1)%intersections.length];
         
         var translated_points = translate_points([a.x, a.y, b.x, b.y]);
-        var wall = make_wall(i, translated_points);
+        var wall = {
+            x1: translated_points[0],
+            y1: translated_points[1],
+            x2: translated_points[2],
+            y2: translated_points[3]
+        }
+        
         walls.push(wall);
     }
-    
 }
 
+
 function save_floorplan()
-{
-    var walls_data_array = [];
-    for (i = 0; i < walls.length; i++)
-    {
-        var wall = {
-            x1:walls[i].x1, 
-            y1:walls[i].y1, 
-            x2:walls[i].x2, 
-            y2:walls[i].y2 
-        };
-    
-        walls_data_array.push(wall);
-    } 
-    
+{    
     $.ajax({
         type:'POST', 
         url: '/floorplans', 
-        data: $.param({floorplan: {walls_attributes: walls_data_array}})
+        data: $.param({floorplan: {walls_attributes: walls}})
     });
     
     console.log("Saved!");

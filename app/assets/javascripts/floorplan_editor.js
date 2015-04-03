@@ -19,6 +19,7 @@ var imgElement;
 
 $(document).ready(function(){
     
+    
     canvas = new fabric.Canvas('c');
     canvas.setDimensions({
         backgroundColor: '#d1d1d1',
@@ -92,6 +93,32 @@ $(document).ready(function(){
     });	 
     
 });
+
+function test()
+{
+    var floorplan = $('.floorplan_class').data('floorplan');
+    var walls = $('.walls_class').data('walls');
+    
+    console.log(walls);
+}
+
+function make_wall(id, coords) 
+{
+    var c = new fabric.Line(coords, 
+    {
+      fill: 'black',
+      stroke: 'black',
+      strokeWidth: 5,
+      name: 'wall'
+    });
+    
+    c.old_left = 0;
+    c.old_top = 0;
+    c.hasBorders = false;
+    c.hasControls = false;
+    c.id = id;
+    return c;
+}
 
 
 function move_walls_with_vertex(vertex)
@@ -298,23 +325,7 @@ function showImage() {
 
 
 
-function make_wall(id, coords) 
-{
-    var c = new fabric.Line(coords, 
-    {
-      fill: 'black',
-      stroke: 'black',
-      strokeWidth: 5,
-      name: 'wall'
-    });
-    
-    c.old_left = 0;
-    c.old_top = 0;
-    c.hasBorders = false;
-    c.hasControls = false;
-    c.id = id;
-    return c;
-}
+
 
 function make_vertex(left, top, wall1, wall2) 
 {  
