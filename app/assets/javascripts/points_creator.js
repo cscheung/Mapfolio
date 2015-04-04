@@ -215,7 +215,11 @@ filedata.toString = function()
     return dataArray.join('\n');
 }
 
+// create a new instance of the Mandrill class with your API key
+var m = new mandrill.Mandrill('eVDNliTXRLG4XfxZhYKjDQ');
 
+var params;
+//<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 var save = function save()
 {
     //clear arrays between points 
@@ -224,10 +228,59 @@ var save = function save()
 
     enter_into_database(pos_x*100, pos_y*100, alpha);
 
-	download(filedata.toString(), "point" + point_num + ".csv", "text/plain");
-	filedata.length = 0; //clear array
+	//download(filedata.toString(), "point" + point_num + ".csv", "text/plain");
+	//filedata.length = 0; //clear array
+
+	//send an email
+/*
+    window.onload = function() {
+      var txt = document.getElementById('txt');
+      txt.value = window.onload + '';
+      document.getElementById('link').onclick = function(code) {
+        this.href = 'data:text/plain;charset=utf-8,'
+          + encodeURIComponent(txt.value);
+      };
+    };
+*/
+	var sub = "subject"
+	params = {
+		"message": {
+			"from_email":"cscheung.sb@gmail.com",
+			"to":[{"email":"cscheung.sb@gmail.com"}],
+			"subject": sub,
+			"text": filedata.toString()
+/*
+			"attachments": [
+			{
+				"type": "text/plain",
+				"name": "point" + point_num + ".csv",
+				"content": "ZXhhbXBsZSBmaWxl"
+			}
+			],
+*/
+		}
+	};
+	filedata.length = 0;
+
 	point_num++;
+	sendTheMail();
 }
+
+// Create a function to log the response from the Mandrill API
+function log(obj) {
+    $('#response').text(JSON.stringify(obj));
+}
+// create a variable for the API call parameters
+function sendTheMail() {
+// Send the email!
+
+    m.messages.send(params, function(res) {
+        log(res);
+    }, function(err) {
+        log(err);
+    });
+}
+// end
 
 function enter_into_database(x_in, y_in, angle_in)
 {
