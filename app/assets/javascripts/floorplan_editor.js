@@ -1,5 +1,5 @@
-var HEIGHT = 450;
-var WIDTH = 650;
+var HEIGHT = 400;
+var WIDTH = 400;
 var SCALING_FACTOR = 1;
 var X_TRANSLATION = 75;
 var Y_TRANSLATION = 75; 
@@ -10,27 +10,22 @@ butnum=0;
 imgnum=0;
 var button = new Array();
 var imgArray = new Array();
-points_array = [];
 intersections_array = [];
-verticies_array = [];
+verticies = [];
+canvas_walls = [];
 var canvas;
 var imgInstance;
 var imgElement;
 
-$(document).ready(function(){
-    
-    
+$(document).ready(function()
+{  
     canvas = new fabric.Canvas('c');
     canvas.setDimensions({
         backgroundColor: '#d1d1d1',
         width: WIDTH,
         height:HEIGHT
     });
-    /*
-    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
-        canvas.renderAll.bind(canvas), {
-  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
-*/
+    
     canvas.on('mouse:up', function(e) 
     {
         if(e.target)
@@ -91,16 +86,119 @@ $(document).ready(function(){
             canvas.renderAll();
         }
     });	 
-    
-});
 
-function test()
+    draw_floorplan();
+    
+});//end document ready
+
+function draw_floorplan()
 {
     var floorplan = $('.floorplan_class').data('floorplan');
     var walls = $('.walls_class').data('walls');
     
-    console.log(walls);
+    draw_walls(walls);
 }
+
+function draw_walls(walls_array)
+{
+    //Put on walls    
+    for (i = 0; i < walls_array.length; i++)
+    {
+        var points = 
+        [
+            walls_array[i].x1,
+            walls_array[i].y1,
+            walls_array[i].x2,
+            walls_array[i].y2
+        ];
+        var wall = make_wall(i, points);
+        
+        canvas.add(wall);
+        
+        wall.old_left = wall.left;
+        wall.old_top = wall.top;
+        canvas_walls.push(wall);
+    }
+    
+    //Make intersections and put them on canvas
+    for (i = 0; i < canvas_walls.length; i++)
+    {
+        if (hasVertex(canvas_walls[i].x1, canvas_walls[i].y1) == false)
+        {
+            var wall1_id = i;
+            var wall2_id = (i+1)%canvas_walls.length;
+    
+            console.log(canvas_walls[i].x2);
+            console.log(canvas_walls[i].y2);
+    
+            var vertex = make_vertex(
+            canvas_walls[i].x1, 
+            canvas_walls[i].y1, 
+            canvas_walls[wall1_id], 
+            canvas_walls[wall2_id]
+            );
+            
+            canvas.add(vertex);
+            verticies.push(vertex);
+        }
+        if (hasVertex(canvas_walls[i].x2, canvas_walls[i].y2) == false)
+        {
+            var wall1_id = i;
+            var wall2_id = (i+1)%canvas_walls.length;
+    
+            console.log(canvas_walls[i].x2);
+            console.log(canvas_walls[i].y2);
+    
+            var vertex = make_vertex(
+            canvas_walls[i].x2, 
+            canvas_walls[i].y2, 
+            canvas_walls[wall1_id], 
+            canvas_walls[wall2_id]
+            );
+            
+            canvas.add(vertex);
+            verticies.push(vertex);
+        }
+    } 
+    
+   canvas.renderAll();
+}//end draw_walls
+
+function hasVertex(x, y)
+{
+    for(var i = 0; i < verticies.length; i++)
+    {
+        if ((verticies[i].top - VERTEX_RADIUS == y) && (verticies[i].left - VERTEX_RADIUS == x))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+function make_vertex(left, top, wall1, wall2) 
+{  
+    var c = new fabric.Circle(
+    {
+        left: left - VERTEX_RADIUS,
+        top: top - VERTEX_RADIUS,
+        strokeWidth: 2,
+        radius: VERTEX_RADIUS,
+        fill: '#fff',
+        stroke: '#666',
+        name: 'vertex'
+    });
+    
+    c.wall1 = wall1;
+    c.wall2 = wall2;
+
+    c.visible = false;    
+    c.hasBorders = false;
+    c.hasControls = false;
+    
+    return c;
+}
+
 
 function make_wall(id, coords) 
 {
@@ -139,70 +237,35 @@ function move_walls_with_vertex(vertex)
 function move_vertecies_with_wall(wall)
 {   
     
-    for(i=0; i < verticies_array.length; i++)
+    for(i=0; i < verticies.length; i++)
     {
-        if (verticies_array[i].wall2.id == wall.id)
+        if (verticies[i].wall2.id == wall.id)
         {                      
 
-            verticies_array[i].top = wall.get('y1') - VERTEX_RADIUS;
-            verticies_array[i].left = wall.get('x1') - VERTEX_RADIUS;
+            verticies[i].top = wall.get('y1') - VERTEX_RADIUS;
+            verticies[i].left = wall.get('x1') - VERTEX_RADIUS;
 
             //verticies_array[i].set({'top' : wall.get('y1') - VERTEX_RADIUS});
             //verticies_array[i].set({'left' : wall.get('x1') - VERTEX_RADIUS}); 
             
-            verticies_array[i].wall1.set({'x2' : verticies_array[i].left + VERTEX_RADIUS});
-            verticies_array[i].wall1.set({'y2' : verticies_array[i].top + VERTEX_RADIUS});            
+            verticies[i].wall1.set({'x2' : verticies[i].left + VERTEX_RADIUS});
+            verticies[i].wall1.set({'y2' : verticies[i].top + VERTEX_RADIUS});            
         }
         
-        if (verticies_array[i].wall1.id == wall.id)
+        if (verticies[i].wall1.id == wall.id)
         {
-            verticies_array[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
-            verticies_array[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
+            verticies[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
+            verticies[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
         
-            verticies_array[i].wall2.set({'x1' : verticies_array[i].left + VERTEX_RADIUS});
-            verticies_array[i].wall2.set({'y1' : verticies_array[i].top + VERTEX_RADIUS});
+            verticies[i].wall2.set({'x1' : verticies[i].left + VERTEX_RADIUS});
+            verticies[i].wall2.set({'y1' : verticies[i].top + VERTEX_RADIUS});
         }
         
     }
     
 }   
 
-function redraw_elements()
-{
-    /*
-    canvas.dispose();
-    
-    var c = new fabric.Line(
-    [
-        10,  
-        20,  
-        40,  
-        60
-    ],
-    {
-      fill: 'red',
-      stroke: 'red',
-      strokeWidth: 10,
-      name: 'wall'
-    });
-    
-
-    canvas.add(c);  
-*/
-    /*
-    for (i = 0; i < walls_array.length; i++) 
-    {
-        canvas.add(walls_array[i]);   
-    }
-    */
-    /*
-    for (i = 0; i < verticies_array.length; i++) 
-    {
-        canvas.add(verticies_array[i]);   
-    }
-    */
-    canvas.renderAll();
-}   
+ 
 
 /*dog*/
 b=0;
@@ -327,56 +390,7 @@ function showImage() {
 
 
 
-function make_vertex(left, top, wall1, wall2) 
-{  
-    var c = new fabric.Circle(
-    {
-        left: left - VERTEX_RADIUS,
-        top: top - VERTEX_RADIUS,
-        strokeWidth: 2,
-        radius: VERTEX_RADIUS,
-        fill: '#fff',
-        stroke: '#666',
-        name: 'vertex'
-    });
-    
-    c.wall1 = wall1;
-    c.wall2 = wall2;
 
-    c.visible = false;    
-    c.hasBorders = false;
-    c.hasControls = false;
-    
-    return c;
-}
-
-function draw_walls()
-{
-        
-    //Put on walls    
-    for (i = 0; i < walls_array.length; i++)
-    {
-        canvas.add(walls_array[i]);
-        walls_array[i].old_left = walls_array[i].left;
-        walls_array[i].old_top = walls_array[i].top;
-    }
-    
-    //Make intersections
-    //Put them on canvas
-    for (i = 0; i < walls_array.length; i++)
-    {
-        var wall1_id = i;
-        var wall2_id = (i+1)%points_array.length;
-        var vertex = make_vertex(
-        walls_array[i].x2, 
-        walls_array[i].y2, 
-        walls_array[wall1_id], 
-        walls_array[wall2_id]);
-        
-        canvas.add(vertex);
-        verticies_array.push(vertex);
-    } 
-}
 
 function hide_update_button()
 {
@@ -461,20 +475,20 @@ function toggle_edit()
     if (title == "Edit")
     {
         document.getElementById("toggle_edit").innerHTML = "Done";  
-        for(i=0; i < verticies_array.length; i++)
+        for(i=0; i < verticies.length; i++)
         {
-            verticies_array[i].visible = true;
-            verticies_array[i].selectable = true;
+            verticies[i].visible = true;
+            verticies[i].selectable = true;
         } 
         canvas.renderAll();
     }
     else
     {
         document.getElementById("toggle_edit").innerHTML = "Edit";   
-        for(i=0; i < verticies_array.length; i++)
+        for(i=0; i < verticies.length; i++)
         {
-            verticies_array[i].visible = false;
-            verticies_array[i].selectable = false;
+            verticies[i].visible = false;
+            verticies[i].selectable = false;
         }
         canvas.renderAll();
         
@@ -484,10 +498,7 @@ function toggle_edit()
 
 
 
-function delete_points()
-{
-    
-}
+
 
 function displayAsImage() {
     //canvas.remove(imgInstance);
