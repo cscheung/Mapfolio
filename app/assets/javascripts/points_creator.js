@@ -32,7 +32,7 @@ var medianX, medianY;
 var MedianBufferLength = 3;
 
 function start_tracking() {
-
+	stops=0;
 	point_num = 1; //used in data file name creation
 	count=0;
 	totx=0;
@@ -84,7 +84,14 @@ function start_tracking() {
 
 			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
 			times.push(timeT);
-
+			acc_x = screenAcc.x;
+			acc_y = screenAcc.y;
+			acc_xy=Math.pow(acc_x,2)+Math.pow(acc_y,2);
+            acc_xy=Math.sqrt(acc_xy);
+            if(acc_xy<0.13)	{
+            	stops++;
+            }
+            /*
 			if (Math.abs(screenAcc.x) > 0.1) 
 				acc_x = screenAcc.x;
 			else {
@@ -101,16 +108,10 @@ function start_tracking() {
 				acc_y = screenAcc.y;
 				consec_stopsY++;
 			} 
-			if (Math.abs(screenAcc.z) > 0.1) 
-				acc_z = screenAcc.z;
-			else {
-				//acc_z = 0; 
-				acc_z = screenAcc.z;
-				consec_stopsZ++;
-			} 
+			*/
 			var a = {x:acc_x, y:acc_y};
 			accel.push(a);
-
+			/*
 			if (consec_stopsX == 15) {
 				velocity_x = 0;
 				consec_stopsX = 0;
@@ -120,14 +121,14 @@ function start_tracking() {
 				velocity_y = 0;
 				consec_stopsY = 0;
 			}
-			if (consec_stopsZ == 15) {
-				velocity_Z = 0;
-				consec_stopsZ = 0;
+			*/
+			if(stops==2)	{
+				velocity_x=0;
+				velocity_y=0;
+				stops=0;
 			}
-
 			recentX.push(acc_x);
 			recentY.push(acc_y);
-			recentZ.push(acc_z);
 			
 			if (recentX.length > MedianBufferLength) recentX.shift();
 			if (recentY.length > MedianBufferLength) recentY.shift();
@@ -146,6 +147,7 @@ function start_tracking() {
 
 			pos_x += (0.5*medianX*t*t) + velocity_x*t;
 			pos_y += (0.5*medianY*t*t) + velocity_y*t;
+			
 			distxy=Math.pow(pos_x,2)+Math.pow(pos_y,2);
             distxy=Math.sqrt(distxy);
 			var p = {x:pos_x, y:pos_y};
@@ -243,6 +245,7 @@ function put_values_in_view()
     yshould=avgy*timeTot;
     document.getElementById("yshould").innerHTML = "yshould = " + yshould;
     document.getElementById("distxy").innerHTML = "distxy = " + distxy;
+    document.getElementById("acc_xy").innerHTML = "acc_xy = " + acc_xy;
 
 }
 
