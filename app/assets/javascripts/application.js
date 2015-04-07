@@ -16,6 +16,7 @@
 //= require_tree .
 
 // Vendor Assets
+//= require gyro
 //= require fulltilt
 //= require fabric
 //= requre Chart

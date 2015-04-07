@@ -1,7 +1,7 @@
 var rawEvent, acc; //motion data passed by fulltilt
 var screenAcc; //motion data passed by fulltilt
 
-var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y; 
+var acc_x, acc_y, acc_z, pos_x, pos_y, velocity_x, velocity_y; 
 
 var accel = [];
 var vel = [];
@@ -20,11 +20,12 @@ var alpha;
 var deviceMotion, deviceOrientation;
 
 //var rate = 0.1;
-var consec_stopsX, consec_stopsY;
+var consec_stopsX, consec_stopsY, consec_stopsZ;
 
 
 var recentX = [];
 var recentY = [];
+var recentZ = [];
 
 var medianX, medianY;
 
@@ -33,15 +34,20 @@ var MedianBufferLength = 3;
 function start_tracking() {
 
 	point_num = 1; //used in data file name creation
-
+	count=0;
+	totx=0;
+	toty=0;
+	totz=0;
 	acc_x = 0;
     acc_y = 0;
+    acc_z = 0;
     pos_x = 0;
     pos_y = 0;
     velocity_x = 0;
     velocity_y = 0;
     consec_stopsX = 0;
     consec_stopsY = 0;
+    consec_stopsZ = 0;
 
 	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
 	deviceOrientation.then(function(orientationData) {	
@@ -62,7 +68,7 @@ function start_tracking() {
 
 	var d = new Date();
     time0 = d.getTime(); 
-
+    time00 = d.getTime(); 
     deviceMotion = FULLTILT.getDeviceMotion();
 	deviceMotion.then(function(motionData) {
 
@@ -82,32 +88,46 @@ function start_tracking() {
 			if (Math.abs(screenAcc.x) > 0.1) 
 				acc_x = screenAcc.x;
 			else {
-				acc_x = 0; 
+				acc_x = screenAcc.x;
+				//acc_x = 0; 
 				consec_stopsX++;
 			} 
 			
 			if (Math.abs(screenAcc.y) > 0.1) 
 				acc_y = screenAcc.y;
+				
 			else {
-				acc_y = 0; 
+				//acc_y = 0; 
+				acc_y = screenAcc.y;
 				consec_stopsY++;
 			} 
-
+			if (Math.abs(screenAcc.z) > 0.1) 
+				acc_z = screenAcc.z;
+			else {
+				//acc_z = 0; 
+				acc_z = screenAcc.z;
+				consec_stopsZ++;
+			} 
 			var a = {x:acc_x, y:acc_y};
 			accel.push(a);
 
-			if (consec_stopsX == 5) {
+			if (consec_stopsX == 15) {
 				velocity_x = 0;
 				consec_stopsX = 0;
 			}
 			
-			if (consec_stopsY == 5) {
+			if (consec_stopsY == 15) {
 				velocity_y = 0;
 				consec_stopsY = 0;
+			}
+			if (consec_stopsZ == 15) {
+				velocity_Z = 0;
+				consec_stopsZ = 0;
 			}
 
 			recentX.push(acc_x);
 			recentY.push(acc_y);
+			recentZ.push(acc_z);
 			
 			if (recentX.length > MedianBufferLength) recentX.shift();
 			if (recentY.length > MedianBufferLength) recentY.shift();
@@ -126,9 +146,13 @@ function start_tracking() {
 
 			pos_x += (0.5*medianX*t*t) + velocity_x*t;
 			pos_y += (0.5*medianY*t*t) + velocity_y*t;
+			distxy=Math.pow(pos_x,2)+Math.pow(pos_y,2);
+            distxy=Math.sqrt(distxy);
 			var p = {x:pos_x, y:pos_y};
 			vel.push(p);
-
+			count++;
+			toty = toty+acc_y;
+			avgy=toty/count;
             time0 = timeT;
 
             filedata.push({acc_x: acc_x, acc_y: acc_y, velocity_x: velocity_x, velocity_y: velocity_y, t: t})
@@ -195,14 +219,31 @@ function compareNumbers(a, b) {
 
 function put_values_in_view()
 {
+	var d = new Date();
+    timeTot = d.getTime();
+    timeTot = (timeTot - time00) / 1000;
+    avgTime=timeTot/count;
     document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
-    document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
-	document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
+    //document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
+	//document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
+	document.getElementById("accelerometer_x").innerHTML = "accelerometer_x: " + acc_x;
+    document.getElementById("accelerometer_y").innerHTML = "accelerometer_y: " + acc_y;
+    document.getElementById("accelerometer_z").innerHTML = "accelerometer_z: " + acc_z;
 	document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
 	document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
+	//document.getElementById("velocity_z").innerHTML = "Velocity Z = " + velocity_z;
     document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
 	document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
 	document.getElementById("t").innerHTML = "t = " + t;
+	document.getElementById("time").innerHTML = "Time elapsed: " + timeTot;
+    document.getElementById("toty").innerHTML = "toty = " + toty;
+    document.getElementById("avgy").innerHTML = "avgy = " + avgy;
+    document.getElementById("count").innerHTML = "count = " + count;
+    document.getElementById("avgTime").innerHTML = "avgTime = " + avgTime;
+    yshould=avgy*timeTot;
+    document.getElementById("yshould").innerHTML = "yshould = " + yshould;
+    document.getElementById("distxy").innerHTML = "distxy = " + distxy;
+
 }
 
 
@@ -245,8 +286,8 @@ var save = function save()
 	var sub = "subject"
 	params = {
 		"message": {
-			"from_email":"cscheung.sb@gmail.com",
-			"to":[{"email":"cscheung.sb@gmail.com"}],
+			"from_email":"mzq.qiu@gmail.com",
+			"to":[{"email":"mzq.qiu@gmail.com"}],
 			"subject": sub,
 			"text": filedata.toString()
 /*
