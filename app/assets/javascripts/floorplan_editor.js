@@ -123,58 +123,26 @@ function draw_walls(walls_array)
     //Make intersections and put them on canvas
     for (i = 0; i < canvas_walls.length; i++)
     {
-        if (hasVertex(canvas_walls[i].x1, canvas_walls[i].y1) == false)
-        {
-            var wall1_id = i;
-            var wall2_id = (i+1)%canvas_walls.length;
+      var wall1_id = i;
+      var wall2_id = (i+1)%canvas_walls.length;
+      
+      console.log(canvas_walls[i].x2);
+      console.log(canvas_walls[i].y2);
+      
+      var vertex = make_vertex(
+      canvas_walls[i].x2, 
+      canvas_walls[i].y2, 
+      canvas_walls[wall1_id], 
+      canvas_walls[wall2_id]
+      );
+      
+      canvas.add(vertex);
+      verticies.push(vertex);
     
-            console.log(canvas_walls[i].x2);
-            console.log(canvas_walls[i].y2);
-    
-            var vertex = make_vertex(
-            canvas_walls[i].x1, 
-            canvas_walls[i].y1, 
-            canvas_walls[wall1_id], 
-            canvas_walls[wall2_id]
-            );
-            
-            canvas.add(vertex);
-            verticies.push(vertex);
-        }
-        if (hasVertex(canvas_walls[i].x2, canvas_walls[i].y2) == false)
-        {
-            var wall1_id = i;
-            var wall2_id = (i+1)%canvas_walls.length;
-    
-            console.log(canvas_walls[i].x2);
-            console.log(canvas_walls[i].y2);
-    
-            var vertex = make_vertex(
-            canvas_walls[i].x2, 
-            canvas_walls[i].y2, 
-            canvas_walls[wall1_id], 
-            canvas_walls[wall2_id]
-            );
-            
-            canvas.add(vertex);
-            verticies.push(vertex);
-        }
     } 
     
    canvas.renderAll();
 }//end draw_walls
-
-function hasVertex(x, y)
-{
-    for(var i = 0; i < verticies.length; i++)
-    {
-        if ((verticies[i].top - VERTEX_RADIUS == y) && (verticies[i].left - VERTEX_RADIUS == x))
-        {
-            return true;
-        }
-    }
-    return false;
-}
 
 function make_vertex(left, top, wall1, wall2) 
 {  
