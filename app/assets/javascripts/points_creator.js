@@ -32,7 +32,10 @@ var medianX, medianY;
 var MedianBufferLength = 3;
 
 function start_tracking() {
+	lpx=0;
+	lpy=0;
 	stops=0;
+	resets=0;
 	point_num = 1; //used in data file name creation
 	count=0;
 	totx=0;
@@ -78,19 +81,25 @@ function start_tracking() {
 			timeT = d2.getTime();
 			t = (timeT - time0) * 0.001;
 
-			//rawEvent = motionData.getLastRawEventData();
+			rawEvent = motionData.getLastRawEventData();
 
-			//acc = rawEvent.acceleration || {};
+			screenAcc = rawEvent.acceleration || {};
 
-			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
+			//screenAcc = motionData.getScreenAdjustedAcceleration() || {};
 			times.push(timeT);
 			acc_x = screenAcc.x;
 			acc_y = screenAcc.y;
 			acc_xy=Math.pow(acc_x,2)+Math.pow(acc_y,2);
             acc_xy=Math.sqrt(acc_xy);
-            if(acc_xy<0.13)	{
-            	stops++;
+            if(acc_xy<0.05)	{
+            	stops=stops+2;
+            	acc_x = 0;
+				acc_y = 0;
+            	
             }
+
+            if(stops>0)
+            	stops--;
             /*
 			if (Math.abs(screenAcc.x) > 0.1) 
 				acc_x = screenAcc.x;
@@ -122,7 +131,8 @@ function start_tracking() {
 				consec_stopsY = 0;
 			}
 			*/
-			if(stops==2)	{
+			if(stops==3)	{
+				resets++;
 				velocity_x=0;
 				velocity_y=0;
 				stops=0;
@@ -138,7 +148,12 @@ function start_tracking() {
 
 			medianX = tempRecentX.sort(compareNumbers)[Math.floor(recentX.length/2)];
     		medianY = tempRecentY.sort(compareNumbers)[Math.floor(recentY.length/2)];
- 
+ 			
+
+ 			//MEDIANS CHANGED TO BASE ACC
+ 			medianX=acc_x;
+ 			medianY=acc_y;
+
 			velocity_x += medianX*t;
 			velocity_y += medianY*t;
 
@@ -157,7 +172,7 @@ function start_tracking() {
 			avgy=toty/count;
             time0 = timeT;
 
-            filedata.push({acc_x: acc_x, acc_y: acc_y, velocity_x: velocity_x, velocity_y: velocity_y, t: t})
+            
 
             put_values_in_view();
             
@@ -225,7 +240,8 @@ function put_values_in_view()
     timeTot = d.getTime();
     timeTot = (timeTot - time00) / 1000;
     avgTime=timeTot/count;
-    document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
+    document.getElementById("resets").innerHTML = "resets = " + resets;
+    //document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
     //document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
 	//document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
 	document.getElementById("accelerometer_x").innerHTML = "accelerometer_x: " + acc_x;
@@ -238,15 +254,16 @@ function put_values_in_view()
 	document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
 	document.getElementById("t").innerHTML = "t = " + t;
 	document.getElementById("time").innerHTML = "Time elapsed: " + timeTot;
-    document.getElementById("toty").innerHTML = "toty = " + toty;
+    //document.getElementById("toty").innerHTML = "toty = " + toty;
     document.getElementById("avgy").innerHTML = "avgy = " + avgy;
     document.getElementById("count").innerHTML = "count = " + count;
     document.getElementById("avgTime").innerHTML = "avgTime = " + avgTime;
-    yshould=avgy*timeTot;
-    document.getElementById("yshould").innerHTML = "yshould = " + yshould;
+    //yshould=avgy*timeTot;
+    //document.getElementById("yshould").innerHTML = "yshould = " + yshould;
     document.getElementById("distxy").innerHTML = "distxy = " + distxy;
     document.getElementById("acc_xy").innerHTML = "acc_xy = " + acc_xy;
-
+    document.getElementById("stops").innerHTML = "stops = " + stops;
+    filedata.push({timeTot: timeTot, acc_x: acc_x, acc_y: acc_y, velocity_x: velocity_x, velocity_y: velocity_y, pos_x:pos_x, pos_y:pos_y})
 }
 
 
@@ -254,7 +271,7 @@ filedata.toString = function()
 {
     var dataArray = new Array();
     for (var i in this) {
-        dataArray[i] = this[i].acc_x + ", " + this[i].acc_y + "," + this[i].velocity_x + "," + this[i].velocity_y + "," + this[i].t;
+        dataArray[i] = this[i].timeTot+ ", " +this[i].acc_x + ", " + this[i].acc_y + "," + this[i].velocity_x + "," + this[i].velocity_y+ "," + this[i].pos_x + "," + this[i].pos_y;
     }
     return dataArray.join('\n');
 }
