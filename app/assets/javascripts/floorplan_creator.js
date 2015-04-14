@@ -43,10 +43,11 @@ function save_floorplan()
     $.ajax({
         type:'POST', 
         url: '/floorplans', 
-        data: $.param({floorplan: {walls_attributes: walls}})
+        data:  $.param({floorplan: {walls_attributes: walls}})
     });
     
     console.log("Saved!");
+    
 }
 //Helper
 function find_intersection(p0, p1)
