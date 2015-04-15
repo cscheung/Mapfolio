@@ -1,3 +1,4 @@
+var points = [];
 var rawEvent, acc; //motion data passed by fulltilt
 var screenAcc; //motion data passed by fulltilt
 
@@ -151,15 +152,19 @@ var save = function save()
     recentX = [];
     recentY = [];
 
-    enter_into_database(pos_x*100, pos_y*100, alpha);
+    var new_point = 
+    {
+        angle: 90-alpha, 
+        x: pos_x*100, 
+        y: pos_y*100
+    };
+        
+    points.push(new_point);
 }
 
-function enter_into_database(x_in, y_in, angle_in)
+function done()
 {
-    $.ajax({
-           type:'POST', 
-           url: '/points', 
-           data: $.param({ point: {x: x_in, y: y_in, angle: angle_in}})
-      });
- 
+    make_floorplan(points);
+    //redirect to edit page
+        //get the id, construct url
 }
