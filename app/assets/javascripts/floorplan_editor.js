@@ -282,7 +282,8 @@ function lock_camera(canvas_object)  {
 function create_camera_icon()
 {
     console.log("CAMERA created");
-    fabric.Image.fromURL('camera.png', function(oImg) 
+    //Dont take the / out
+    fabric.Image.fromURL("/camera.png", function(oImg) 
     {
         oImg.name = "camera";
         oImg.number = butnum-1;
