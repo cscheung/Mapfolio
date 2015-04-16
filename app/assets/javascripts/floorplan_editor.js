@@ -1,8 +1,8 @@
-var HEIGHT = 400;
-var WIDTH = 400;
+var HEIGHT = 1000;
+var WIDTH = 1000;
 var SCALING_FACTOR = 1;
-var X_TRANSLATION = 75;
-var Y_TRANSLATION = 75; 
+var X_TRANSLATION = 500;
+var Y_TRANSLATION = 500; 
 var VERTEX_RADIUS = 10;
 
    

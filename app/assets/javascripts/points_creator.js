@@ -1,37 +1,37 @@
-var points = [];
+var deviceMotion, deviceOrientation;
 var rawEvent, acc; //motion data passed by fulltilt
-var screenAcc; //motion data passed by fulltilt
+var rawAcc; //motion data passed by fulltilt
 
-var acc_x, acc_y, pos_x, pos_y, velocity_x, velocity_y; 
+var acc_x, acc_y, acc_z, pos_x, pos_y, velocity_x, velocity_y; 
 
 var t, time0, timeT;
 
+var alpha, beta, gamma;
 
-var alpha;
-
-var deviceMotion, deviceOrientation;
-
-//var rate = 0.1;
 var consec_stopsX, consec_stopsY;
-
 
 var recentX = [];
 var recentY = [];
 
 var medianX, medianY;
 
-var MedianBufferLength = 3;
+var MedianBufferLength = 21;
+
+var points = [];
+
 
 function start_tracking() {
 
 	acc_x = 0;
     acc_y = 0;
+    acc_z = 0;
     pos_x = 0;
     pos_y = 0;
     velocity_x = 0;
     velocity_y = 0;
     consec_stopsX = 0;
     consec_stopsY = 0;
+    position_time = 0;
 
 	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
 	deviceOrientation.then(function(orientationData) {	
@@ -41,9 +41,13 @@ function start_tracking() {
 
 			// Display calculated screen-adjusted deviceorientation
 
-			var screenAdjustedEvent = orientationData.getFixedFrameEuler();
+			var rawEvent = orientationData.getFixedFrameEuler();
 
-			alpha = screenAdjustedEvent.alpha;
+			alpha = rawEvent.alpha;
+
+			beta = rawEvent.beta;
+
+			gamma = rawEvent.gamma;
 
 		});
 
@@ -62,32 +66,43 @@ function start_tracking() {
 			timeT = d2.getTime();
 			t = (timeT - time0) * 0.001;
 
-			//rawEvent = motionData.getLastRawEventData();
+			rawEvent = motionData.getLastRawEventData();
 
-			//acc = rawEvent.acceleration || {};
+			rawAcc = rawEvent.accelerationIncludingGravity || {};
 
-			screenAcc = motionData.getScreenAdjustedAcceleration() || {};
+			var quat = new FULLTILT.Quaternion();
+ 			quat.rotateX((360-beta) * (Math.PI / 180));
+ 			quat.rotateY((360-gamma) * (Math.PI / 180));
+ 			quat.rotateZ((360-alpha) * (Math.PI / 180));
+ 			var matrix = new FULLTILT.RotationMatrix();
+ 			matrix.setFromQuaternion(quat);
+			var new_x = matrix.elements[0]*rawAcc.x + matrix.elements[3]*rawAcc.y + matrix.elements[6]*rawAcc.z;
+ 			var new_y = matrix.elements[1]*rawAcc.x + matrix.elements[4]*rawAcc.y + matrix.elements[7]*rawAcc.z;
+ 			var new_z = matrix.elements[2]*rawAcc.x + matrix.elements[5]*rawAcc.y + matrix.elements[8]*rawAcc.z;
 
-			if (Math.abs(screenAcc.x) > 0.1) 
-				acc_x = screenAcc.x;
+ 			acc_z = new_z;
+
+			if (Math.abs(new_x) > 0.1) {
+				acc_x = new_x;
+				consec_stopsX = 0;
+			}
 			else {
 				acc_x = 0; 
 				consec_stopsX++;
 			} 
 			
-			if (Math.abs(screenAcc.y) > 0.1) 
-				acc_y = screenAcc.y;
+			if (Math.abs(new_y) > 0.1) { 
+				acc_y = new_y;
+				consec_stopsX = 0;
+			}
 			else {
 				acc_y = 0; 
 				consec_stopsY++;
 			} 
 
-			if (consec_stopsX == 5) {
+			if ((consec_stopsX == 5) || (consec_stopsY == 5)) {
 				velocity_x = 0;
 				consec_stopsX = 0;
-			}
-			
-			if (consec_stopsY == 5) {
 				velocity_y = 0;
 				consec_stopsY = 0;
 			}
@@ -165,6 +180,7 @@ var save = function save()
 function done()
 {
     make_floorplan(points);
+    points = [];
     //redirect to edit page
         //get the id, construct url
 }
