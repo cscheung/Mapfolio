@@ -1,8 +1,7 @@
-var HEIGHT = 1000;
-var WIDTH = 1000;
-var SCALING_FACTOR = 1;
-var X_TRANSLATION = 500;
-var Y_TRANSLATION = 500; 
+var HEIGHT = 500;
+var WIDTH = 500;
+var X_MARGIN = 50;
+var Y_MARGIN = 50; 
 var VERTEX_RADIUS = 10;
 
    
@@ -95,8 +94,99 @@ function draw_floorplan()
 {
     var floorplan = $('.floorplan_class').data('floorplan');
     var walls = $('.walls_class').data('walls');
+    var scaledWalls = resizeFloorplan(walls);
+    draw_walls(scaledWalls);
+}
+
+function resizeFloorplan(walls)
+{
+    var minX = 9007199254740992;
+    var minY = 9007199254740992;
+    var maxX = -9007199254740992; 
+    var maxY = -9007199254740992;
+
+    //find min and max
+    for (var i = 0; i < walls.length; i++) {
+        if (walls[i].x1 < minX)
+            minX = walls[i].x1;
+        if (walls[i].x1 > maxX)
+            maxX = walls[i].x1;
+        
+        if (walls[i].x2 < minX)
+            minX = walls[i].x2;
+        if (walls[i].x2 > maxX)
+            maxX = walls[i].x2;
+
+        if (walls[i].y1 < minY)
+            minY = walls[i].y1;
+        if (walls[i].y1 > maxY)
+            maxY = walls[i].y1;
+
+
+        if (walls[i].y2 < minY)
+            minY = walls[i].y2;
+        if (walls[i].y2 > maxY)
+            maxY = walls[i].y2;
+    }
+    console.log("maxX = " + maxX);
+    console.log("maxY = " + maxY);
+    console.log("minX = " + minX);
+    console.log("minY = " + minY);
+
+    var canvasSizeX = WIDTH - 2*X_MARGIN;
+    var canvasSizeY = HEIGHT - 2*Y_MARGIN;
+
+    console.log("canvasSizeX = " + canvasSizeX);
+    console.log("canvasSizeY = " + canvasSizeY);
+
+    var scaleX = canvasSizeX*1.0 / ((maxX-minX)*1.0);
+    var scaleY = canvasSizeY*1.0 / ((maxY-minY)*1.0);
     
-    draw_walls(walls);
+    console.log("scaleX = " + scaleX);
+    console.log("scaleY = " + scaleY);
+
+    var finalScaling;
+    if (scaleX > scaleY)
+        finalScaling = scaleY;
+    else 
+        finalScaling = scaleX;
+    console.log("finalScaling = " + finalScaling);
+
+    //center the floorplan on canvas
+    var X_TRANSLATION = (canvasSizeX - (maxX - minX)*finalScaling) / 2;
+    var Y_TRANSLATION = (canvasSizeY - (maxY - minY)*finalScaling) / 2;
+    console.log("X_TRANSLATION = " + X_TRANSLATION);
+    console.log("Y_TRANSLATION = " + Y_TRANSLATION);
+
+    var newWalls = []
+    //shift, then scale
+    for (var i = 0; i < walls.length; i++) {
+        //shift into 1st quadrant, starting at origin
+        var x1 = walls[i].x1 - minX;
+        var x2 = walls[i].x2 - minX;
+        var y1 = walls[i].y1 - minY;
+        var y2 = walls[i].y2 - minY;
+
+        //scale
+        x1 = x1*finalScaling + X_MARGIN + X_TRANSLATION;
+        x2 = x2*finalScaling + X_MARGIN + X_TRANSLATION;
+        y1 = y1*finalScaling + Y_MARGIN + Y_TRANSLATION;
+        y2 = y2*finalScaling + Y_MARGIN + Y_TRANSLATION;
+
+        console.log("X1: " + walls[i].x1 + "->" + x1);
+        console.log("Y1: " + walls[i].y1 + "->" + y1);
+        console.log("X2: " + walls[i].x2 + "->" + x2);
+        console.log("Y2: " + walls[i].y2 + "->" + y2);
+        var wall = {
+            x1: x1,
+            y1: y1,
+            x2: x2,
+            y2: y2
+        }
+        
+        newWalls.push(wall);
+    }
+    return newWalls;
 }
 
 function draw_walls(walls_array)
@@ -126,8 +216,8 @@ function draw_walls(walls_array)
       var wall1_id = i;
       var wall2_id = (i+1)%canvas_walls.length;
       
-      console.log(canvas_walls[i].x2);
-      console.log(canvas_walls[i].y2);
+      //console.log(canvas_walls[i].x2);
+      //console.log(canvas_walls[i].y2);
       
       var vertex = make_vertex(
       canvas_walls[i].x2, 
