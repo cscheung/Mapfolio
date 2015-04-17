@@ -186,19 +186,14 @@ var save = function save()
     points.push(new_point);
     
     
+window.setTimeout(function () {
+$("#myAlert").addClass("in");
+}, 100);
 
-    
+window.setTimeout(function () {
+$("#myAlert").removeClass("in");
+}, 900);
 
-  
-  window.setTimeout(function () {
-    $('#saved_not').addClass("in");
-}, 500);
-
- window.setTimeout(function(){
-    $('#saved_not').fadeTo("slow", 0.1, function(){
-        $('#saved_not').alert('close')
-    });     
-    }, 700)
     
     
 }
