@@ -44,12 +44,11 @@ function save_floorplan()
         type:'POST',
         url: '/floorplans',
         data:  $.param({floorplan: {walls_attributes: walls}}),
+        dataType: 'json',
         success:function(data) {
-          console.log(data);
+          window.location.href = data.location;
         }
     });
-
-    //console.log("Saved!");
 }
 
 function goToEditPage(id)

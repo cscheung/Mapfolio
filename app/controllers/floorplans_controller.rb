@@ -33,24 +33,13 @@ class FloorplansController < ApplicationController
         respond_to do |format|
           if @floorplan.save
             format.html { redirect_to @floorplan, notice: 'Floorplan was successfully created.' }
-            format.json { render :show, status: :created, location: floorplans_path }
+            format.json { render json: {location: url_for(@floorplan)} }
           else
             format.html { render :new }
             format.json { render json: @floorplan.errors, status: :unprocessable_entity }
           end
         end
     end
-
-
-
-
-    #floorplan = Floorplan.last
-    #return floorplan.id
-    #redirect_to floorplans_url
-
-    #redirect_to request.host_with_port + "/floorplans/" + floorplan.id
-
-
   end
 
   # PATCH/PUT /floorplans/1
