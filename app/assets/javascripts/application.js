@@ -13,9 +13,10 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
+//= require bootstrap-sprockets
 
 // Vendor Assets
 //= require fulltilt
 //= require fabric
 
+//= require_tree .

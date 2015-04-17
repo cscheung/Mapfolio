@@ -1,0 +1,80 @@
+/*WebDesignAndSuch.com*/
+
+
+
+
+
+@charset "UTF-8";
+body {
+	font-family:Palatino, Baskerville, Georgia, serif;
+	background:#190121;
+	margin: 0; 
+	padding: 0;
+	text-align: center; 
+	color: #000000;
+}
+ #container {
+	width: 780px;  
+	background: #FFFFFF;
+	margin: 0 auto; 
+	font-size:14px;
+	
+	text-align: left; 
+}
+#mainContent {
+	padding: 0 60px;
+	min-height:600px;
+	line-height:25px
+}
+
+img {border:0px}
+
+
+
+
+/*LINKS*/
+
+/*
+#mainContent a:link, #mainContent a:visited {color:#fff; text-decoration:none; font-size:18px; background:#000000; padding:5px; -webkit-border-radius:10px;
+-moz-border-radius:10px}
+#mainContent a:hover, #mainContent a:active {color:#fff; text-decoration:none; font-size:18px; background:#333333; padding:5px; -webkit-border-radius:10px;
+-moz-border-radius:10px}
+*/
+
+
+
+
+
+/*STYLES FOR CSS POPUP*/
+
+
+#blanket {
+   background-color:#111;
+   opacity: 0.65;
+   *background:none;
+   position:absolute;
+   z-index: 9001;
+   top:0px;
+   left:0px;
+   width:100%;
+}
+
+#popUpDiv {
+	//position:absolute;
+	position: fixed;
+	background:url('crystal-profile.jpg') no-repeat;
+	background-size: contain;
+	left: 50%;
+	top: 50%;
+	width:300px;
+	height:400px;
+	margin-left:-150px;
+	margin-top:-200px;
+	//margin-left: auto;
+	//margin-right: auto;
+	border:5px solid #000;
+	z-index: 9002;
+}
+
+#popUpDiv a {position:relative; top:20px; left:20px}
+
