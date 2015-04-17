@@ -22,6 +22,9 @@ var points = [];
 
 function start_tracking() {
 
+
+document.getElementById("start_tracking").style.visibility = "hidden";
+
 	acc_x = 0;
     acc_y = 0;
     acc_z = 0;
@@ -128,6 +131,7 @@ function start_tracking() {
             time0 = timeT;
 
             put_values_in_view();
+            show_tracking_text();
             
 		});
 
@@ -161,6 +165,11 @@ function put_values_in_view()
 }
 
 
+function show_tracking_text()
+{
+  document.getElementById("tracking").innerHTML = "Currently Tracking...";
+}
+
 var save = function save()
 {
     //clear arrays between points 
@@ -175,7 +184,25 @@ var save = function save()
     };
         
     points.push(new_point);
+    
+    
+
+    
+
+  
+  window.setTimeout(function () {
+    $('#saved_not').addClass("in");
+}, 500);
+
+ window.setTimeout(function(){
+    $('#saved_not').fadeTo("slow", 0.1, function(){
+        $('#saved_not').alert('close')
+    });     
+    }, 700)
+    
+    
 }
+
 
 function done()
 {
