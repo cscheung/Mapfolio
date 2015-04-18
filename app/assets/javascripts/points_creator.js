@@ -17,6 +17,7 @@ var medianX, medianY;
 
 var MedianBufferLength = 21;
 
+var name;
 var points = [];
 
 
@@ -185,24 +186,25 @@ var save = function save()
         
     points.push(new_point);
     
+    window.setTimeout(function () {
+      $("#myAlert").addClass("in");
+    }, 0);
     
-window.setTimeout(function () {
-$("#myAlert").addClass("in");
-}, 0);
-
-window.setTimeout(function () {
-$("#myAlert").removeClass("in");
-}, 1000);
-
-    
-    
+    window.setTimeout(function () {
+      $("#myAlert").removeClass("in");
+    }, 1000);
 }
 
 
 function done()
 {
-    make_floorplan(points);
+    var $inputs = $('#new_floorplan :input');
+    var values = {};
+    $inputs.each(function() {
+        values[this.name] = $(this).val();
+    });
+    
+    var name = values["floorplan[name]"];
+    make_floorplan(name, points);
     points = [];
-    //redirect to edit page
-        //get the id, construct url
 }
