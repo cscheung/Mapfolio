@@ -44,19 +44,11 @@ function save_floorplan()
         type:'POST',
         url: '/floorplans',
         data:  $.param({floorplan: {walls_attributes: walls}}),
+        dataType: 'json',
         success:function(data) {
-          console.log(data);
+          window.location.href = data.location;
         }
     });
-
-    //console.log("Saved!");
-}
-
-function goToEditPage(id)
-{
-
-  var urlList = location.href.split('/');
-  //location.href = urlList[0] + '/floorplans/' + id + '/edit';
 }
 
 //Helper
@@ -99,10 +91,9 @@ function find_intersection(p0, p1)
 //Helper
 function translate_points(points)
 {
-    points[0] = points[0]*SCALING_FACTOR + X_TRANSLATION;
-    points[1] = (WIDTH - points[1])*SCALING_FACTOR - Y_TRANSLATION;
-    points[2] = points[2]*SCALING_FACTOR + X_TRANSLATION;
-    points[3] = (WIDTH - points[3])*SCALING_FACTOR - Y_TRANSLATION;
-
+    points[0] = points[0];
+    points[1] = (WIDTH - points[1]);
+    points[2] = points[2];
+    points[3] = (WIDTH - points[3]);
     return points;
 }
