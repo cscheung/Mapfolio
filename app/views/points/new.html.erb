@@ -1,11 +1,13 @@
+<h1>New Room</h1>
 
-<h1>New Point</h1>
-
-<button onclick="start_tracking()">Start Tracking</button>
-<button onclick="stop_tracking()">Stop tracking</button>
+<button id="start_tracking" onclick="start_tracking()">Start Tracking</button>
 <button onclick="save()">Save Point</button>
 
-<div id="values">    
+<h3 id="tracking"></h3>
+
+<!-- div for tracking numbers -->
+<!-- Hidden for th usability test -->
+<div id="values" style="display: none;">
     <p id="alpha">Idle</p>
     <p id="accelerometer_x"></p>
     <p id="accelerometer_y"></p>
@@ -17,7 +19,12 @@
     <p id="t"></p>
 </div>
 
-<button onclick="done()">Save The Floor Plan</button>
-<%= button_to "Show Floorplans", floorplans_path, :method => "get" %>
+
+<div id="myAlert" class="alert alert-info fade" data-alert="alert">Wall Saved!</div>
 
 
+
+
+
+
+<button onclick="done()">Done</button>
