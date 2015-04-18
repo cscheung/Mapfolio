@@ -24,19 +24,21 @@ class FloorplansController < ApplicationController
       @walls = Wall.where("floorplan_id = ?", params[:id])
   end
 
-  # POST /floorplans
+# POST /floorplans
   # POST /floorplans.json
   def create
     @floorplan = Floorplan.new(floorplan_params)
-	
-    respond_to do |format|
-      if @floorplan.save
-        format.html { redirect_to @floorplan, notice: 'Floorplan was successfully created.' }
-        format.json { render :show, status: :created, location: @floorplan }
-      else
-        format.html { render :new }
-        format.json { render json: @floorplan.errors, status: :unprocessable_entity }
-      end
+
+    begin
+        respond_to do |format|
+          if @floorplan.save
+            format.html { redirect_to @floorplan, notice: 'Floorplan was successfully created.' }
+            format.json { render json: {location: url_for(@floorplan)} }
+          else
+            format.html { render :new }
+            format.json { render json: @floorplan.errors, status: :unprocessable_entity }
+          end
+        end
     end
   end
 

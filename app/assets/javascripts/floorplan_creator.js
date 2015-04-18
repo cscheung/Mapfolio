@@ -39,16 +39,18 @@ function make_walls(points_array)
 
 
 function save_floorplan()
-{    
+{
     $.ajax({
-        type:'POST', 
-        url: '/floorplans', 
-        data:  $.param({floorplan: {walls_attributes: walls}})
+        type:'POST',
+        url: '/floorplans',
+        data:  $.param({floorplan: {walls_attributes: walls}}),
+        dataType: 'json',
+        success:function(data) {
+          window.location.href = data.location;
+        }
     });
-    
-    console.log("Saved!");
-    
 }
+
 //Helper
 function find_intersection(p0, p1)
 {

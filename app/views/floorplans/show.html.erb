@@ -1,14 +1,18 @@
-<p id="notice"><%= notice %></p>
+<img id="banner" src="http://i.imgur.com/SzFVJBp.jpg"/>
 
-<p>
-  <strong>Name:</strong>
-  <%= @floorplan.name %>
-</p>
+<canvas id="c"></canvas>
+<button id="toggle_edit" onclick="toggle_edit()">Edit</button>
+<button onclick="showImage()">Hide Image</button>
+<button onclick="placeImage()">Place Image</button>
+<button onclick="removeImage()">Remove Image</button>
+<button onclick="displayAsImage()">DisplayAsImage</button>
+<input type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
 
-<p>
-  <strong>Created by:</strong>
-  <%= @floorplan.created_by %>
-</p>
+<img id="loadingImage" height="1"  style="visibility:hidden"/>
 
-<%= link_to 'Edit', edit_floorplan_path(@floorplan) %> |
+<%= content_tag :div, class: "floorplan_class", data: {floorplan: @floorplan} do %>
+<% end %>
+<%= content_tag :div, class: "walls_class", data: {walls: @walls} do %>
+<% end %>
+
 <%= link_to 'Back', floorplans_path %>
