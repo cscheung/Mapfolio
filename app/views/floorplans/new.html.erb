@@ -22,9 +22,26 @@
 
 <div id="myAlert" class="alert alert-info fade" data-alert="alert">Wall Saved!</div>
 
+<!-- div for popup instructions -->
+<script type="text/javascript">
+    $(window).load(function(){
+        $('#helpModal').modal('show');
+    });
+</script>
 
-
+<div class="modal fade modal" id = helpModal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	Here are some poopy instructions! <br>
+	<img src="//placehold.it/1000x600" alt="profile" style="width:304px;height:228px">
+	<br>
+	<button type="button" class="btn btn-default" data-dismiss="modal">Got it!</button>
+    </div>
+  </div>
+</div>
+<!-- end popup div -->
 
 
 
 <button onclick="done()">Done</button>
+<button type="button"  data-toggle="modal" data-target=".modal">Help!</button>
