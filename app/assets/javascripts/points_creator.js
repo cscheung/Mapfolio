@@ -188,11 +188,11 @@ var save = function save()
     
 window.setTimeout(function () {
 $("#myAlert").addClass("in");
-}, 100);
+}, 0);
 
 window.setTimeout(function () {
 $("#myAlert").removeClass("in");
-}, 900);
+}, 1000);
 
     
     
