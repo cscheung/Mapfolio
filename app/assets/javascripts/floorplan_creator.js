@@ -1,9 +1,9 @@
 walls = [];
 
-function make_floorplan(points)
+function make_floorplan(name, points)
 {
     make_walls(points);
-    save_floorplan();
+    save_floorplan(name);
 }
 
 function make_walls(points_array)
@@ -38,17 +38,19 @@ function make_walls(points_array)
 }
 
 
-function save_floorplan()
+function save_floorplan(fp_name)
 {
-    $.ajax({
-        type:'POST',
-        url: '/floorplans',
-        data:  $.param({floorplan: {walls_attributes: walls}}),
-        dataType: 'json',
-        success:function(data) {
-          window.location.href = data.location;
-        }
-    });
+  console.log("saving");
+    
+  $.ajax({
+      type:'POST',
+      url: '/floorplans',
+      data:  $.param({floorplan: { name: fp_name, walls_attributes: walls}}),
+      dataType: 'json',
+      success:function(data) {
+        window.location.href = data.location;
+      }
+  });
 }
 
 //Helper
