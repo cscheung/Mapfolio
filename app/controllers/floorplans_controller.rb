@@ -10,7 +10,7 @@ class FloorplansController < ApplicationController
   # GET /floorplans/1
   # GET /floorplans/1.json
   def show
-      
+    @walls = Wall.where("floorplan_id = ?", params[:id])
   end
 
   # GET /floorplans/new
@@ -21,7 +21,6 @@ class FloorplansController < ApplicationController
 
   # GET /floorplans/1/edit
   def edit
-      @walls = Wall.where("floorplan_id = ?", params[:id])
   end
 
 # POST /floorplans

@@ -14,7 +14,6 @@ class PointsController < ApplicationController
 
   # GET /points/new
   def new
-    @point = Point.new
   end
 
   # GET /points/1/edit
