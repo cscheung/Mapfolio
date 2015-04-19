@@ -129,8 +129,8 @@ function start_tracking() {
 
             time0 = timeT;
 
-            put_values_in_view();
-            show_tracking_text();
+            //put_values_in_view();
+            //show_tracking_text();
             
 		});
 
@@ -154,14 +154,14 @@ function compareNumbers(a, b) {
 
 function put_values_in_view()
 {
-    //document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
-    //document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
-	//document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
-	//document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
-	//document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
-    ////document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
-	//document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
-	//document.getElementById("t").innerHTML = "t = " + t;
+    document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
+    document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
+	document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
+	document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
+	document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
+    document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
+	document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
+	document.getElementById("t").innerHTML = "t = " + t;
 }
 
 
