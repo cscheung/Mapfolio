@@ -1,12 +1,15 @@
-<canvas id="c"></canvas>
-<button id="toggle_edit">Save</button>
-<input type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
-
-<img id="loadingImage" height="1"  style="visibility:hidden"/>
-
 <%= content_tag :div, class: "floorplan_class", data: {floorplan: @floorplan} do %>
 <% end %>
 <%= content_tag :div, class: "walls_class", data: {walls: @walls} do %>
 <% end %>
 
-<%= link_to 'Back', floorplans_path %>
+            <canvas id="c" >
+              Sorry, your browser doesn't support the &lt;canvas&gt; element.
+            </canvas>
+            <button class="btn btn-primary" id="toggle_edit" type="submit">Save</button>
+              
+              <button class="btn btn-primary" type="button" onclick="document.getElementById('myimage').click(); return false;">Add Photo</button>
+              <input style="visibility: hidden; display: none;" type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
+
+            <img id="loadingImage" height="1"  style="visibility:hidden"/>
+ 
