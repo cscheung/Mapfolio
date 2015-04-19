@@ -249,8 +249,7 @@ function make_vertex(left, top, wall1, wall2)
     
     c.wall1 = wall1;
     c.wall2 = wall2;
-
-    c.visible = false;    
+  
     c.hasBorders = false;
     c.hasControls = false;
     
@@ -265,7 +264,8 @@ function make_wall(id, coords)
       fill: 'black',
       stroke: 'black',
       strokeWidth: 5,
-      name: 'wall'
+      name: 'wall',
+      selectable: 'false'
     });
     
     c.old_left = 0;
@@ -445,22 +445,6 @@ function showImage() {
 }
 
 
-
-
-
-
-
-
-function hide_update_button()
-{
-    document.getElementById("save_floorplan").style.visibility = 'hidden';
-}
-
-function show_update_button()
-{
-    document.getElementById("save_floorplan").style.visibility = 'visible';
-}
-
 function wall_threshold_hit(vertex)
 {
     
@@ -526,33 +510,6 @@ function changeImage()   {
 function removeImage()   {
   // document.getElementById('loadingImage').src="";
     //canvas.remove(imgInstance);
-}
-function toggle_edit()
-{     
-    var title = document.getElementById("toggle_edit").innerHTML;
-    
-    if (title == "Edit")
-    {
-        document.getElementById("toggle_edit").innerHTML = "Done";  
-        for(i=0; i < verticies.length; i++)
-        {
-            verticies[i].visible = true;
-            verticies[i].selectable = true;
-        } 
-        canvas.renderAll();
-    }
-    else
-    {
-        document.getElementById("toggle_edit").innerHTML = "Edit";   
-        for(i=0; i < verticies.length; i++)
-        {
-            verticies[i].visible = false;
-            verticies[i].selectable = false;
-        }
-        canvas.renderAll();
-        
-        update_floorplan();
-    }      
 }
 
 
