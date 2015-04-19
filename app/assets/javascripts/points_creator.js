@@ -171,6 +171,8 @@ function show_tracking_text()
 
 var save = function save()
 {
+  //If this is the first save, call
+  //start_tracking()
     //clear arrays between points 
     recentX = [];
     recentY = [];
