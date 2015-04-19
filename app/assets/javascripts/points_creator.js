@@ -19,29 +19,23 @@ var MedianBufferLength = 21;
 
 var name;
 var points = [];
-var starttrack=0;
-alpha=0;
-acc_x = 0;
-    acc_y = 0;
-    acc_z = 0;
-pos_x=0;
-pos_y=0;
-velocity_x = 0;
+var startFlag = 0;
+
+function start_tracking() {
+
+	pos_x=0;
+	pos_y=0;
+	velocity_x = 0;
     velocity_y = 0;
     consec_stopsX = 0;
     consec_stopsY = 0;
     position_time = 0;
-
-function start_tracking() {
-
-
+	
 	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
 	deviceOrientation.then(function(orientationData) {	
 
 
 		orientationData.listen(function() {
-
-			// Display calculated screen-adjusted deviceorientation
 
 			var rawEvent = orientationData.getFixedFrameEuler();
 
@@ -139,7 +133,7 @@ function start_tracking() {
 
 function stop_tracking()
 {
-	starttrack=0;
+	startFlag = 0;
 	deviceMotion.then(function(motionData) {
 
 		motionData.stop();
@@ -175,15 +169,15 @@ var save = function save()
   //If this is the first save, call
   //start_tracking()
     //clear arrays between points 
-    if (starttrack==0)	{
-    	
-		pos_x=0;
-		pos_y=0;
+    if (startFlag == 0)	{
+		pos_x = 0;
+		pos_y = 0;
 		velocity_x = 0;
 	    velocity_y = 0;
-	    consec_stopsX=0;
-	    consec_stopsY=0;
-	    starttrack=1;
+	    consec_stopsX = 0;
+	    consec_stopsY = 0;
+	    
+	    startFlag = 1;
     }
 
 
