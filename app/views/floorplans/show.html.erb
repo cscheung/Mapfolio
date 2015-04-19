@@ -3,13 +3,18 @@
 <%= content_tag :div, class: "walls_class", data: {walls: @walls} do %>
 <% end %>
 
-            <canvas id="c" >
-              Sorry, your browser doesn't support the &lt;canvas&gt; element.
-            </canvas>
-            <button class="btn btn-primary" id="toggle_edit" type="submit">Save</button>
-              
-              <button class="btn btn-primary" type="button" onclick="document.getElementById('myimage').click(); return false;">Add Photo</button>
-              <input style="visibility: hidden; display: none;" type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
+<canvas id="c" >
+  Sorry, your browser doesn't support the &lt;canvas&gt; element.
+</canvas>
 
-            <img id="loadingImage" height="1"  style="visibility:hidden"/>
+<%= button_to floorplans_path, class:"btn btn-primary", :method => :get do %>
+  Save
+<% end %>
+              
+              
+              
+    <button class="btn btn-primary" type="button" onclick="document.getElementById('myimage').click(); return false;">Add Photo</button>
+    <input style="visibility: hidden; display: none;" type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
+
+<img id="loadingImage" height="1"  style="visibility:hidden"/>
  

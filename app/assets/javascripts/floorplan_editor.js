@@ -264,8 +264,7 @@ function make_wall(id, coords)
       fill: 'black',
       stroke: 'black',
       strokeWidth: 5,
-      name: 'wall',
-      selectable: 'false'
+      name: 'wall'
     });
     
     c.old_left = 0;
@@ -273,6 +272,7 @@ function make_wall(id, coords)
     c.hasBorders = false;
     c.hasControls = false;
     c.id = id;
+    c.selectable = false;
     return c;
 }
 
