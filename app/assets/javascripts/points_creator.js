@@ -24,8 +24,6 @@ var points = [];
 function start_tracking() {
 
 
-document.getElementById("start_tracking").style.visibility = "hidden";
-
 	acc_x = 0;
     acc_y = 0;
     acc_z = 0;
