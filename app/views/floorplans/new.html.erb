@@ -3,13 +3,13 @@
 <button type="button" class="btn btn-primary btn-lg" onclick="save()">
   Save Point
 </button>
-
+<body onload="start_tracking()">
 <h3 id="tracking"></h3>
 
 <!-- div for tracking numbers -->
 <!-- Hidden for th usability test -->
-<div id="values" style="display: none;">
-    <p id="alpha">Idle</p>
+<div id="values" style="display; none;">
+    <p id="alpha"></p>
     <p id="accelerometer_x"></p>
     <p id="accelerometer_y"></p>
     <p id="accelerometer_z"></p>
@@ -17,6 +17,9 @@
     <p id="velocity_y"></p>
     <p id="pos_x"></p>
     <p id="pos_y"></p>
+    <p id="lasta"></p>
+    <p id="lastx"></p>
+    <p id="lasty"></p>
     <p id="t"></p>
 </div>
 
@@ -36,7 +39,7 @@
 	Here are some poopy instructions! <br>
 	<img src="//placehold.it/1000x600" alt="profile" style="width:304px;height:228px">
 	<br>
-	<button type="button" class="btn btn-default" data-dismiss="modal">Got it!</button>
+	<button type="button" class="btn btn-default" data-dismiss="modal" >Got it!</button>
     </div>
   </div>
 </div>

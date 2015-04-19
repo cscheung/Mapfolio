@@ -19,21 +19,21 @@ var MedianBufferLength = 21;
 
 var name;
 var points = [];
-
-
-function start_tracking() {
-
-
-	acc_x = 0;
+var starttrack=0;
+alpha=0;
+acc_x = 0;
     acc_y = 0;
     acc_z = 0;
-    pos_x = 0;
-    pos_y = 0;
-    velocity_x = 0;
+pos_x=0;
+pos_y=0;
+velocity_x = 0;
     velocity_y = 0;
     consec_stopsX = 0;
     consec_stopsY = 0;
     position_time = 0;
+
+function start_tracking() {
+
 
 	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
 	deviceOrientation.then(function(orientationData) {	
@@ -139,6 +139,7 @@ function start_tracking() {
 
 function stop_tracking()
 {
+	starttrack=0;
 	deviceMotion.then(function(motionData) {
 
 		motionData.stop();
@@ -153,14 +154,14 @@ function compareNumbers(a, b) {
 
 function put_values_in_view()
 {
-    document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
-    document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
-	document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
-	document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
-	document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
-    document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
-	document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
-	document.getElementById("t").innerHTML = "t = " + t;
+    //document.getElementById("alpha").innerHTML = "Alpha = " + alpha;
+    //document.getElementById("accelerometer_x").innerHTML = "Acc X = " + acc_x;
+	//document.getElementById("accelerometer_y").innerHTML = "Acc Y = " + acc_y;
+	//document.getElementById("velocity_x").innerHTML = "Velocity X = " + velocity_x;
+	//document.getElementById("velocity_y").innerHTML = "Velocity Y = " + velocity_y;
+    ////document.getElementById("pos_x").innerHTML = "Position x = " + pos_x;
+	//document.getElementById("pos_y").innerHTML = "Position y = " + pos_y;
+	//document.getElementById("t").innerHTML = "t = " + t;
 }
 
 
@@ -174,6 +175,18 @@ var save = function save()
   //If this is the first save, call
   //start_tracking()
     //clear arrays between points 
+    if (starttrack==0)	{
+    	
+		pos_x=0;
+		pos_y=0;
+		velocity_x = 0;
+	    velocity_y = 0;
+	    consec_stopsX=0;
+	    consec_stopsY=0;
+	    starttrack=1;
+    }
+
+
     recentX = [];
     recentY = [];
 
@@ -185,7 +198,9 @@ var save = function save()
     };
         
     points.push(new_point);
-    
+    //document.getElementById("lasta").innerHTML = "lasta= " + alpha;
+    //document.getElementById("lastx").innerHTML = "lastx = " + pos_x;
+	//document.getElementById("lasty").innerHTML = "lasty= " + pos_y;
     window.setTimeout(function () {
       $("#myAlert").addClass("in");
     }, 0);
@@ -198,6 +213,7 @@ var save = function save()
 
 function done()
 {
+	stop_tracking();
     var $inputs = $('#new_floorplan :input');
     var values = {};
     $inputs.each(function() {
