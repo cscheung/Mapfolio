@@ -7,7 +7,7 @@
 <h3 id="tracking"></h3>
 
 <!-- div for tracking numbers -->
-<!-- Hidden for th usability test -->
+<!-- Hidden for the usability test -->
 <div id="values" style="display; none;">
     <p id="alpha"></p>
     <p id="accelerometer_x"></p>
@@ -31,6 +31,7 @@
     $('#helpModal').modal('show');
 </script>
 
+
 <div class="modal fade modal" id = helpModal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -52,16 +53,6 @@
 </div>
 <!-- end popup div -->
 
-
-
-
-<!--<button onclick="done()">Done</button>-->
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Done
-</button>
-
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -81,9 +72,12 @@
   </div>
 </div>
 
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Done
+</button>
+
 <!-- Button trigger Help modal -->
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#helpModal">
   Help!
 </button>
-<!--<button type="button"  data-toggle="modal" data-target=".modal">Help!</button>-->
-

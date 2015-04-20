@@ -1,8 +1,8 @@
-var HEIGHT = 500;
-var WIDTH = 500;
-var X_MARGIN = 50;
-var Y_MARGIN = 50; 
-var VERTEX_RADIUS = 10;
+var HEIGHT = 300;
+var WIDTH = 300;
+var X_MARGIN = 30;
+var Y_MARGIN = 30; 
+var VERTEX_RADIUS = 12;
 
    
 butnum=0;
@@ -16,8 +16,12 @@ var canvas;
 var imgInstance;
 var imgElement;
 
-$(document).ready(function()
-{  
+$( document ).ready(function() {
+    setup_canvas();
+});
+
+function setup_canvas()
+{
     canvas = new fabric.Canvas('c');
     canvas.setDimensions({
         backgroundColor: '#d1d1d1',
@@ -88,7 +92,7 @@ $(document).ready(function()
 
     draw_floorplan();
     
-});//end document ready
+}
 
 function draw_floorplan()
 {
@@ -128,35 +132,22 @@ function resizeFloorplan(walls)
         if (walls[i].y2 > maxY)
             maxY = walls[i].y2;
     }
-    console.log("maxX = " + maxX);
-    console.log("maxY = " + maxY);
-    console.log("minX = " + minX);
-    console.log("minY = " + minY);
-
+    
     var canvasSizeX = WIDTH - 2*X_MARGIN;
     var canvasSizeY = HEIGHT - 2*Y_MARGIN;
 
-    console.log("canvasSizeX = " + canvasSizeX);
-    console.log("canvasSizeY = " + canvasSizeY);
-
     var scaleX = canvasSizeX*1.0 / ((maxX-minX)*1.0);
     var scaleY = canvasSizeY*1.0 / ((maxY-minY)*1.0);
-    
-    console.log("scaleX = " + scaleX);
-    console.log("scaleY = " + scaleY);
-
+  
     var finalScaling;
     if (scaleX > scaleY)
         finalScaling = scaleY;
     else 
         finalScaling = scaleX;
-    console.log("finalScaling = " + finalScaling);
 
     //center the floorplan on canvas
     var X_TRANSLATION = (canvasSizeX - (maxX - minX)*finalScaling) / 2;
     var Y_TRANSLATION = (canvasSizeY - (maxY - minY)*finalScaling) / 2;
-    console.log("X_TRANSLATION = " + X_TRANSLATION);
-    console.log("Y_TRANSLATION = " + Y_TRANSLATION);
 
     var newWalls = []
     //shift, then scale
@@ -173,10 +164,7 @@ function resizeFloorplan(walls)
         y1 = y1*finalScaling + Y_MARGIN + Y_TRANSLATION;
         y2 = y2*finalScaling + Y_MARGIN + Y_TRANSLATION;
 
-        console.log("X1: " + walls[i].x1 + "->" + x1);
-        console.log("Y1: " + walls[i].y1 + "->" + y1);
-        console.log("X2: " + walls[i].x2 + "->" + x2);
-        console.log("Y2: " + walls[i].y2 + "->" + y2);
+        
         var wall = {
             x1: x1,
             y1: y1,
