@@ -3,6 +3,7 @@ var WIDTH = 300;
 var X_MARGIN = 30;
 var Y_MARGIN = 30; 
 var VERTEX_RADIUS = 12;
+var hidevar=0;
 
    
 butnum=0;
@@ -29,8 +30,17 @@ function setup_canvas()
         height:HEIGHT
     });
     
+    canvas.on('mouse:down', function(e) 
+        {
+            hidevar=1;
+        });
+    canvas.on('mouse:move', function(e) 
+        {
+            hidevar=0;
+        });
     canvas.on('mouse:up', function(e) 
     {
+        //hidevar=0;
         if(e.target)
         {
             //Call a js function
@@ -333,14 +343,18 @@ function display_photo(canvas_object)
         console.log("camera clicked");
         if (imgnum==canvas_object.number) {
             //showImage();
-            displayAsImage();
+            showModal();
+            
+            //displayAsImage();
 
         }
         else {
             imgnum=canvas_object.number;
             var img = document.getElementById('loadingImage');
             //img.style.visibility = 'visible';
-            displayAsImage();
+            showModal();
+            //hidevar=1;
+            //displayAsImage();
 
         }
         canvas.renderAll.bind(canvas);
@@ -501,7 +515,24 @@ function removeImage()   {
 }
 
 
+function showModal() {
+    //canvas.remove(imgInstance);
+    file =imgArray[imgnum];
+    console.log(imgnum);
+    var preview = document.getElementById('loadingImage');
+    var reader = new FileReader();
+    reader.onloadend = function () {
+    preview.src = reader.result;
+    }
 
+    if (file) {
+       reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+    }
+    $('#picModal').modal('show');
+
+}
 
 
 function displayAsImage() {
@@ -526,3 +557,15 @@ function displayAsImage() {
       canvas.add(oImg);
     });
 }
+function hideModal() {
+    if (hidevar==0)    {
+         $('#picModal').modal('hide');
+     }
+     hidevar=0;
+    //$('#picModal').remove();
+    }
+    function hideModal2() {
+   
+         $('#helpModal').modal('hide');
+     
+    }
