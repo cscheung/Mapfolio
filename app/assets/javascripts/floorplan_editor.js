@@ -1,8 +1,9 @@
-var HEIGHT = 500;
-var WIDTH = 500;
-var X_MARGIN = 50;
-var Y_MARGIN = 50; 
-var VERTEX_RADIUS = 10;
+var HEIGHT = 300;
+var WIDTH = 300;
+var X_MARGIN = 30;
+var Y_MARGIN = 30; 
+var VERTEX_RADIUS = 12;
+var hidevar=0;
 
    
 butnum=0;
@@ -16,8 +17,12 @@ var canvas;
 var imgInstance;
 var imgElement;
 
-$(document).ready(function()
-{  
+$( document ).ready(function() {
+    setup_canvas();
+});
+
+function setup_canvas()
+{
     canvas = new fabric.Canvas('c');
     canvas.setDimensions({
         backgroundColor: '#d1d1d1',
@@ -25,8 +30,17 @@ $(document).ready(function()
         height:HEIGHT
     });
     
+    canvas.on('mouse:down', function(e) 
+        {
+            hidevar=1;
+        });
+    canvas.on('mouse:move', function(e) 
+        {
+            hidevar=0;
+        });
     canvas.on('mouse:up', function(e) 
     {
+        //hidevar=0;
         if(e.target)
         {
             //Call a js function
@@ -88,7 +102,7 @@ $(document).ready(function()
 
     draw_floorplan();
     
-});//end document ready
+}
 
 function draw_floorplan()
 {
@@ -128,35 +142,22 @@ function resizeFloorplan(walls)
         if (walls[i].y2 > maxY)
             maxY = walls[i].y2;
     }
-    console.log("maxX = " + maxX);
-    console.log("maxY = " + maxY);
-    console.log("minX = " + minX);
-    console.log("minY = " + minY);
-
+    
     var canvasSizeX = WIDTH - 2*X_MARGIN;
     var canvasSizeY = HEIGHT - 2*Y_MARGIN;
 
-    console.log("canvasSizeX = " + canvasSizeX);
-    console.log("canvasSizeY = " + canvasSizeY);
-
     var scaleX = canvasSizeX*1.0 / ((maxX-minX)*1.0);
     var scaleY = canvasSizeY*1.0 / ((maxY-minY)*1.0);
-    
-    console.log("scaleX = " + scaleX);
-    console.log("scaleY = " + scaleY);
-
+  
     var finalScaling;
     if (scaleX > scaleY)
         finalScaling = scaleY;
     else 
         finalScaling = scaleX;
-    console.log("finalScaling = " + finalScaling);
 
     //center the floorplan on canvas
     var X_TRANSLATION = (canvasSizeX - (maxX - minX)*finalScaling) / 2;
     var Y_TRANSLATION = (canvasSizeY - (maxY - minY)*finalScaling) / 2;
-    console.log("X_TRANSLATION = " + X_TRANSLATION);
-    console.log("Y_TRANSLATION = " + Y_TRANSLATION);
 
     var newWalls = []
     //shift, then scale
@@ -173,10 +174,7 @@ function resizeFloorplan(walls)
         y1 = y1*finalScaling + Y_MARGIN + Y_TRANSLATION;
         y2 = y2*finalScaling + Y_MARGIN + Y_TRANSLATION;
 
-        console.log("X1: " + walls[i].x1 + "->" + x1);
-        console.log("Y1: " + walls[i].y1 + "->" + y1);
-        console.log("X2: " + walls[i].x2 + "->" + x2);
-        console.log("Y2: " + walls[i].y2 + "->" + y2);
+        
         var wall = {
             x1: x1,
             y1: y1,
@@ -249,8 +247,7 @@ function make_vertex(left, top, wall1, wall2)
     
     c.wall1 = wall1;
     c.wall2 = wall2;
-
-    c.visible = false;    
+  
     c.hasBorders = false;
     c.hasControls = false;
     
@@ -273,6 +270,7 @@ function make_wall(id, coords)
     c.hasBorders = false;
     c.hasControls = false;
     c.id = id;
+    c.selectable = false;
     return c;
 }
 
@@ -345,14 +343,18 @@ function display_photo(canvas_object)
         console.log("camera clicked");
         if (imgnum==canvas_object.number) {
             //showImage();
-            displayAsImage();
+            showModal();
+            
+            //displayAsImage();
 
         }
         else {
             imgnum=canvas_object.number;
             var img = document.getElementById('loadingImage');
             //img.style.visibility = 'visible';
-            displayAsImage();
+            showModal();
+            //hidevar=1;
+            //displayAsImage();
 
         }
         canvas.renderAll.bind(canvas);
@@ -377,7 +379,7 @@ function create_camera_icon()
     {
         oImg.name = "camera";
         oImg.number = butnum-1;
-        oImg.scale(0.5);
+        oImg.scale(0.6);
         oImg.set('selectable', true);
         oImg.set('hasRotatingPoint', false);
         oImg.lockScalingY=true;
@@ -416,50 +418,10 @@ function showPhoto()    {
     }
     butnum++;
 }
-function showPhoto2()    {
-    var preview = document.getElementById('loadingImage');
-    //var file = document.querySelector('input[type=file]').files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-    preview.src = reader.result;
-    }
-
-    if (imgArray[imgnum]) {
-       reader.readAsDataURL(imgArray[imgnum]);
-    } else {
-       // preview.src = "";
-    }
-
-}
 /*camera code*/
 
-function showImage() {
-    var img = document.getElementById('loadingImage');
-
-    if (img.style.visibility == 'visible') {
-        img.style.visibility = 'hidden';
-    }
-    else    {
-        img.style.visibility = 'visible';
-    }
-}
 
 
-
-
-
-
-
-
-function hide_update_button()
-{
-    document.getElementById("save_floorplan").style.visibility = 'hidden';
-}
-
-function show_update_button()
-{
-    document.getElementById("save_floorplan").style.visibility = 'visible';
-}
 
 function wall_threshold_hit(vertex)
 {
@@ -487,76 +449,25 @@ function wall_threshold_hit(vertex)
     
     return false;
 }
-function placeImage()   {
-    imgElement = document.getElementById('loadingImage');
 
-    imgInstance = new fabric.Image(imgElement, {
-      //left: 0,
-      //top: 100,
-      //angle: 30,
-      //opacity: 0.85
-    });
-    /*
-    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
-        canvas.renderAll.bind(canvas), {
-  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
-*/
-    console.log("placeImage()");
-    canvas.add(imgInstance);
-}
-function changeImage()   {
-    //imgElement = document.getElementById('loadingImage');
+function showModal() {
     //canvas.remove(imgInstance);
- //imgInstance.setElement(document.getElementById('loadingImage'));
-    //imgInstance = new fabric.Image(imgElement, {
-      //left: 0,
-      //top: 100,
-      //angle: 30,
-      //opacity: 0.85
-    //});
-    /*
-    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
-        canvas.renderAll.bind(canvas), {
-  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
-*/
-    console.log("changeImage()");
-    
-    //canvas.add(imgInstance);
-}
-function removeImage()   {
-  // document.getElementById('loadingImage').src="";
-    //canvas.remove(imgInstance);
-}
-function toggle_edit()
-{     
-    var title = document.getElementById("toggle_edit").innerHTML;
-    
-    if (title == "Edit")
-    {
-        document.getElementById("toggle_edit").innerHTML = "Done";  
-        for(i=0; i < verticies.length; i++)
-        {
-            verticies[i].visible = true;
-            verticies[i].selectable = true;
-        } 
-        canvas.renderAll();
+    file =imgArray[imgnum];
+    console.log(imgnum);
+    var preview = document.getElementById('loadingImage');
+    var reader = new FileReader();
+    reader.onloadend = function () {
+    preview.src = reader.result;
     }
-    else
-    {
-        document.getElementById("toggle_edit").innerHTML = "Edit";   
-        for(i=0; i < verticies.length; i++)
-        {
-            verticies[i].visible = false;
-            verticies[i].selectable = false;
-        }
-        canvas.renderAll();
-        
-        update_floorplan();
-    }      
+
+    if (file) {
+       reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+    }
+    $('#picModal').modal('show');
+
 }
-
-
-
 
 
 function displayAsImage() {
@@ -565,15 +476,6 @@ function displayAsImage() {
     console.log(imgnum);
   var imgURL = URL.createObjectURL(file);
   
-  /*
-      img = document.getElementById('loadingImage');
-
-  
-
-  img.src = imgURL;
-  */
-  //document.body.appendChild(img);
-  //canvas.renderAll.bind(canvas);
   imgInstance=new fabric.Image.fromURL(imgURL, function(oImg) {
         oImg.name="photo";
         oImg.width=canvas.width;
@@ -581,3 +483,15 @@ function displayAsImage() {
       canvas.add(oImg);
     });
 }
+function hideModal() {
+    if (hidevar==0)    {
+         $('#picModal').modal('hide');
+     }
+     hidevar=0;
+    //$('#picModal').remove();
+    }
+    function hideModal2() {
+   
+         $('#helpModal').modal('hide');
+     
+    }

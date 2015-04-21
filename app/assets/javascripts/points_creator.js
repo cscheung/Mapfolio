@@ -19,31 +19,23 @@ var MedianBufferLength = 21;
 
 var name;
 var points = [];
-
+var startFlag = 0;
 
 function start_tracking() {
 
-
-document.getElementById("start_tracking").style.visibility = "hidden";
-
-	acc_x = 0;
-    acc_y = 0;
-    acc_z = 0;
-    pos_x = 0;
-    pos_y = 0;
-    velocity_x = 0;
+	pos_x=0;
+	pos_y=0;
+	velocity_x = 0;
     velocity_y = 0;
     consec_stopsX = 0;
     consec_stopsY = 0;
     position_time = 0;
-
+	
 	deviceOrientation = FULLTILT.getDeviceOrientation({'type': 'world'});
 	deviceOrientation.then(function(orientationData) {	
 
 
 		orientationData.listen(function() {
-
-			// Display calculated screen-adjusted deviceorientation
 
 			var rawEvent = orientationData.getFixedFrameEuler();
 
@@ -131,8 +123,8 @@ document.getElementById("start_tracking").style.visibility = "hidden";
 
             time0 = timeT;
 
-            put_values_in_view();
-            show_tracking_text();
+            //put_values_in_view();
+            //show_tracking_text();
             
 		});
 
@@ -141,6 +133,7 @@ document.getElementById("start_tracking").style.visibility = "hidden";
 
 function stop_tracking()
 {
+	startFlag = 0;
 	deviceMotion.then(function(motionData) {
 
 		motionData.stop();
@@ -173,7 +166,21 @@ function show_tracking_text()
 
 var save = function save()
 {
+  //If this is the first save, call
+  //start_tracking()
     //clear arrays between points 
+    if (startFlag == 0)	{
+		pos_x = 0;
+		pos_y = 0;
+		velocity_x = 0;
+	    velocity_y = 0;
+	    consec_stopsX = 0;
+	    consec_stopsY = 0;
+	    
+	    startFlag = 1;
+    }
+
+
     recentX = [];
     recentY = [];
 
@@ -185,7 +192,9 @@ var save = function save()
     };
         
     points.push(new_point);
-    
+    //document.getElementById("lasta").innerHTML = "lasta= " + alpha;
+    //document.getElementById("lastx").innerHTML = "lastx = " + pos_x;
+	//document.getElementById("lasty").innerHTML = "lasty= " + pos_y;
     window.setTimeout(function () {
       $("#myAlert").addClass("in");
     }, 0);
@@ -198,6 +207,7 @@ var save = function save()
 
 function done()
 {
+	stop_tracking();
     var $inputs = $('#new_floorplan :input');
     var values = {};
     $inputs.each(function() {

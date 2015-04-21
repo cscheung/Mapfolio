@@ -1,14 +1,15 @@
 <h1>New Room</h1>
 
-<button id="start_tracking" onclick="start_tracking()">Start Tracking</button>
-<button onclick="save()">Save Point</button>
-
+<button type="button" class="btn btn-primary btn-lg" onclick="save()">
+  Save Point
+</button>
+<body onload="start_tracking(); $('#helpModal').modal('show');">
 <h3 id="tracking"></h3>
 
 <!-- div for tracking numbers -->
-<!-- Hidden for th usability test -->
-<div id="values" style="display: none;">
-    <p id="alpha">Idle</p>
+<!-- Hidden for the usability test -->
+<div id="values" style="display; none;">
+    <p id="alpha"></p>
     <p id="accelerometer_x"></p>
     <p id="accelerometer_y"></p>
     <p id="accelerometer_z"></p>
@@ -16,40 +17,35 @@
     <p id="velocity_y"></p>
     <p id="pos_x"></p>
     <p id="pos_y"></p>
+    <p id="lasta"></p>
+    <p id="lastx"></p>
+    <p id="lasty"></p>
     <p id="t"></p>
 </div>
 
 
 <div id="myAlert" class="alert alert-info fade" data-alert="alert">Wall Saved!</div>
 
-<!-- div for popup instructions -->
-<script type="text/javascript">
-    $(window).load(function(){
-        $('#helpModal').modal('show');
-    });
-</script>
-
-<div class="modal fade modal" id = helpModal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade modal" id = helpModal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-	Here are some poopy instructions! <br>
-	<img src="//placehold.it/1000x600" alt="profile" style="width:304px;height:228px">
 	<br>
+	<font size="5">How to Create a Floor Plan</font>
+	<br><br>
+	Keep your phone parallel to the floor during the entire measuring process
+	<br>
+	<img src="<%= asset_path("crystal-profile.png") %>" alt="profile" style="width:298px;height:428px">
+	<br>
+	Hold the top of your phone against each wall of the room and hit "Save Point"
+	<br>
+	<img src="<%= asset_path("crystal-topdown.png") %>" alt="profile" style="width:298px;height:200px">
+	<br><br>
 	<button type="button" class="btn btn-default" data-dismiss="modal">Got it!</button>
+	<br><br>
     </div>
   </div>
 </div>
 <!-- end popup div -->
-
-
-
-
-<!--<button onclick="done()">Done</button>-->
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Done
-</button>
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -70,9 +66,12 @@
   </div>
 </div>
 
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Done
+</button>
+
 <!-- Button trigger Help modal -->
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#helpModal">
   Help!
 </button>
-<!--<button type="button"  data-toggle="modal" data-target=".modal">Help!</button>-->
-
