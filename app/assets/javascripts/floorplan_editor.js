@@ -15,6 +15,7 @@ canvas_walls = [];
 var canvas;
 var imgInstance;
 var imgElement;
+var reader;
 
 $( document ).ready(function() {
     setup_canvas();
@@ -40,12 +41,10 @@ function setup_canvas()
             if(e.target.name == 'vertex')
             {
                 redraw_elements();
-                console.log("vertex done moving");
             }
             else if (e.target.name == 'wall')
             {
                 redraw_elements();
-                console.log("wall done moving");            
             }
         }
 
@@ -204,9 +203,6 @@ function draw_walls(walls_array)
       var wall1_id = i;
       var wall2_id = (i+1)%canvas_walls.length;
       
-      //console.log(canvas_walls[i].x2);
-      //console.log(canvas_walls[i].y2);
-      
       var vertex = make_vertex(
       canvas_walls[i].x2, 
       canvas_walls[i].y2, 
@@ -269,9 +265,6 @@ function move_walls_with_vertex(vertex)
 {            
     //Want to check this eventaully            
     //if(!wall_threshold_hit(p))
-    console.log(vertex.wall1.get('top'));
-    console.log(vertex.wall1.get('left'));
-    console.log('--');
     
     vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
     vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
@@ -306,18 +299,8 @@ function move_vertecies_with_wall(wall)
             verticies[i].wall2.set({'x1' : verticies[i].left + VERTEX_RADIUS});
             verticies[i].wall2.set({'y1' : verticies[i].top + VERTEX_RADIUS});
         }
-        
     }
-    
 }   
-
- 
-
-/*dog*/
-b=0;
-
-
-/*------------------------------------*/
 
 /*camera code*/
 function display_photo(canvas_object)
@@ -325,12 +308,10 @@ function display_photo(canvas_object)
     if (canvas_object.name == "photo")
     {
         canvas.remove(canvas_object);
-        console.log("photo clicked");
     }
     if (canvas_object.name == "camera")
     {
         //changeImage();
-        console.log("camera clicked");
         if (imgnum==canvas_object.number) {
             //showImage();
             displayAsImage();
@@ -344,22 +325,19 @@ function display_photo(canvas_object)
 
         }
         canvas.renderAll.bind(canvas);
-    }
-       
-    
+    }    
 }
+
 function lock_camera(canvas_object)  {
     if (canvas_object.name == "camera")
     {
         //canvas_object.set('selectable', false);
-        console.log("locking camera");
         
     }
 
 }
 function create_camera_icon()
 {
-    console.log("CAMERA created");
     //Dont take the / out
     fabric.Image.fromURL("/camera.png", function(oImg) 
     {
@@ -382,20 +360,23 @@ function previewFile() {
     button[butnum]=create_camera_icon();
     
     showPhoto();
-    imgnum=butnum;
-    
-    
-    
+    imgnum=butnum;    
 }
+
 function showPhoto()    {
     var preview = document.getElementById('loadingImage');
     imgArray[butnum]=document.querySelector('input[type=file]').files[0];
-    console.log("imgarray %d assigned", butnum);
-    //var file = document.querySelector('input[type=file]').files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-    preview.src = reader.result;
-    }
+    
+      reader = new FileReader();
+      reader.onloadend = function () 
+      {
+        preview.src = reader.result;
+        console.log(preview.src.Orientation);
+        console.log(preview.Orientation);
+        console.log(reader.result.Orientation);
+var exif = EXIF.readFromBinaryFile(new BinaryFile(this.result));
+        console.log(exif);
+      }
 
     if (imgArray[butnum]) {
        reader.readAsDataURL(imgArray[butnum]);
@@ -404,10 +385,11 @@ function showPhoto()    {
     }
     butnum++;
 }
+
 function showPhoto2()    {
     var preview = document.getElementById('loadingImage');
     //var file = document.querySelector('input[type=file]').files[0];
-    var reader = new FileReader();
+    reader = new FileReader();
     reader.onloadend = function () {
     preview.src = reader.result;
     }
@@ -419,7 +401,6 @@ function showPhoto2()    {
     }
 
 }
-/*camera code*/
 
 function showImage() {
     var img = document.getElementById('loadingImage');
@@ -432,6 +413,32 @@ function showImage() {
     }
 }
 
+function placeImage()   {
+    imgElement = document.getElementById('loadingImage');
+
+    imgInstance = new fabric.Image(imgElement, {
+      //left: 0,
+      //top: 100,
+      //angle: 30,
+      //opacity: 0.85
+    });
+    
+    canvas.add(imgInstance);
+}
+
+function displayAsImage() 
+{
+  file =imgArray[imgnum];
+
+  var imgURL = URL.createObjectURL(file);
+
+  imgInstance=new fabric.Image.fromURL(imgURL, function(oImg) {
+        oImg.name="photo";
+        oImg.width=canvas.width;
+        oImg.height=canvas.height;
+      canvas.add(oImg);
+    });
+}
 
 function wall_threshold_hit(vertex)
 {
@@ -458,71 +465,4 @@ function wall_threshold_hit(vertex)
     
     
     return false;
-}
-function placeImage()   {
-    imgElement = document.getElementById('loadingImage');
-
-    imgInstance = new fabric.Image(imgElement, {
-      //left: 0,
-      //top: 100,
-      //angle: 30,
-      //opacity: 0.85
-    });
-    /*
-    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
-        canvas.renderAll.bind(canvas), {
-  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
-*/
-    console.log("placeImage()");
-    canvas.add(imgInstance);
-}
-function changeImage()   {
-    //imgElement = document.getElementById('loadingImage');
-    //canvas.remove(imgInstance);
- //imgInstance.setElement(document.getElementById('loadingImage'));
-    //imgInstance = new fabric.Image(imgElement, {
-      //left: 0,
-      //top: 100,
-      //angle: 30,
-      //opacity: 0.85
-    //});
-    /*
-    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
-        canvas.renderAll.bind(canvas), {
-  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
-*/
-    console.log("changeImage()");
-    
-    //canvas.add(imgInstance);
-}
-function removeImage()   {
-  // document.getElementById('loadingImage').src="";
-    //canvas.remove(imgInstance);
-}
-
-
-
-
-
-function displayAsImage() {
-    //canvas.remove(imgInstance);
-    file =imgArray[imgnum];
-    console.log(imgnum);
-  var imgURL = URL.createObjectURL(file);
-  
-  /*
-      img = document.getElementById('loadingImage');
-
-  
-
-  img.src = imgURL;
-  */
-  //document.body.appendChild(img);
-  //canvas.renderAll.bind(canvas);
-  imgInstance=new fabric.Image.fromURL(imgURL, function(oImg) {
-        oImg.name="photo";
-        oImg.width=canvas.width;
-        oImg.height=canvas.height;
-      canvas.add(oImg);
-    });
 }
