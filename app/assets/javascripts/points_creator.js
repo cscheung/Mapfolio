@@ -138,14 +138,13 @@ function start_tracking() {
 
 function stop_tracking()
 {
+	if (startFlag) 
+	{
+		deviceMotion.then(function(motionData) {
+			motionData.stop();
+		});
+	}
 	startFlag = 0;
-	/*
-	deviceMotion.then(function(motionData) {
-
-		motionData.stop();
-
-	});
-	*/
 }
 
 function compareNumbers(a, b) {
