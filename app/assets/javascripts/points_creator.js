@@ -21,6 +21,11 @@ var name;
 var points = [];
 var startFlag = 0;
 
+function start_up()
+{
+  $('#helpModal').modal('show');
+  start_tracking();
+}
 function start_tracking() {
 
 	pos_x=0;
