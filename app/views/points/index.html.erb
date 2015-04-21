@@ -1,4 +1,104 @@
-<p id="notice"><%= notice %></p>
+<h1>Instructions</h1>
+<div class="modal fade modal" id = 1Modal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <br>
+      <font size="5">How to Create a Floor Plan</font>
+      <br><br>
+      Keep your phone parallel to the floor during the entire measuring process
+      <br>
+      <img src="<%= asset_path("crystal-profile.png") %>" alt="profile" style="width:298px;height:428px">
+      <br>
+      Hold the top of your phone against each wall of the room and hit "Save Point"
+      <br>
+      <img src="<%= asset_path("crystal-topdown.png") %>" alt="profile" style="width:298px;height:200px">
+      <br><br>
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <br><br>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade modal" id = "2Modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <img src="<%= asset_path("editinstr.png") %>" img id="helpImage" alt="profile" style="width:298px">
+      <br><br>
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+    
+  </div>
+</div>
+<div class="modal fade modal" id = "3Modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      Scroll through list to find specified floorplan.
+      Press the pencil icon to view or edit the floorplan.
+      Press the X icon to delete the floorplan.
+      <br><br>
+
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="btn-group">
+  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#3Modal">
+    Instructions for managing floorplans
+  </button>
+</div>
+<br><br>
+<div class="btn-group">
+  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#1Modal">
+    Instructions for measuring a room
+  </button>
+</div>
+<br><br>
+<div class="btn-group">
+  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#2Modal">
+    Instructions for editing a floorplan
+  </button>
+</div>
+<h1>Settings</h1>
+<input type="button" value="Meters" onclick="return change(this);" />
+
+<script type="text/javascript">
+function change( el )
+{
+  if ( el.value === "Feet" )
+    el.value = "Meters";
+  else
+    el.value = "Feet";
+}
+</script>
+<h1>Sign In</h1>
+
+<form method="POST">
+  <input type="text" name = "user"/>
+  <br>
+  <input type="password" name = "password"  />
+  <br>
+  <br>
+  <input type="submit" name = "submit" value = "Log In"/ >
+  <br>
+  <br>
+  <button type="button" class="btn btn-default">I don't have a Mapfolio account</button>
+</form>
+<h1>About</h1>
+Landlords and tenants expect rental process to be a convenient online experience. While much of rental process has been moved online, the process of efficiently creating and effectively presenting a visual of a rental unit has not yet been perfected. Tenants do not want to waste their time trying to figure out a complex floor plan with no indication of what the property actually looks like. Landlords want a more modern way to present their property information to potential tenants.
+Using the gyroscope and accelerometer in a mobile device, this mobile application will allow landlords to generate a floor plan that can be stored in the cloud.
+System Architecture Overview
+
+    Javascript to access, process, and interpret a mobile phone’s camera and sensors data.
+    Ruby on Rails as a web application development framework.
+    Full-Tilt to utilize the phone’s gyroscope and accelerometer sensors.
+    Fabric.js to show, edit, and render the completed floor plans on HTML canvas.
+    Microsoft Azure to serve up our master branch on GitHub. The link is mapfolio.cloudapp.net.
+
+
+
+<!-- <p id="notice"><%= notice %></p>
 
 <h1>Listing Points</h1>
 
@@ -29,3 +129,4 @@
 <br>
 
 <%= link_to 'New Point', new_point_path %>
+ -->
