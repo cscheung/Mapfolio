@@ -184,6 +184,7 @@ var save = function save()
 	    consec_stopsY = 0;
 	    
 	    startFlag = 1;
+	    document.getElementById("secondinst").style.visibility="visible";
     }
 
 

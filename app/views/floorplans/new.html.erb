@@ -1,13 +1,15 @@
 <script> start_up()(); </script>
 
 <h1>New Room</h1>
+<p class="text-primary" id='initinst'>Place phone against wall and press 'Save Point'</p>
 
 <button type="button" class="btn btn-primary btn-lg" onclick="save(),onClick()">
   Save Point
 </button>
 <body>
-<h3 id="tracking"></h3>
 
+<h3 id="tracking"></h3>
+<p class="text-primary" id='secondinst' style="visibility:hidden">Go to the next wall. Press 'Done' when every wall in the room is saved</p>
 <!-- div for tracking numbers -->
 <!-- Hidden for the usability test -->
 <div id="values" style="display; none;">
@@ -88,6 +90,7 @@
 </button>
 
 <!-- Button trigger Help modal -->
+<br><br><br>
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#helpModal">
-  Help!
+  Read Instructions
 </button>
