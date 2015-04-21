@@ -139,11 +139,13 @@ function start_tracking() {
 function stop_tracking()
 {
 	startFlag = 0;
+	/*
 	deviceMotion.then(function(motionData) {
 
 		motionData.stop();
 
 	});
+	*/
 }
 
 function compareNumbers(a, b) {
