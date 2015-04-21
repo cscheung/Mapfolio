@@ -201,13 +201,20 @@ var save = function save()
     //document.getElementById("lasta").innerHTML = "lasta= " + alpha;
     //document.getElementById("lastx").innerHTML = "lastx = " + pos_x;
 	//document.getElementById("lasty").innerHTML = "lasty= " + pos_y;
+    // window.setTimeout(function () {
+    //   $("#myAlert").addClass("in");
+    // }, 0);
+    
+    // window.setTimeout(function () {
+    //   $("#myAlert").removeClass("in");
+    // }, 1000);
     window.setTimeout(function () {
-      $("#myAlert").addClass("in");
+      $("#myAlert2").addClass("in");
     }, 0);
     
     window.setTimeout(function () {
-      $("#myAlert").removeClass("in");
-    }, 1000);
+      $("#myAlert2").removeClass("in");
+    }, 3000);
 }
 
 
