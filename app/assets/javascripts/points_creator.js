@@ -21,6 +21,11 @@ var name;
 var points = [];
 var startFlag = 0;
 
+function start_up()
+{
+  $('#helpModal').modal('show');
+  start_tracking();
+}
 function start_tracking() {
 
 	pos_x=0;
@@ -133,12 +138,13 @@ function start_tracking() {
 
 function stop_tracking()
 {
+	if (startFlag) 
+	{
+		deviceMotion.then(function(motionData) {
+			motionData.stop();
+		});
+	}
 	startFlag = 0;
-	deviceMotion.then(function(motionData) {
-
-		motionData.stop();
-
-	});
 }
 
 function compareNumbers(a, b) {

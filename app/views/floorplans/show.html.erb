@@ -1,9 +1,4 @@
-<!--
-<script src="floorplan_editor.js"></script>
-<script type="text/javascript">
-    setup_canvas()
-</script>
--->
+<script> setup_canvas(); </script>
 
 <!-- Invisible stuff we need -->
 <%= content_tag :div, class: "walls_class", data: {walls: @walls} do %>
@@ -12,7 +7,6 @@
 <% end %>
 <!--<img id="loadingImage" height="1"  style="visibility:hidden"/>-->
 <input style="visibility: hidden; display: none;" type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
-
 
 <div class="modal fade modal" id = "picModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" onclick="hideModal()">
   <div class="modal-dialog modal-lg">
