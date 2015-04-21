@@ -3,7 +3,7 @@
 <button type="button" class="btn btn-primary btn-lg" onclick="save()">
   Save Point
 </button>
-<body onload="start_tracking()">
+<body onload="start_tracking(); $('#helpModal').modal('show');">
 <h3 id="tracking"></h3>
 
 <!-- div for tracking numbers -->
@@ -25,12 +25,6 @@
 
 
 <div id="myAlert" class="alert alert-info fade" data-alert="alert">Wall Saved!</div>
-
-<!-- div for popup instructions -->
-<script type="text/javascript">
-    $('#helpModal').modal('show');
-</script>
-
 
 <div class="modal fade modal" id = helpModal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg">
