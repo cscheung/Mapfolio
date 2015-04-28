@@ -16,9 +16,7 @@ var canvas;
 var imgInstance;
 var imgElement;
 
-$( document ).ready(function() {
-    setup_canvas();
-});
+$( window ).load(function() { setup_canvas(); });
 
 function setup_canvas()
 {
