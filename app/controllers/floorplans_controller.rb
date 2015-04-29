@@ -44,15 +44,16 @@ class FloorplansController < ApplicationController
   # PATCH/PUT /floorplans/1
   # PATCH/PUT /floorplans/1.json
   def update
-    respond_to do |format|
-      if @floorplan.update(floorplan_params)
-        format.html { redirect_to @floorplan, notice: 'Floorplan was successfully updated.' }
-        format.json { render :show, status: :ok, location: @floorplan }
-      else
-        format.html { render :edit }
-        format.json { render json: @floorplan.errors, status: :unprocessable_entity }
-      end
-    end
+	  @floorplan.update(floorplan_params)
+#     respond_to do |format|
+#       if @floorplan.update(floorplan_params)
+#         format.html { redirect_to @floorplan, notice: 'Floorplan was successfully updated.' }
+#         format.json { render :show, status: :ok, location: @floorplan }
+#       else
+#         format.html { render :edit }
+#         format.json { render json: @floorplan.errors, status: :unprocessable_entity }
+#       end
+#     end
   end
 
   # DELETE /floorplans/1

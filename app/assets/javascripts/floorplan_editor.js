@@ -19,7 +19,7 @@ var imgElement;
 $( window ).load(function() { setup_canvas(); });
 
 function setup_canvas()
-{
+{ 
     canvas = new fabric.Canvas('c');
     canvas.setDimensions({
         backgroundColor: '#d1d1d1',
@@ -307,7 +307,38 @@ function move_vertecies_with_wall(wall)
         
     }
     
-}   
+}
+
+/*function update_floorplan()
+{
+  var floorplan_id = $('.floorplan_class').data('floorplan').id; 
+  var fp_name = $('.floorplan_class').data('floorplan').name;
+ 
+  /*HAVE TO FIX CANVAS BUG BEFORE WE CAN SAVE CHANGES TO DB
+	  for (i = 0; i < canvas_walls.length; i++)
+    {
+        var points = 
+        [
+            db_walls[i].x1 = canvas_walls.,
+            db_walls[i].y1,
+            db_walls[i].x2,
+            db_walls[i].y2
+        ];
+    }*/
+  
+ /* $.ajax({
+      type:'PUT',
+      url: '/floorplans/' + floorplan_id,
+      data:  $.param({floorplan: { id:floorplan_id, name:"CHANGED", walls_attributes: db_walls}}),
+      dataType: 'json'
+   });
+   
+    window.location.href = "/floorplans";
+    
+      
+
+        
+}*/
 
  
 
