@@ -16,8 +16,6 @@ var canvas;
 var imgInstance;
 var imgElement;
 
-$( window ).load(function() { setup_canvas(); });
-
 function setup_canvas()
 {
     canvas = new fabric.Canvas('c');

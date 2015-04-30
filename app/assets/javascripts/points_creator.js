@@ -21,7 +21,7 @@ var name;
 var points = [];
 var startFlag = 0;
 
-$( window ).load(function() { start_up();})
+
 
 function start_up()
 {
