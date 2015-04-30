@@ -1,16 +1,19 @@
 <script> start_up()(); </script>
 
 <h1>New Room</h1>
-<p class="text-primary" id='initinst'>Place phone against wall and press 'Save Point'</p>
+<!-- <p class="text-primary" id='initinst'>Place phone against wall and press 'Save Point'</p> -->
 
 <button type="button" class="btn btn-primary btn-lg" onclick="save(),onClick()">
   Save Point
 </button>
 <body>
+  <br><br>
+<!-- <p class="text-primary" id='secondinst'>Currently measuring Wall <a id="clicks">1</a></p> -->
 
+<p class="text-primary" id='secondinst'>Currently measuring Wall <a id="char2">A</a></p>
 <h3 id="tracking"></h3>
-<p class="text-primary" id='secondinst' style="visibility:hidden">Go to the next wall. Press 'Done' when every wall in the room is saved</p>
-<!-- div for tracking numbers -->
+<!-- <p class="text-primary" id='secondinst' style="visibility:hidden">Go to the next wall. Press 'Done' when every wall in the room is saved</p>
+ --><!-- div for tracking numbers -->
 <!-- Hidden for the usability test -->
 <div id="values" style="display; none;">
     <p id="alpha"></p>
@@ -29,10 +32,16 @@
 
 <body>
     <script type="text/javascript">
-    var clicks = 0;
+    var clicks = 1;
+    var chr ='A';
+    char='abcdefghijklmnopqrstuvwxyz';
     function onClick() {
         clicks += 1;
-        document.getElementById("clicks").innerHTML = clicks;
+        chr= String.fromCharCode(97 + clicks);
+        char2='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(clicks-1);
+        // document.getElementById("clicks").innerHTML = clicks;
+
+        document.getElementById("char2").innerHTML = char2;
     };
     </script>
     <!-- <button type="button" onClick="onClick()">Click me</button> -->
@@ -42,7 +51,7 @@
 </body></html>
 
 <!-- <div id="myAlert" class="alert alert-info fade" data-alert="alert">Wall Saved!</div> -->
-<div id="myAlert2" class="alert alert-info fade" data-alert="alert"><a id="clicks">0</a> Walls Saved</div>
+<div id="myAlert2" class="alert alert-info fade" data-alert="alert">Wall Saved</div>
 
 <div class="modal fade modal" id = helpModal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg">
@@ -90,7 +99,7 @@
 </button>
 
 <!-- Button trigger Help modal -->
-<br><br><br>
+
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#helpModal">
-  Read Instructions
+  Help!
 </button>
