@@ -114,33 +114,60 @@ function draw_floorplan()
 
 function resizeFloorplan(walls)
 {
+    var newWalls = []
+
+    //rotate the walls, so the first wall is parallel to the x axis
+    var slope = (walls[0].y2 - walls[0].y1) / (walls[0].x2 - walls[0].x1);
+    var rotateby = Math.atan(slope); 
+    var matrix = new FULLTILT.RotationMatrix();
+    matrix.rotateZ(rotateby);
+    
+    for (var i = 0; i < walls.length; i++) {
+        var new_x1 = matrix.elements[0]*walls[i].x1 + matrix.elements[3]*walls[i].y1; 
+        var new_y1 = matrix.elements[1]*walls[i].x1 + matrix.elements[4]*walls[i].y1;
+        var new_x2 = matrix.elements[0]*walls[i].x2 + matrix.elements[3]*walls[i].y2;
+        var new_y2 = matrix.elements[1]*walls[i].x2 + matrix.elements[4]*walls[i].y2;
+        
+        // var new_x1 = walls[i].x1; 
+        // var new_y1 = walls[i].y1;
+        // var new_x2 = walls[i].x2;
+        // var new_y2 = walls[i].y2;
+
+        var wall = {
+            x1: new_x1,
+            y1: new_y1,
+            x2: new_x2,
+            y2: new_y2
+        }     
+        newWalls.push(wall);
+    }
+
+    //find min and max
     var minX = 9007199254740992;
     var minY = 9007199254740992;
     var maxX = -9007199254740992; 
     var maxY = -9007199254740992;
 
-    //find min and max
-    for (var i = 0; i < walls.length; i++) {
-        if (walls[i].x1 < minX)
-            minX = walls[i].x1;
-        if (walls[i].x1 > maxX)
-            maxX = walls[i].x1;
+    for (var i = 0; i < newWalls.length; i++) {
+        if (newWalls[i].x1 < minX)
+            minX = newWalls[i].x1;
+        if (newWalls[i].x1 > maxX)
+            maxX = newWalls[i].x1;
         
-        if (walls[i].x2 < minX)
-            minX = walls[i].x2;
-        if (walls[i].x2 > maxX)
-            maxX = walls[i].x2;
+        if (newWalls[i].x2 < minX)
+            minX = newWalls[i].x2;
+        if (newWalls[i].x2 > maxX)
+            maxX = newWalls[i].x2;
 
-        if (walls[i].y1 < minY)
-            minY = walls[i].y1;
-        if (walls[i].y1 > maxY)
-            maxY = walls[i].y1;
+        if (newWalls[i].y1 < minY)
+            minY = newWalls[i].y1;
+        if (newWalls[i].y1 > maxY)
+            maxY = newWalls[i].y1;
 
-
-        if (walls[i].y2 < minY)
-            minY = walls[i].y2;
-        if (walls[i].y2 > maxY)
-            maxY = walls[i].y2;
+        if (newWalls[i].y2 < minY)
+            minY = newWalls[i].y2;
+        if (newWalls[i].y2 > maxY)
+            maxY = newWalls[i].y2;
     }
     
     var canvasSizeX = WIDTH - 2*X_MARGIN;
@@ -159,31 +186,21 @@ function resizeFloorplan(walls)
     var X_TRANSLATION = (canvasSizeX - (maxX - minX)*finalScaling) / 2;
     var Y_TRANSLATION = (canvasSizeY - (maxY - minY)*finalScaling) / 2;
 
-    var newWalls = []
     //shift, then scale
     for (var i = 0; i < walls.length; i++) {
         //shift into 1st quadrant, starting at origin
-        var x1 = walls[i].x1 - minX;
-        var x2 = walls[i].x2 - minX;
-        var y1 = walls[i].y1 - minY;
-        var y2 = walls[i].y2 - minY;
+        newWalls[i].x1 -= minX;
+        newWalls[i].x2 -= minX;
+        newWalls[i].y1 -= minY;
+        newWalls[i].y2 -= minY;
 
         //scale
-        x1 = x1*finalScaling + X_MARGIN + X_TRANSLATION;
-        x2 = x2*finalScaling + X_MARGIN + X_TRANSLATION;
-        y1 = y1*finalScaling + Y_MARGIN + Y_TRANSLATION;
-        y2 = y2*finalScaling + Y_MARGIN + Y_TRANSLATION;
-
-        
-        var wall = {
-            x1: x1,
-            y1: y1,
-            x2: x2,
-            y2: y2
-        }
-        
-        newWalls.push(wall);
+        newWalls[i].x1 = newWalls[i].x1*finalScaling + X_MARGIN + X_TRANSLATION;
+        newWalls[i].x2 = newWalls[i].x2*finalScaling + X_MARGIN + X_TRANSLATION;
+        newWalls[i].y1 = newWalls[i].y1*finalScaling + Y_MARGIN + Y_TRANSLATION;
+        newWalls[i].y2 = newWalls[i].y2*finalScaling + Y_MARGIN + Y_TRANSLATION;    
     }
+
     return newWalls;
 }
 
