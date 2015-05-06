@@ -26,6 +26,7 @@ function setup_canvas()
         width: WIDTH,
         height:HEIGHT
     });
+	//canvas.selection = false;
 
 	var boundingBox = new fabric.Rect({
 	  fill: "none",
@@ -286,20 +287,14 @@ function move_walls_with_vertex(vertex, boundingBox)
 	console.log("vertex top: " + vertex.top);
 	console.log("vertex left: " + vertex.left);
     console.log('--');
-	//x = Math.min(Math.ma
-// SO bounding box
-	var topBound = boundingBox.top;
-  var bottomBound = topBound + boundingBox.height;
-  var leftBound = boundingBox.left;
-  var rightBound = leftBound + boundingBox.width;
-
-	//vertex.setLeft(Math.min(Math.max(vertex.left, leftBound), rightBound+vertex.left));
+	/* CANVAS EDGE PROTECTION FOR VERTICES */
+	//if object on left of canvas, must be hitting left edge
 	if (vertex.left < WIDTH/2)
 		vertex.setLeft(Math.max(vertex.left,0));
 	else {
-		//console.log("vertex on right side");
 		vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
 	}
+	//if object on bottom half, must be hitting bottom edge
 	if (vertex.top > HEIGHT/2) {
 		console.log("vertex top " + vertex.top);
 		vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
@@ -308,16 +303,6 @@ function move_walls_with_vertex(vertex, boundingBox)
 		vertex.setTop(Math.max(vertex.top, 0));
 	}
 
-
-	//vertex.setTop = (Math.min(Math.max(vertex.top, topBound), bottomBound-vertex.height));
-/*
-	if (vertex.top > HEIGHT/2) {
-		console.log("vertex top " + vertex.top);
-		vertex.setTop = Math.min(vertex.top, HEIGHT-VERTEX_RADIUS);
-	}
-*/
-		//vertex.setTop = Math.min(vertex.top, topBound);
-	
 	
 
 	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
