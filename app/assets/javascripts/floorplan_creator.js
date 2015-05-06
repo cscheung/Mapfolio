@@ -17,16 +17,13 @@ function make_walls(points_array)
         var p1 = points_array[(i+1)%points_array.length];
         
         //snap to 90: make angles in 75-105 range 90
-        console.log("p1 angle original" + p1.angle);
-        if (((p1.angle - p0.angle) >= 75) || ((p1.angle - p0.angle) <= 105)) 
+        if (((p1.angle - p0.angle) >= 75) && ((p1.angle - p0.angle) <= 105)) 
         {
             p1.angle = p0.angle + 90;
-            console.log("p1 angle changed" + p1.angle);
         }
-        else if (((p0.angle - p1.angle) >= 75) || ((p1.angle - p0.angle) <= 105))
+        else if (((p0.angle - p1.angle) >= 75) && ((p1.angle - p0.angle) <= 105))
         {
             p1.angle = p0.angle - 90;
-            console.log("p1 angle changed" + p1.angle);
         }
 
         var p2 = find_intersection(p0, p1);
