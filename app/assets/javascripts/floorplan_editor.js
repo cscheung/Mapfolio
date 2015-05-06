@@ -26,6 +26,18 @@ function setup_canvas()
         width: WIDTH,
         height:HEIGHT
     });
+
+	var boundingBox = new fabric.Rect({
+	  fill: "none",
+	  width: WIDTH,
+	  height: HEIGHT,
+	  hasBorders: false,
+	  hasControls: false,
+	  lockMovementX: true,
+	  lockMovementY: true,
+	  evented: false,
+	  stroke: "red"
+	});
     
     canvas.on('mouse:up', function(e) 
     {
@@ -64,7 +76,7 @@ function setup_canvas()
     {
         if(e.target.name == 'vertex')
         {           
-            move_walls_with_vertex(e.target); 
+            move_walls_with_vertex(e.target, boundingBox); 
             //canvas.renderAll();
         }
         else if (e.target.name == 'wall')
@@ -263,19 +275,99 @@ function make_wall(id, coords)
 }
 
 
-function move_walls_with_vertex(vertex)
+function move_walls_with_vertex(vertex, boundingBox)
 {            
+	var minHeight = VERTEX_RADIUS;
+	var maxHeight = HEIGHT - VERTEX_RADIUS;
+	var minWidth = VERTEX_RADIUS;
+	var maxWidth = WIDTH - VERTEX_RADIUS;
+	var vertex_left = vertex.left;
+	var vertex_top = vertex.top;
+	console.log("vertex top: " + vertex.top);
+	console.log("vertex left: " + vertex.left);
+    console.log('--');
+	//x = Math.min(Math.ma
+// SO bounding box
+	var topBound = boundingBox.top;
+  var bottomBound = topBound + boundingBox.height;
+  var leftBound = boundingBox.left;
+  var rightBound = leftBound + boundingBox.width;
+
+	//vertex.setLeft(Math.min(Math.max(vertex.left, leftBound), rightBound+vertex.left));
+	if (vertex.left < WIDTH/2)
+		vertex.setLeft(Math.max(vertex.left,0));
+	else {
+		//console.log("vertex on right side");
+		vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
+	}
+	if (vertex.top > HEIGHT/2) {
+		console.log("vertex top " + vertex.top);
+		vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
+	}
+	else {
+		vertex.setTop(Math.max(vertex.top, 0));
+	}
+
+
+	//vertex.setTop = (Math.min(Math.max(vertex.top, topBound), bottomBound-vertex.height));
+/*
+	if (vertex.top > HEIGHT/2) {
+		console.log("vertex top " + vertex.top);
+		vertex.setTop = Math.min(vertex.top, HEIGHT-VERTEX_RADIUS);
+	}
+*/
+		//vertex.setTop = Math.min(vertex.top, topBound);
+	
+	
+
+	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
+	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
+		
+	vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
+	vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+
     //Want to check this eventaully            
     //if(!wall_threshold_hit(p))
-    console.log(vertex.wall1.get('top'));
-    console.log(vertex.wall1.get('left'));
-    console.log('--');
+    //console.log(vertex.wall1.get('top'));
+    //console.log(vertex.wall1.get('left'));
+    //console.log('--');
     
-    vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
-    vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
-        
-    vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
-    vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+/*
+	var edge_safe_pos = check_points_wall(vertex.left + VERTEX_RADIUS, minWidth, maxWidth);
+	vertex.wall1.set({'x2' : edge_safe_pos});
+	edge_safe_pos = check_points_wall(vertex.top + VERTEX_RADIUS, minHeight, maxHeight);
+	vertex.wall1.set({'y2' : edge_safe_pos});
+
+	edge_safe_pos = check_points_wall(vertex.left + VERTEX_RADIUS, minWidth, maxWidth);
+	vertex.wall2.set({'x1' : edge_safe_pos});
+	edge_safe_pos = check_points_wall(vertex.top + VERTEX_RADIUS, minHeight, maxHeight);
+	vertex.wall2.set({'y1' : edge_safe_pos});
+*/
+
+/*
+	var goodtop, goodleft, boundingObject;
+
+	canvas.on("object:moving", function(){
+		var obj = this.relatedTarget;
+		var bounds = boundingObject;
+		obj.setCoords();
+		if(!obj.isContainedWithinObject(bounds)){
+			obj.setTop(goodtop);
+			obj.setLeft(goodleft);
+			canvas.refresh();    
+		} else {
+			goodtop = obj.top;
+			goodleft = obj.left;
+		}  
+	});
+*/
+/*
+		vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
+		vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
+			
+		vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
+		vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+*/
 }
 
 function move_vertecies_with_wall(wall)
@@ -295,6 +387,7 @@ function move_vertecies_with_wall(wall)
             verticies[i].wall1.set({'x2' : verticies[i].left + VERTEX_RADIUS});
             verticies[i].wall1.set({'y2' : verticies[i].top + VERTEX_RADIUS});            
         }
+//function wall_threshold_hit(vertex)
         
         if (verticies[i].wall1.id == wall.id)
         {
@@ -430,29 +523,57 @@ function showImage() {
     }
 }
 
+function check_points_wall(point, max, min) {
+	if (point >= (max - VERTEX_RADIUS))
+		return (max - VERTEX_RADIUS);
+	if (point <= (min + VERTEX_RADIUS))
+		return (min + VERTEX_RADIUS);
+	return point;
+}
 
-function wall_threshold_hit(vertex)
+
+function wall_threshold_hit(vertex, max)
 {
     
+/*
     var a = vertex.wall1.get('x2') - vertex.wall1.get('x1');
     var b = vertex.wall1.get('y2') - vertex.wall1.get('y1');
     var a_sqr = Math.pow(a, 2);
     var b_sqr = Math.pow(b, 2);
+	
+	var a_x = vertex.wall1.get('x2');
+	var b_x = vertex.wall1.get('x1');
+	var a_y = vertex.wall1.get('y1');
+	var b_y = vertex.wall1.get('y2'); */
+
+/*
+	if (a_x > (WIDTH - VERTEX_RADIUS) || a_x < (0 + VERTEX_RADIUS))
+		return true;
+	if (b_x > (WIDTH - VERTEX_RADIUS) || b_x < (0 + VERTEX_RADIUS))
+		return true;
+	if (a_x > (HEIGHT - VERTEX_RADIUS) || a_x < (0 + VERTEX_RADIUS))
+		return true;
+	if (a_y > (HEIGHT - VERTEX_RADIUS) || a_y < (0 + VERTEX_RADIUS))
+		return true;
+*/
         
+/*
+    if (Math.sqrt(a_sqr + b_sqr) < )
+    {
+        return true;
+    }
+*/
+    
+    //a = vertex.wall2.get('x2') - vertex.wall2.get('x1');
+    //b = vertex.wall2.get('y2') - vertex.wall2.get('y1');
+/*
+    a_sqr = Math.pow(a, 2); b_sqr = Math.pow(b, 2);
+    
     if (Math.sqrt(a_sqr + b_sqr) < WALL_THRESH)
     {
         return true;
     }
-    
-    a = vertex.wall2.get('x2') - vertex.wall2.get('x1');
-    b = vertex.wall2.get('y2') - vertex.wall2.get('y1');
-    a_sqr = Math.pow(a, 2);
-    b_sqr = Math.pow(b, 2);
-    
-    if (Math.sqrt(a_sqr + b_sqr) < WALL_THRESH)
-    {
-        return true;
-    }
+*/
     
     
     return false;
