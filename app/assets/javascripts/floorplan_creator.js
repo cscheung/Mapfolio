@@ -9,13 +9,27 @@ function make_floorplan(name, points)
 function make_walls(points_array)
 {
     intersections = [];
+
     //Find intersections
     for (i = 0; i < points_array.length; i++)
     {
         var p0 = points_array[i];
         var p1 = points_array[(i+1)%points_array.length];
-        var p2 = find_intersection(p0, p1);
+        
+        //snap to 90: make angles in 75-105 range 90
+        console.log("p1 angle original" + p1.angle);
+        if (((p1.angle - p0.angle) >= 75) || ((p1.angle - p0.angle) <= 105)) 
+        {
+            p1.angle = p0.angle + 90;
+            console.log("p1 angle changed" + p1.angle);
+        }
+        else if (((p0.angle - p1.angle) >= 75) || ((p1.angle - p0.angle) <= 105))
+        {
+            p1.angle = p0.angle - 90;
+            console.log("p1 angle changed" + p1.angle);
+        }
 
+        var p2 = find_intersection(p0, p1);
         intersections.push(p2);
     }
 
