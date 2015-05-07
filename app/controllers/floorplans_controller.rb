@@ -44,6 +44,10 @@ class FloorplansController < ApplicationController
   # PATCH/PUT /floorplans/1
   # PATCH/PUT /floorplans/1.json
   def update
+    
+    @walls = Wall.where("floorplan_id = ?", params[:id])
+    @walls.destroy_all
+    
     respond_to do |format|
       if @floorplan.update(floorplan_params)
         format.html { redirect_to @floorplan, notice: 'Floorplan was successfully updated.' }
