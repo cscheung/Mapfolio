@@ -3,6 +3,7 @@ var WIDTH = 300;
 var X_MARGIN = 30;
 var Y_MARGIN = 30; 
 var VERTEX_RADIUS = 12;
+var hidevar=0;
 
    
 butnum=0;
@@ -16,7 +17,9 @@ var canvas;
 var imgInstance;
 var imgElement;
 
-$( window ).load(function() { setup_canvas(); });
+$( document ).ready(function() {
+    setup_canvas();
+});
 
 function setup_canvas()
 {
@@ -27,8 +30,17 @@ function setup_canvas()
         height:HEIGHT
     });
     
+    canvas.on('mouse:down', function(e) 
+        {
+            hidevar=1;
+        });
+    canvas.on('mouse:move', function(e) 
+        {
+            hidevar=0;
+        });
     canvas.on('mouse:up', function(e) 
     {
+        //hidevar=0;
         if(e.target)
         {
             //Call a js function
@@ -37,13 +49,13 @@ function setup_canvas()
             //Fix the positionings
             if(e.target.name == 'vertex')
             {
-                redraw_elements();
-                console.log("vertex done moving");
+
+
             }
             else if (e.target.name == 'wall')
             {
-                redraw_elements();
-                console.log("wall done moving");            
+
+
             }
         }
 
@@ -102,33 +114,60 @@ function draw_floorplan()
 
 function resizeFloorplan(walls)
 {
+    var newWalls = []
+
+    //rotate the walls, so the first wall is parallel to the x axis
+    var slope = (walls[0].y2 - walls[0].y1) / (walls[0].x2 - walls[0].x1);
+    var rotateby = Math.atan(slope); 
+    var matrix = new FULLTILT.RotationMatrix();
+    matrix.rotateZ(rotateby);
+    
+    for (var i = 0; i < walls.length; i++) {
+        var new_x1 = matrix.elements[0]*walls[i].x1 + matrix.elements[3]*walls[i].y1; 
+        var new_y1 = matrix.elements[1]*walls[i].x1 + matrix.elements[4]*walls[i].y1;
+        var new_x2 = matrix.elements[0]*walls[i].x2 + matrix.elements[3]*walls[i].y2;
+        var new_y2 = matrix.elements[1]*walls[i].x2 + matrix.elements[4]*walls[i].y2;
+        
+        // var new_x1 = walls[i].x1; 
+        // var new_y1 = walls[i].y1;
+        // var new_x2 = walls[i].x2;
+        // var new_y2 = walls[i].y2;
+
+        var wall = {
+            x1: new_x1,
+            y1: new_y1,
+            x2: new_x2,
+            y2: new_y2
+        }     
+        newWalls.push(wall);
+    }
+
+    //find min and max
     var minX = 9007199254740992;
     var minY = 9007199254740992;
     var maxX = -9007199254740992; 
     var maxY = -9007199254740992;
 
-    //find min and max
-    for (var i = 0; i < walls.length; i++) {
-        if (walls[i].x1 < minX)
-            minX = walls[i].x1;
-        if (walls[i].x1 > maxX)
-            maxX = walls[i].x1;
+    for (var i = 0; i < newWalls.length; i++) {
+        if (newWalls[i].x1 < minX)
+            minX = newWalls[i].x1;
+        if (newWalls[i].x1 > maxX)
+            maxX = newWalls[i].x1;
         
-        if (walls[i].x2 < minX)
-            minX = walls[i].x2;
-        if (walls[i].x2 > maxX)
-            maxX = walls[i].x2;
+        if (newWalls[i].x2 < minX)
+            minX = newWalls[i].x2;
+        if (newWalls[i].x2 > maxX)
+            maxX = newWalls[i].x2;
 
-        if (walls[i].y1 < minY)
-            minY = walls[i].y1;
-        if (walls[i].y1 > maxY)
-            maxY = walls[i].y1;
+        if (newWalls[i].y1 < minY)
+            minY = newWalls[i].y1;
+        if (newWalls[i].y1 > maxY)
+            maxY = newWalls[i].y1;
 
-
-        if (walls[i].y2 < minY)
-            minY = walls[i].y2;
-        if (walls[i].y2 > maxY)
-            maxY = walls[i].y2;
+        if (newWalls[i].y2 < minY)
+            minY = newWalls[i].y2;
+        if (newWalls[i].y2 > maxY)
+            maxY = newWalls[i].y2;
     }
     
     var canvasSizeX = WIDTH - 2*X_MARGIN;
@@ -147,31 +186,21 @@ function resizeFloorplan(walls)
     var X_TRANSLATION = (canvasSizeX - (maxX - minX)*finalScaling) / 2;
     var Y_TRANSLATION = (canvasSizeY - (maxY - minY)*finalScaling) / 2;
 
-    var newWalls = []
     //shift, then scale
     for (var i = 0; i < walls.length; i++) {
         //shift into 1st quadrant, starting at origin
-        var x1 = walls[i].x1 - minX;
-        var x2 = walls[i].x2 - minX;
-        var y1 = walls[i].y1 - minY;
-        var y2 = walls[i].y2 - minY;
+        newWalls[i].x1 -= minX;
+        newWalls[i].x2 -= minX;
+        newWalls[i].y1 -= minY;
+        newWalls[i].y2 -= minY;
 
         //scale
-        x1 = x1*finalScaling + X_MARGIN + X_TRANSLATION;
-        x2 = x2*finalScaling + X_MARGIN + X_TRANSLATION;
-        y1 = y1*finalScaling + Y_MARGIN + Y_TRANSLATION;
-        y2 = y2*finalScaling + Y_MARGIN + Y_TRANSLATION;
-
-        
-        var wall = {
-            x1: x1,
-            y1: y1,
-            x2: x2,
-            y2: y2
-        }
-        
-        newWalls.push(wall);
+        newWalls[i].x1 = newWalls[i].x1*finalScaling + X_MARGIN + X_TRANSLATION;
+        newWalls[i].x2 = newWalls[i].x2*finalScaling + X_MARGIN + X_TRANSLATION;
+        newWalls[i].y1 = newWalls[i].y1*finalScaling + Y_MARGIN + Y_TRANSLATION;
+        newWalls[i].y2 = newWalls[i].y2*finalScaling + Y_MARGIN + Y_TRANSLATION;    
     }
+
     return newWalls;
 }
 
@@ -267,15 +296,17 @@ function move_walls_with_vertex(vertex)
 {            
     //Want to check this eventaully            
     //if(!wall_threshold_hit(p))
-    console.log(vertex.wall1.get('top'));
-    console.log(vertex.wall1.get('left'));
-    console.log('--');
+
+
+
     
     vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
     vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
+    vertex.wall1.setCoords();
         
     vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
     vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+    vertex.wall1.setCoords();
 }
 
 function move_vertecies_with_wall(wall)
@@ -309,6 +340,39 @@ function move_vertecies_with_wall(wall)
     
 }   
 
+ function update_floorplan()
+{
+  var floorplan_id = $('.floorplan_class').data('floorplan').id; 
+  var fp_name = $('.floorplan_class').data('floorplan').name;
+ 
+    var db_walls = [];
+	  for (i = 0; i < canvas_walls.length; i++)
+    {
+        var points = 
+        {
+          x1: canvas_walls[i].x1,
+          y1: canvas_walls[i].y1,
+          x2: canvas_walls[i].x2,
+          y2: canvas_walls[i].y2
+        };
+        db_walls.push(points);
+    }
+
+    
+  
+  $.ajax({
+      type:'PUT',
+      url: '/floorplans/' + floorplan_id,
+      data:  $.param({floorplan: { name: fp_name, walls_attributes: db_walls}}),
+      dataType: 'json'
+  });
+  
+   
+   
+    window.location.href = "/floorplans";
+     
+}
+ 
  
 
 /*dog*/
@@ -331,14 +395,18 @@ function display_photo(canvas_object)
         console.log("camera clicked");
         if (imgnum==canvas_object.number) {
             //showImage();
-            displayAsImage();
+            showModal();
+            
+            //displayAsImage();
 
         }
         else {
             imgnum=canvas_object.number;
             var img = document.getElementById('loadingImage');
             //img.style.visibility = 'visible';
-            displayAsImage();
+            showModal();
+            //hidevar=1;
+            //displayAsImage();
 
         }
         canvas.renderAll.bind(canvas);
@@ -363,7 +431,7 @@ function create_camera_icon()
     {
         oImg.name = "camera";
         oImg.number = butnum-1;
-        oImg.scale(0.5);
+        oImg.scale(0.6);
         oImg.set('selectable', true);
         oImg.set('hasRotatingPoint', false);
         oImg.lockScalingY=true;
@@ -402,33 +470,9 @@ function showPhoto()    {
     }
     butnum++;
 }
-function showPhoto2()    {
-    var preview = document.getElementById('loadingImage');
-    //var file = document.querySelector('input[type=file]').files[0];
-    var reader = new FileReader();
-    reader.onloadend = function () {
-    preview.src = reader.result;
-    }
-
-    if (imgArray[imgnum]) {
-       reader.readAsDataURL(imgArray[imgnum]);
-    } else {
-       // preview.src = "";
-    }
-
-}
 /*camera code*/
 
-function showImage() {
-    var img = document.getElementById('loadingImage');
 
-    if (img.style.visibility == 'visible') {
-        img.style.visibility = 'hidden';
-    }
-    else    {
-        img.style.visibility = 'visible';
-    }
-}
 
 
 function wall_threshold_hit(vertex)
@@ -457,49 +501,25 @@ function wall_threshold_hit(vertex)
     
     return false;
 }
-function placeImage()   {
-    imgElement = document.getElementById('loadingImage');
 
-    imgInstance = new fabric.Image(imgElement, {
-      //left: 0,
-      //top: 100,
-      //angle: 30,
-      //opacity: 0.85
-    });
-    /*
-    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
-        canvas.renderAll.bind(canvas), {
-  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
-*/
-    console.log("placeImage()");
-    canvas.add(imgInstance);
-}
-function changeImage()   {
-    //imgElement = document.getElementById('loadingImage');
+function showModal() {
     //canvas.remove(imgInstance);
- //imgInstance.setElement(document.getElementById('loadingImage'));
-    //imgInstance = new fabric.Image(imgElement, {
-      //left: 0,
-      //top: 100,
-      //angle: 30,
-      //opacity: 0.85
-    //});
-    /*
-    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
-        canvas.renderAll.bind(canvas), {
-  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
-*/
-    console.log("changeImage()");
-    
-    //canvas.add(imgInstance);
+    file =imgArray[imgnum];
+    console.log(imgnum);
+    var preview = document.getElementById('loadingImage');
+    var reader = new FileReader();
+    reader.onloadend = function () {
+    preview.src = reader.result;
+    }
+
+    if (file) {
+       reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+    }
+    $('#picModal').modal('show');
+
 }
-function removeImage()   {
-  // document.getElementById('loadingImage').src="";
-    //canvas.remove(imgInstance);
-}
-
-
-
 
 
 function displayAsImage() {
@@ -508,15 +528,6 @@ function displayAsImage() {
     console.log(imgnum);
   var imgURL = URL.createObjectURL(file);
   
-  /*
-      img = document.getElementById('loadingImage');
-
-  
-
-  img.src = imgURL;
-  */
-  //document.body.appendChild(img);
-  //canvas.renderAll.bind(canvas);
   imgInstance=new fabric.Image.fromURL(imgURL, function(oImg) {
         oImg.name="photo";
         oImg.width=canvas.width;
@@ -524,3 +535,15 @@ function displayAsImage() {
       canvas.add(oImg);
     });
 }
+function hideModal() {
+    if (hidevar==0)    {
+         $('#picModal').modal('hide');
+     }
+     hidevar=0;
+    //$('#picModal').remove();
+    }
+    function hideModal2() {
+   
+         $('#helpModal').modal('hide');
+     
+    }
