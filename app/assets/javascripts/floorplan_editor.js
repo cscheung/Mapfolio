@@ -49,13 +49,13 @@ function setup_canvas()
             //Fix the positionings
             if(e.target.name == 'vertex')
             {
-                redraw_elements();
-                console.log("vertex done moving");
+
+
             }
             else if (e.target.name == 'wall')
             {
-                redraw_elements();
-                console.log("wall done moving");            
+
+
             }
         }
 
@@ -296,15 +296,17 @@ function move_walls_with_vertex(vertex)
 {            
     //Want to check this eventaully            
     //if(!wall_threshold_hit(p))
-    console.log(vertex.wall1.get('top'));
-    console.log(vertex.wall1.get('left'));
-    console.log('--');
+
+
+
     
     vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
     vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
+    vertex.wall1.setCoords();
         
     vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
     vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+    vertex.wall1.setCoords();
 }
 
 function move_vertecies_with_wall(wall)
@@ -338,6 +340,50 @@ function move_vertecies_with_wall(wall)
     
 }   
 
+ function update_floorplan()
+{
+  var floorplan_id = $('.floorplan_class').data('floorplan').id; 
+  var fp_name = $('.floorplan_class').data('floorplan').name;
+ 
+    var db_walls = [];
+	  for (i = 0; i < canvas_walls.length; i++)
+    {
+        var points = 
+        {
+          x1: canvas_walls[i].x1,
+          y1: canvas_walls[i].y1,
+          x2: canvas_walls[i].x2,
+          y2: canvas_walls[i].y2
+        };
+        db_walls.push(points);
+    }
+
+  
+  
+  var walls = [];
+  
+  var wall = {
+            x1: 0,
+            y1: 10,
+            x2: 0,
+            y2: 0
+        };
+  walls.push(wall);
+    
+  
+  $.ajax({
+      type:'PUT',
+      url: '/floorplans/' + floorplan_id,
+      data:  $.param({floorplan: { name: fp_name, walls_attributes: db_walls}}),
+      dataType: 'json'
+  });
+  
+   
+   
+    window.location.href = "/floorplans";
+     
+}
+ 
  
 
 /*dog*/

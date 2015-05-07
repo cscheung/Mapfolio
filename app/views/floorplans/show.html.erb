@@ -1,4 +1,4 @@
-<script> setup_canvas(); </script>
+<script>setup_canvas();</script>
 
 <!-- Invisible stuff we need -->
 <%= content_tag :div, class: "walls_class", data: {walls: @walls} do %>
@@ -52,7 +52,7 @@
         </button>
       </div>
       <div class="btn-group">
-        <%= button_to('Done', floorplans_path, :class => 'btn btn-lg btn-primary', :method => :get) %>
+        <button class = 'btn btn-lg btn-primary' type="button" onclick="update_floorplan()"> Done </button>
       </div>
     </div>
   </div>
