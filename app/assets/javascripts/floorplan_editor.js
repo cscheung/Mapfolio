@@ -292,21 +292,37 @@ function make_wall(id, coords)
 }
 
 
-function move_walls_with_vertex(vertex)
+function move_walls_with_vertex(vertex, boundingBox)
 {            
-    //Want to check this eventaully            
-    //if(!wall_threshold_hit(p))
-
-
-
-    
-    vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
-    vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
-    vertex.wall1.setCoords();
-        
-    vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
-    vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
-    vertex.wall1.setCoords();
+	var minHeight = VERTEX_RADIUS;
+	var maxHeight = HEIGHT - VERTEX_RADIUS;
+	var minWidth = VERTEX_RADIUS;
+	var maxWidth = WIDTH - VERTEX_RADIUS;
+	var vertex_left = vertex.left;
+	var vertex_top = vertex.top;
+	
+	/* CANVAS EDGE PROTECTION FOR VERTICES */
+	//if object on left of canvas, must be hitting left edge
+	if (vertex.left < WIDTH/2)
+		vertex.setLeft(Math.max(vertex.left,0));
+	else {
+		vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
+	}
+	//if object on bottom half, must be hitting bottom edge
+	if (vertex.top > HEIGHT/2) {
+		console.log("vertex top " + vertex.top);
+		vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
+	}
+	else {
+		vertex.setTop(Math.max(vertex.top, 0));
+	}
+	
+	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
+	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
+		
+	vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
+	vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+	
 }
 
 function move_vertecies_with_wall(wall)
