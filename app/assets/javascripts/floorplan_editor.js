@@ -24,6 +24,7 @@ $( document ).ready(function() {
 function setup_canvas()
 {
     canvas = new fabric.Canvas('c');
+    canvas.selection = false;
     canvas.setDimensions({
         backgroundColor: '#d1d1d1',
         width: WIDTH,
