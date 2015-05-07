@@ -372,10 +372,10 @@ function move_vertecies_with_wall(wall)
     window.location.href = "/floorplans";
      
 }
- 
- 
 
-/*dog*/
+
+
+ /*dog*/
 b=0;
 
 
@@ -395,18 +395,14 @@ function display_photo(canvas_object)
         console.log("camera clicked");
         if (imgnum==canvas_object.number) {
             //showImage();
-            showModal();
-            
-            //displayAsImage();
+            displayAsImage();
 
         }
         else {
             imgnum=canvas_object.number;
             var img = document.getElementById('loadingImage');
             //img.style.visibility = 'visible';
-            showModal();
-            //hidevar=1;
-            //displayAsImage();
+            displayAsImage();
 
         }
         canvas.renderAll.bind(canvas);
@@ -431,7 +427,7 @@ function create_camera_icon()
     {
         oImg.name = "camera";
         oImg.number = butnum-1;
-        oImg.scale(0.6);
+        oImg.scale(0.5);
         oImg.set('selectable', true);
         oImg.set('hasRotatingPoint', false);
         oImg.lockScalingY=true;
@@ -470,9 +466,33 @@ function showPhoto()    {
     }
     butnum++;
 }
+function showPhoto2()    {
+    var preview = document.getElementById('loadingImage');
+    //var file = document.querySelector('input[type=file]').files[0];
+    var reader = new FileReader();
+    reader.onloadend = function () {
+    preview.src = reader.result;
+    }
+
+    if (imgArray[imgnum]) {
+       reader.readAsDataURL(imgArray[imgnum]);
+    } else {
+       // preview.src = "";
+    }
+
+}
 /*camera code*/
 
+function showImage() {
+    var img = document.getElementById('loadingImage');
 
+    if (img.style.visibility == 'visible') {
+        img.style.visibility = 'hidden';
+    }
+    else    {
+        img.style.visibility = 'visible';
+    }
+}
 
 
 function wall_threshold_hit(vertex)
@@ -501,25 +521,49 @@ function wall_threshold_hit(vertex)
     
     return false;
 }
+function placeImage()   {
+    imgElement = document.getElementById('loadingImage');
 
-function showModal() {
-    //canvas.remove(imgInstance);
-    file =imgArray[imgnum];
-    console.log(imgnum);
-    var preview = document.getElementById('loadingImage');
-    var reader = new FileReader();
-    reader.onloadend = function () {
-    preview.src = reader.result;
-    }
-
-    if (file) {
-       reader.readAsDataURL(file);
-    } else {
-        preview.src = "";
-    }
-    $('#picModal').modal('show');
-
+    imgInstance = new fabric.Image(imgElement, {
+      //left: 0,
+      //top: 100,
+      //angle: 30,
+      //opacity: 0.85
+    });
+    /*
+    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
+        canvas.renderAll.bind(canvas), {
+  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
+*/
+    console.log("placeImage()");
+    canvas.add(imgInstance);
 }
+function changeImage()   {
+    //imgElement = document.getElementById('loadingImage');
+    //canvas.remove(imgInstance);
+ //imgInstance.setElement(document.getElementById('loadingImage'));
+    //imgInstance = new fabric.Image(imgElement, {
+      //left: 0,
+      //top: 100,
+      //angle: 30,
+      //opacity: 0.85
+    //});
+    /*
+    canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
+        canvas.renderAll.bind(canvas), {
+  width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
+*/
+    console.log("changeImage()");
+    
+    //canvas.add(imgInstance);
+}
+function removeImage()   {
+  // document.getElementById('loadingImage').src="";
+    //canvas.remove(imgInstance);
+}
+
+
+
 
 
 function displayAsImage() {
@@ -528,6 +572,13 @@ function displayAsImage() {
     console.log(imgnum);
   var imgURL = URL.createObjectURL(file);
   
+  /*
+      img = document.getElementById('loadingImage');
+  
+  img.src = imgURL;
+  */
+  //document.body.appendChild(img);
+  //canvas.renderAll.bind(canvas);
   imgInstance=new fabric.Image.fromURL(imgURL, function(oImg) {
         oImg.name="photo";
         oImg.width=canvas.width;
@@ -535,15 +586,3 @@ function displayAsImage() {
       canvas.add(oImg);
     });
 }
-function hideModal() {
-    if (hidevar==0)    {
-         $('#picModal').modal('hide');
-     }
-     hidevar=0;
-    //$('#picModal').remove();
-    }
-    function hideModal2() {
-   
-         $('#helpModal').modal('hide');
-     
-    }
