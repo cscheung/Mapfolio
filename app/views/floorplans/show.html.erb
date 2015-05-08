@@ -1,11 +1,9 @@
+<form>
+<input id="floorplan_name" type="text">
 
-<!-- Invisible stuff we need -->
-<%= content_tag :div, class: "walls_class", data: {walls: @walls} do %>
-<% end %>
-<%= content_tag :div, class: "floorplan_class", data: {floorplan: @floorplan} do %>
-<% end %>
-<img id="loadingImage" height="1"  style="visibility:hidden"/>
-<input style="visibility: hidden; display: none;" type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>
+</form>
+<br>
+
   
 <div class="container"> 
   <div class="row">
@@ -32,3 +30,11 @@
     </div>
   </div>
 </div>
+
+<!-- Invisible stuff we need -->
+<%= content_tag :div, class: "walls_class", data: {walls: @walls} do %>
+<% end %>
+<%= content_tag :div, class: "floorplan_class", data: {floorplan: @floorplan} do %>
+<% end %>
+<img id="loadingImage" height="1"  style="visibility:hidden"/>
+<input style="visibility: hidden; display: none;" type="file" onchange="previewFile()" id="myimage" name="image" accept="image/*" capture>

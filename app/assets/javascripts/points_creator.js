@@ -216,13 +216,14 @@ var save = function save()
 function done()
 {
 	stop_tracking();
-    var $inputs = $('#new_floorplan :input');
-    var values = {};
-    $inputs.each(function() {
-        values[this.name] = $(this).val();
-    });
-    
-    var name = values["floorplan[name]"];
-    make_floorplan(name, points);
-    points = [];
+	
+  var $inputs = $('#new_floorplan :input');
+  var values = {};
+  $inputs.each(function() {
+      values[this.name] = $(this).val();
+  });
+  
+  var name = values["floorplan[name]"];
+  make_floorplan(name, points);
+  points = [];
 }
