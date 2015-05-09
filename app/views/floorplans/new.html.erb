@@ -2,10 +2,14 @@
 
 <h1>New Room</h1>
 
-<button type="button" class="btn btn-primary btn-lg" onclick="save()">
+<button type="button" class="btn btn-primary btn-lg" onclick="save(),onClick()">
   Save Point
 </button>
 <body>
+<br><br>
+
+
+<p class="text-primary" id='secondinst'>Currently measuring Wall <a id="char2">A</a></p>
 <h3 id="tracking"></h3>
 
 <!-- div for tracking numbers -->
@@ -25,8 +29,28 @@
     <p id="t"></p>
 </div>
 
+<body>
+  <script type="text/javascript">
+    var clicks = 0;
 
-<div id="myAlert" class="alert alert-info fade" data-alert="alert">Wall Saved!</div>
+    var chr ='A';
+    char='abcdefghijklmnopqrstuvwxyz';
+     function onClick() {
+         clicks += 1;
+       document.getElementById("clicks").innerHTML = clicks;
+       chr= String.fromCharCode(97 + clicks);
+        char2='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(clicks);
+
+        document.getElementById("char2").innerHTML = char2;
+     };
+     </script>
+</body></html>
+
+
+<div id="myAlert2" class="alert alert-info fade" data-alert="alert">
+  <a id="clicks">0</a> 
+  Walls Saved
+</div>
 
 <div class="modal fade modal" id = helpModal tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
   <div class="modal-dialog modal-lg">
