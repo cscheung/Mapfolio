@@ -3,6 +3,8 @@ var WIDTH = 300;
 var X_MARGIN = 30;
 var Y_MARGIN = 30; 
 var VERTEX_RADIUS = 12;
+var KNOB_RADIUS = 20;
+var WALL_WIDTH = 5;
 var hidevar=0;
 
    
@@ -32,34 +34,21 @@ function setup_canvas()
     });
     
     canvas.on('mouse:down', function(e) 
-        {
-            hidevar=1;
-        });
+    {
+        hidevar=1;
+    });
     canvas.on('mouse:move', function(e) 
-        {
-            hidevar=0;
-        });
+    {
+        hidevar=0;
+    });
     canvas.on('mouse:up', function(e) 
     {
-        //hidevar=0;
-        if(e.target)
-        {
-            //Call a js function
-            display_photo(e.target);
-            
-            //Fix the positionings
-            if(e.target.name == 'vertex')
-            {
-
-
-            }
-            else if (e.target.name == 'wall')
-            {
-
-
-            }
-        }
-
+      //hidevar=0;
+      if(e.target)
+      {
+          //Call a js function
+          display_photo(e.target);
+      }
     });
 
       canvas.on('object:scaling', function(e) 
@@ -78,31 +67,21 @@ function setup_canvas()
         if(e.target.name == 'vertex')
         {           
             move_walls_with_vertex(e.target); 
-            //canvas.renderAll();
+            canvas.renderAll();
         }
         else if (e.target.name == 'wall')
-        {
-            //This sets the x,y vars of the wall when you move it
-            //when you move, you only change the left,top vars
-            
+        {          
+
             delta_x = e.target.left - e.target.old_left;
             delta_y = e.target.top - e.target.old_top;
-                        
-            e.target.set({'x1' : e.target.get('x1') + delta_x});
-            e.target.set({'x2' : e.target.get('x2') + delta_x});
-            e.target.set({'y1' : e.target.get('y1') + delta_y});
-            e.target.set({'y2' : e.target.get('y2') + delta_y});
-            
             e.target.old_left = e.target.left;
             e.target.old_top = e.target.top;
-            
-            move_vertecies_with_wall(e.target); 
+            move_vertecies_with_wall(e.target, delta_x, delta_y);  
             canvas.renderAll();
         }
     });	 
 
-    draw_floorplan();
-    
+    draw_floorplan(); 
 }
 
 function draw_floorplan()
@@ -115,7 +94,8 @@ function draw_floorplan()
 
 function resizeFloorplan(walls)
 {
-    var newWalls = []
+    if(typeof walls === 'undefined') return walls;
+    var newWalls = [];
 
     //rotate the walls, so the first wall is parallel to the x axis
     var slope = (walls[0].y2 - walls[0].y1) / (walls[0].x2 - walls[0].x1);
@@ -129,11 +109,6 @@ function resizeFloorplan(walls)
         var new_x2 = matrix.elements[0]*walls[i].x2 + matrix.elements[3]*walls[i].y2;
         var new_y2 = matrix.elements[1]*walls[i].x2 + matrix.elements[4]*walls[i].y2;
         
-        // var new_x1 = walls[i].x1; 
-        // var new_y1 = walls[i].y1;
-        // var new_x2 = walls[i].x2;
-        // var new_y2 = walls[i].y2;
-
         var wall = {
             x1: new_x1,
             y1: new_y1,
@@ -217,12 +192,29 @@ function draw_walls(walls_array)
             walls_array[i].x2,
             walls_array[i].y2
         ];
-        var wall = make_wall(i, points);
         
+        console.log("making this wall: ");
+        console.log(points);
+        var wall = make_wall(points);
+        /*
+        var knob = make_knob(points);
+        
+        var group = new fabric.Group([wall,knob], {
+          name: 'wall',
+          old_left: 0,
+          old_top: 0,
+          hasBorders: false,
+          hasControls: false,
+          id: i
+        });
+        
+        canvas.add(group);
+        */
         canvas.add(wall);
         
         wall.old_left = wall.left;
         wall.old_top = wall.top;
+        //canvas_walls.push(group);
         canvas_walls.push(wall);
     }
     
@@ -231,13 +223,10 @@ function draw_walls(walls_array)
     {
       var wall1_id = i;
       var wall2_id = (i+1)%canvas_walls.length;
-      
-      //console.log(canvas_walls[i].x2);
-      //console.log(canvas_walls[i].y2);
-      
+            
       var vertex = make_vertex(
-      canvas_walls[i].x2, 
-      canvas_walls[i].y2, 
+      canvas_walls[wall1_id].x2, 
+      canvas_walls[wall1_id].y2, 
       canvas_walls[wall1_id], 
       canvas_walls[wall2_id]
       );
@@ -252,12 +241,13 @@ function draw_walls(walls_array)
 
 function make_vertex(left, top, wall1, wall2) 
 {  
-    var c = new fabric.Circle(
+    var c = new fabric.Rect(
     {
-        left: left - VERTEX_RADIUS,
-        top: top - VERTEX_RADIUS,
+        left: left - VERTEX_RADIUS + WALL_WIDTH,
+        top: top - VERTEX_RADIUS + WALL_WIDTH,
         strokeWidth: 2,
-        radius: VERTEX_RADIUS,
+        width: KNOB_RADIUS,
+        height: KNOB_RADIUS,
         fill: '#fff',
         stroke: '#666',
         name: 'vertex'
@@ -272,24 +262,43 @@ function make_vertex(left, top, wall1, wall2)
     return c;
 }
 
-
-function make_wall(id, coords) 
+function make_wall(coords) 
 {
-    var c = new fabric.Line(coords, 
+    var straight_threshold = 10;
+    var c = new fabric.Line(coords);
+        
+    c.fill = 'black';
+    c.stroke = 'black';
+    c. strokeWidth = WALL_WIDTH;
+              
+    //horizontal line
+    if(Math.abs(coords[1] - coords[3]) < straight_threshold)
     {
-      fill: 'black',
-      stroke: 'black',
-      strokeWidth: 5,
-      name: 'wall'
-    });
+      c.lockMovementX = true;
+    }
+    //vertical line
+    if(Math.abs(coords[0] - coords[2]) < straight_threshold)
+    {
+      c.lockMovementY = true;
+    }
     
-    c.old_left = 0;
-    c.old_top = 0;
-    c.hasBorders = false;
-    c.hasControls = false;
-    c.id = id;
-    c.selectable = false;
     return c;
+}
+
+function make_knob(coords) 
+{
+  var knob = new fabric.Rect(
+  {
+      left: (coords[0]+coords[2])/2 - VERTEX_RADIUS + WALL_WIDTH,
+      top: (coords[1]+coords[3])/2 - VERTEX_RADIUS + WALL_WIDTH,
+      strokeWidth: 2,
+      width: KNOB_RADIUS,
+      height: KNOB_RADIUS,
+      fill: '#fff',
+      stroke: '#666'
+  });
+    
+  return knob;
 }
 
 
@@ -318,43 +327,41 @@ function move_walls_with_vertex(vertex, boundingBox)
 		vertex.setTop(Math.max(vertex.top, 0));
 	}
 	
+	
 	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
 	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
 		
 	vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
 	vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
-	
 }
 
-function move_vertecies_with_wall(wall)
+
+function move_vertecies_with_wall(wall, delta_x, delta_y)
 {   
-    
+    console.log(wall.top);
+    console.log(wall.left);
     for(i=0; i < verticies.length; i++)
     {
         if (verticies[i].wall2.id == wall.id)
         {                      
-
-            verticies[i].top = wall.get('y1') - VERTEX_RADIUS;
-            verticies[i].left = wall.get('x1') - VERTEX_RADIUS;
-
-            //verticies_array[i].set({'top' : wall.get('y1') - VERTEX_RADIUS});
-            //verticies_array[i].set({'left' : wall.get('x1') - VERTEX_RADIUS}); 
+            verticies[i].top += delta_y;
+            verticies[i].left += delta_x;
             
-            verticies[i].wall1.set({'x2' : verticies[i].left + VERTEX_RADIUS});
-            verticies[i].wall1.set({'y2' : verticies[i].top + VERTEX_RADIUS});            
+            verticies[i].wall1.top += delta_y;
+            verticies[i].wall1.left += delta_x;
         }
         
         if (verticies[i].wall1.id == wall.id)
         {
-            verticies[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
-            verticies[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
+          /*
+            verticies[i].top += delta_y;
+            verticies[i].left += delta_x;
         
-            verticies[i].wall2.set({'x1' : verticies[i].left + VERTEX_RADIUS});
-            verticies[i].wall2.set({'y1' : verticies[i].top + VERTEX_RADIUS});
+            verticies[i].wall2.top += delta_y;
+            verticies[i].wall2.left += delta_x;
+            */
         }
-        
     }
-    
 }   
 
  function update_floorplan()
