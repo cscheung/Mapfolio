@@ -71,13 +71,14 @@ function setup_canvas()
         }
         else if (e.target.name == 'wall')
         {          
-
+          /*
             delta_x = e.target.left - e.target.old_left;
             delta_y = e.target.top - e.target.old_top;
             e.target.old_left = e.target.left;
             e.target.old_top = e.target.top;
             move_vertecies_with_wall(e.target, delta_x, delta_y);  
             canvas.renderAll();
+            */
         }
     });	 
 
@@ -196,7 +197,6 @@ function draw_walls(walls_array)
         console.log("making this wall: ");
         console.log(points);
         var wall = make_wall(points);
-        /*
         var knob = make_knob(points);
         
         var group = new fabric.Group([wall,knob], {
@@ -208,14 +208,12 @@ function draw_walls(walls_array)
           id: i
         });
         
+        group.setCoords();
         canvas.add(group);
-        */
-        canvas.add(wall);
         
         wall.old_left = wall.left;
         wall.old_top = wall.top;
-        //canvas_walls.push(group);
-        canvas_walls.push(wall);
+        canvas_walls.push(group);
     }
     
     //Make intersections and put them on canvas
@@ -225,8 +223,8 @@ function draw_walls(walls_array)
       var wall2_id = (i+1)%canvas_walls.length;
             
       var vertex = make_vertex(
-      canvas_walls[wall1_id].x2, 
-      canvas_walls[wall1_id].y2, 
+      canvas_walls[wall1_id].getObjects()[0].x2, 
+      canvas_walls[wall1_id].getObjects()[0].y2, 
       canvas_walls[wall1_id], 
       canvas_walls[wall2_id]
       );
@@ -327,12 +325,14 @@ function move_walls_with_vertex(vertex, boundingBox)
 		vertex.setTop(Math.max(vertex.top, 0));
 	}
 	
+	vertex.wall1.getObjects()[0].set({'x2' : vertex.left + VERTEX_RADIUS});
+	vertex.wall1.getObjects()[0].set({'y2' : vertex.top + VERTEX_RADIUS});
+
+	vertex.wall2.getObjects()[0].set({'x1' : vertex.left + VERTEX_RADIUS});
+	vertex.wall2.getObjects()[0].set({'y1' : vertex.top + VERTEX_RADIUS});
 	
-	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
-	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
-		
-	vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
-	vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+	vertex.wall1.getObjects()[0].setCoords();
+	vertex.wall2.getObjects()[0].setCoords();
 }
 
 
