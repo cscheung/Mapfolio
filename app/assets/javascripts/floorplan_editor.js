@@ -19,6 +19,8 @@ var imgElement;
 
 $( document ).ready(function() {
     setup_canvas();
+    var text_box = document.getElementById("floorplan_name");
+    text_box.value = $('.floorplan_class').data('floorplan').name;
 });
 
 function setup_canvas()
@@ -376,11 +378,11 @@ function move_vertecies_with_wall(wall)
     }
 
     
-  
+  var text_box = document.getElementById("floorplan_name");
   $.ajax({
       type:'PUT',
       url: '/floorplans/' + floorplan_id,
-      data:  $.param({floorplan: { name: fp_name, walls_attributes: db_walls}}),
+      data:  $.param({floorplan: { name: text_box.value, walls_attributes: db_walls}}),
       dataType: 'json'
   });
   
