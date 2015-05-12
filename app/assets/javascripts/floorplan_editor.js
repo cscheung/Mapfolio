@@ -503,6 +503,8 @@ function create_camera_icon()
         oImg.lockScalingX=true;
         oImg.hasControls=false;
         oImg.hasBorders=false;
+        oImg.left=WIDTH/2;
+        oImg.top=HEIGHT/2;
         //oImg.transparentCorners=true;
         //oImg.set('hasBorders', false);
         canvas.add(oImg);
