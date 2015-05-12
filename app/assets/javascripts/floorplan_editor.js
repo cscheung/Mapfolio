@@ -3,6 +3,7 @@ var WIDTH = 300;
 var X_MARGIN = 30;
 var Y_MARGIN = 30; 
 var VERTEX_RADIUS = 12;
+var WALL_WIDTH = 7;
 var hidevar=0;
 
    
@@ -80,6 +81,7 @@ function setup_canvas()
         if(e.target.name == 'vertex')
         {           
             move_walls_with_vertex(e.target); 
+            safe_reposition_vertex(e.target);
             //canvas.renderAll();
         }
         else if (e.target.name == 'wall')
@@ -87,6 +89,7 @@ function setup_canvas()
             //This sets the x,y vars of the wall when you move it
             //when you move, you only change the left,top vars
             
+            safe_reposition_wall(e.target);
             delta_x = e.target.left - e.target.old_left;
             delta_y = e.target.top - e.target.old_top;
                         
@@ -270,6 +273,7 @@ function make_vertex(left, top, wall1, wall2)
   
     c.hasBorders = false;
     c.hasControls = false;
+    c.visible = false;
     
     return c;
 }
@@ -281,19 +285,66 @@ function make_wall(id, coords)
     {
       fill: 'black',
       stroke: 'black',
-      strokeWidth: 5,
+      strokeWidth: WALL_WIDTH,
       name: 'wall'
     });
     
+     var straight_threshold = 10;
     c.old_left = 0;
     c.old_top = 0;
     c.hasBorders = false;
     c.hasControls = false;
     c.id = id;
-    c.selectable = false;
+
+ //horizontal line
+    if(Math.abs(coords[1] - coords[3]) < straight_threshold)
+    {
+      c.lockMovementX = true;
+    }
+    //vertical line
+    if(Math.abs(coords[0] - coords[2]) < straight_threshold)
+    {
+      c.lockMovementY = true;
+    }
+    
     return c;
 }
 
+
+function safe_reposition_vertex(vertex)
+{
+  if (vertex.left < WIDTH/2) 
+  {
+		vertex.setLeft(Math.max(vertex.left,0));
+  }
+	else {
+		vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
+	}
+	//if object on bottom half, must be hitting bottom edge
+	if (vertex.top > HEIGHT/2) {
+		vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
+	}
+	else {
+		vertex.setTop(Math.max(vertex.top, 0));
+	}
+}
+
+function safe_reposition_wall(wall)
+{
+  if (wall.left < WIDTH/2) {
+		wall.setLeft(Math.max(wall.left,(VERTEX_RADIUS+2)));
+  }
+	else {
+		wall.setLeft(Math.min(wall.left,WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
+	}
+	//if object on bottom half, must be hitting bottom edge
+	if (wall.top > HEIGHT/2) {
+		wall.setTop(Math.min(wall.top, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
+	}
+	else {
+		wall.setTop(Math.max(wall.top, (VERTEX_RADIUS+2)));
+	}
+}
 
 function move_walls_with_vertex(vertex, boundingBox)
 {            
@@ -303,23 +354,7 @@ function move_walls_with_vertex(vertex, boundingBox)
 	var maxWidth = WIDTH - VERTEX_RADIUS;
 	var vertex_left = vertex.left;
 	var vertex_top = vertex.top;
-	
-	/* CANVAS EDGE PROTECTION FOR VERTICES */
-	//if object on left of canvas, must be hitting left edge
-	if (vertex.left < WIDTH/2)
-		vertex.setLeft(Math.max(vertex.left,0));
-	else {
-		vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
-	}
-	//if object on bottom half, must be hitting bottom edge
-	if (vertex.top > HEIGHT/2) {
-		console.log("vertex top " + vertex.top);
-		vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
-	}
-	else {
-		vertex.setTop(Math.max(vertex.top, 0));
-	}
-	
+
 	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
 	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
 		
@@ -330,20 +365,26 @@ function move_walls_with_vertex(vertex, boundingBox)
 
 function move_vertecies_with_wall(wall)
 {   
-    
     for(i=0; i < verticies.length; i++)
     {
         if (verticies[i].wall2.id == wall.id)
-        {                      
-
+        {              
             verticies[i].top = wall.get('y1') - VERTEX_RADIUS;
             verticies[i].left = wall.get('x1') - VERTEX_RADIUS;
+            
+            safe_reposition_vertex(verticies[i]);         
 
             //verticies_array[i].set({'top' : wall.get('y1') - VERTEX_RADIUS});
             //verticies_array[i].set({'left' : wall.get('x1') - VERTEX_RADIUS}); 
             
             verticies[i].wall1.set({'x2' : verticies[i].left + VERTEX_RADIUS});
-            verticies[i].wall1.set({'y2' : verticies[i].top + VERTEX_RADIUS});            
+            verticies[i].wall1.set({'y2' : verticies[i].top + VERTEX_RADIUS}); 
+            
+            safe_reposition_wall(verticies[i].wall1);
+            
+            verticies[i].setCoords();
+            verticies[i].wall1.setCoords();
+            verticies[i].wall2.setCoords();           
         }
         
         if (verticies[i].wall1.id == wall.id)
@@ -351,15 +392,24 @@ function move_vertecies_with_wall(wall)
             verticies[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
             verticies[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
         
+            safe_reposition_vertex(verticies[i]);
+            
             verticies[i].wall2.set({'x1' : verticies[i].left + VERTEX_RADIUS});
             verticies[i].wall2.set({'y1' : verticies[i].top + VERTEX_RADIUS});
+            
+            safe_reposition_wall(verticies[i].wall2);
+            
+            verticies[i].setCoords();
+            verticies[i].wall1.setCoords();
+            verticies[i].wall2.setCoords();
+            
         }
         
     }
     
 }   
 
- function update_floorplan()
+function update_floorplan()
 {
   var floorplan_id = $('.floorplan_class').data('floorplan').id; 
   var fp_name = $('.floorplan_class').data('floorplan').name;
