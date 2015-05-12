@@ -273,6 +273,7 @@ function make_vertex(left, top, wall1, wall2)
   
     c.hasBorders = false;
     c.hasControls = false;
+    c.visible = false;
     
     return c;
 }
