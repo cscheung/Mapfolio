@@ -3,6 +3,7 @@ var WIDTH = 300;
 var X_MARGIN = 30;
 var Y_MARGIN = 30; 
 var VERTEX_RADIUS = 12;
+var WALL_WIDTH = 7;
 var hidevar=0;
 
    
@@ -283,7 +284,7 @@ function make_wall(id, coords)
     {
       fill: 'black',
       stroke: 'black',
-      strokeWidth: 5,
+      strokeWidth: WALL_WIDTH,
       name: 'wall'
     });
     
@@ -330,18 +331,17 @@ function safe_reposition_vertex(vertex)
 function safe_reposition_wall(wall)
 {
   if (wall.left < WIDTH/2) {
-    console.log(wall.left);
-		wall.setLeft(Math.max(wall.left,0));
+		wall.setLeft(Math.max(wall.left,(VERTEX_RADIUS+2)));
   }
 	else {
-		wall.setLeft(Math.min(wall.left,WIDTH-2*VERTEX_RADIUS-2));
+		wall.setLeft(Math.min(wall.left,WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
 	}
 	//if object on bottom half, must be hitting bottom edge
 	if (wall.top > HEIGHT/2) {
-		wall.setTop(Math.min(wall.top, HEIGHT-2*VERTEX_RADIUS-2));
+		wall.setTop(Math.min(wall.top, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
 	}
 	else {
-		wall.setTop(Math.max(wall.top, 0));
+		wall.setTop(Math.max(wall.top, (VERTEX_RADIUS+2)));
 	}
 }
 
