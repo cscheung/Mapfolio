@@ -104,7 +104,7 @@ function setup_canvas()
             move_vertecies_with_wall(e.target); 
             canvas.renderAll();
         }
-    });	 
+    });  
 
     draw_floorplan();
     
@@ -323,70 +323,52 @@ function safe_reposition_vertex(vertex)
 {
   if (vertex.left < WIDTH/2) 
   {
-		vertex.setLeft(Math.max(vertex.left,0));
+        vertex.setLeft(Math.max(vertex.left,0));
   }
-	else {
-		vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
-	}
-	//if object on bottom half, must be hitting bottom edge
-	if (vertex.top > HEIGHT/2) {
-		vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
-	}
-	else {
-		vertex.setTop(Math.max(vertex.top, 0));
-	}
+    else {
+        vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
+    }
+    //if object on bottom half, must be hitting bottom edge
+    if (vertex.top > HEIGHT/2) {
+        vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
+    }
+    else {
+        vertex.setTop(Math.max(vertex.top, 0));
+    }
 }
 
 function safe_reposition_wall(wall)
 {
-  var slope, slope_prime, b;
-
-  //find slope
-  if ((wall.top == y2) || (wall.top == y1)) 
-  {  
-    slope = Math.abs(wall.y2-wall.y1) / Math.abs(wall.y2-wall.y1) 
-    slope_prime = (-1 / slope);
-    b = wall.top - slope_prime*wall.left;
+  if (wall.left < WIDTH/2) {
+        wall.setLeft(Math.max(wall.left,(VERTEX_RADIUS+2)));
   }
-  else
-  {
-    slope = 
-  }
-
-  if (wall.left < WIDTH/2) 
-      {
-        wall.setLeft(Math.max((wall.top-b)/slope_prime,(VERTEX_RADIUS+2)));
-      }
-      else 
-      {
-        wall.setLeft(Math.min((wall.top-b)/slope_prime,WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
-      }
-      //if object on bottom half, must be hitting bottom edge
-      if (wall.top > HEIGHT/2) 
-      {
-        wall.setTop(Math.min(wall.left*slope_prime + b, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
-      }
-      else 
-      {
-        wall.setTop(Math.max(wall.left*slope_prime + b, (VERTEX_RADIUS+2)));
-      }
+    else {
+        wall.setLeft(Math.min(wall.left,WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
+    }
+    //if object on bottom half, must be hitting bottom edge
+    if (wall.top > HEIGHT/2) {
+        wall.setTop(Math.min(wall.top, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
+    }
+    else {
+        wall.setTop(Math.max(wall.top, (VERTEX_RADIUS+2)));
+    }
 }
 
 function move_walls_with_vertex(vertex, boundingBox)
 {            
-	var minHeight = VERTEX_RADIUS;
-	var maxHeight = HEIGHT - VERTEX_RADIUS;
-	var minWidth = VERTEX_RADIUS;
-	var maxWidth = WIDTH - VERTEX_RADIUS;
-	var vertex_left = vertex.left;
-	var vertex_top = vertex.top;
+    var minHeight = VERTEX_RADIUS;
+    var maxHeight = HEIGHT - VERTEX_RADIUS;
+    var minWidth = VERTEX_RADIUS;
+    var maxWidth = WIDTH - VERTEX_RADIUS;
+    var vertex_left = vertex.left;
+    var vertex_top = vertex.top;
 
-	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
-	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
-		
-	vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
-	vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
-	
+    vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
+    vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
+        
+    vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
+    vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+    
 }
 
 function move_vertecies_with_wall(wall)
@@ -441,7 +423,7 @@ function update_floorplan()
   var fp_name = $('.floorplan_class').data('floorplan').name;
  
     var db_walls = [];
-	  for (i = 0; i < canvas_walls.length; i++)
+      for (i = 0; i < canvas_walls.length; i++)
     {
         var points = 
         {
