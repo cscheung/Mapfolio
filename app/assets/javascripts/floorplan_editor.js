@@ -296,16 +296,24 @@ function make_wall(id, coords)
     c.hasControls = false;
     c.id = id;
 
- //horizontal line
-    if(Math.abs(coords[1] - coords[3]) < straight_threshold)
+    if ((Math.abs(coords[0] - coords[2]) != 0)
     {
-      c.lockMovementX = true;
+        var slope =  (Math.abs(coords[1] - coords[3]) / (Math.abs(coords[0] - coords[2]);
+        //horizontal line
+        if(Math.abs(slope) <= 1)
+        {
+          c.lockMovementX = true;
+        }
+        //vertical line
+        else if((Math.abs(slope) > 1))
+        {
+          c.lockMovementY = true;
+        }
     }
-    //vertical line
-    if(Math.abs(coords[0] - coords[2]) < straight_threshold)
+    else //line is vertical exactly
     {
-      c.lockMovementY = true;
-    }
+        c.lockMovementY = true;
+    }    
     
     return c;
 }
@@ -331,19 +339,37 @@ function safe_reposition_vertex(vertex)
 
 function safe_reposition_wall(wall)
 {
-  if (wall.left < WIDTH/2) {
-		wall.setLeft(Math.max(wall.left,(VERTEX_RADIUS+2)));
+  var slope, slope_prime, b;
+
+  //find slope
+  if ((wall.top == y2) || (wall.top == y1)) 
+  {  
+    slope = Math.abs(wall.y2-wall.y1) / Math.abs(wall.y2-wall.y1) 
+    slope_prime = (-1 / slope);
+    b = wall.top - slope_prime*wall.left;
   }
-	else {
-		wall.setLeft(Math.min(wall.left,WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
-	}
-	//if object on bottom half, must be hitting bottom edge
-	if (wall.top > HEIGHT/2) {
-		wall.setTop(Math.min(wall.top, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
-	}
-	else {
-		wall.setTop(Math.max(wall.top, (VERTEX_RADIUS+2)));
-	}
+  else
+  {
+    slope = 
+  }
+
+  if (wall.left < WIDTH/2) 
+      {
+        wall.setLeft(Math.max((wall.top-b)/slope_prime,(VERTEX_RADIUS+2)));
+      }
+      else 
+      {
+        wall.setLeft(Math.min((wall.top-b)/slope_prime,WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
+      }
+      //if object on bottom half, must be hitting bottom edge
+      if (wall.top > HEIGHT/2) 
+      {
+        wall.setTop(Math.min(wall.left*slope_prime + b, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
+      }
+      else 
+      {
+        wall.setTop(Math.max(wall.left*slope_prime + b, (VERTEX_RADIUS+2)));
+      }
 }
 
 function move_walls_with_vertex(vertex, boundingBox)
