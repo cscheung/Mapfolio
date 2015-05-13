@@ -298,7 +298,7 @@ function make_wall(id, coords)
 
     if ((Math.abs(coords[0] - coords[2]) != 0))
     {
-        var slope =  (Math.abs(coords[1] - coords[3]) / (Math.abs(coords[0] - coords[2]);
+        var slope =  (Math.abs(coords[1] - coords[3]) / (Math.abs(coords[0] - coords[2]));
         //horizontal line
         if(Math.abs(slope) <= 1)
         {
