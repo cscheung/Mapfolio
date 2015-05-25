@@ -62,7 +62,6 @@ function setup_canvas()
 
             }
         }
-
     });
 
       canvas.on('object:scaling', function(e) 
@@ -89,8 +88,13 @@ function setup_canvas()
             //This sets the x,y vars of the wall when you move it
             //when you move, you only change the left,top vars
             
-            safe_reposition_wall(e.target);
-            delta_x = e.target.left - e.target.old_left;
+						e.target.setCoords();
+						console.log(e.target.get('x1'));					
+						console.log(e.target.get('y1'));					
+
+	
+						/*
+						delta_x = e.target.left - e.target.old_left;
             delta_y = e.target.top - e.target.old_top;
                         
             e.target.set({'x1' : e.target.get('x1') + delta_x});
@@ -102,7 +106,10 @@ function setup_canvas()
             e.target.old_top = e.target.top;
             
             move_vertecies_with_wall(e.target); 
+
+            safe_reposition_wall(e.target);
             canvas.renderAll();
+						*/
         }
     });  
 
@@ -339,19 +346,23 @@ function safe_reposition_vertex(vertex)
 
 function safe_reposition_wall(wall)
 {
-  if (wall.left < WIDTH/2) {
-        wall.setLeft(Math.max(wall.left,(VERTEX_RADIUS+2)));
+  if (wall.left < WIDTH/2) 
+	{
+        wall.setLeft(Math.max(wall.left, (VERTEX_RADIUS+2)));
   }
-    else {
-        wall.setLeft(Math.min(wall.left,WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
-    }
-    //if object on bottom half, must be hitting bottom edge
-    if (wall.top > HEIGHT/2) {
-        wall.setTop(Math.min(wall.top, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
-    }
-    else {
-        wall.setTop(Math.max(wall.top, (VERTEX_RADIUS+2)));
-    }
+  else 
+	{
+        wall.setLeft(Math.min(wall.left, WIDTH-VERTEX_RADIUS-2-WALL_WIDTH));
+  }
+  //if object on bottom half, must be hitting bottom edge
+	if (wall.top < HEIGHT/2)
+	{
+		wall.setTop(Math.max(wall.top, (VERTEX_RADIUS+2)));
+	}
+	else
+	{
+		wall.setTop(Math.min(wall.top, HEIGHT-VERTEX_RADIUS-2-WALL_WIDTH));
+	}	
 }
 
 function move_walls_with_vertex(vertex, boundingBox)
