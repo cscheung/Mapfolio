@@ -12,6 +12,7 @@ var button = new Array();
 var imgArray = new Array();
 intersections_array = [];
 verticies = [];
+vertex=[];
 canvas_walls = [];
 var canvas;
 var imgInstance;
@@ -64,19 +65,24 @@ function setup_canvas()
 
     });
 
-      canvas.on('object:scaling', function(e) 
-        {
-            if(e.target)
-            {
-                //Call a js function
-                lock_camera(e.target);
-                canvas.renderAll();
-            }
-        });
         
          
     canvas.on('object:moving', function(e) 
     {
+        if(e.target.name == 'circle')
+        {      
+            
+           // e.target.text.set(left:100);     
+            //move_walls_with_vertex(e.target); 
+            //canvas.renderAll();
+        }
+        if(e.target.name == 'text')
+        {           
+            move_circle_verts(e.target);
+
+            //move_walls_with_vertex(e.target); 
+            //canvas.renderAll();
+        }
         if(e.target.name == 'vertex')
         {           
             move_walls_with_vertex(e.target); 
@@ -227,8 +233,12 @@ function draw_walls(walls_array)
         wall.old_top = wall.top;
         canvas_walls.push(wall);
     }
-    
+    //var xx1;
+    //var yy1;
     //Make intersections and put them on canvas
+    //var[] vert= new var[30];
+    //vertex[]=new vertex[30];
+    //var vertex[i];
     for (i = 0; i < canvas_walls.length; i++)
     {
       var wall1_id = i;
@@ -237,17 +247,38 @@ function draw_walls(walls_array)
       //console.log(canvas_walls[i].x2);
       //console.log(canvas_walls[i].y2);
       
-      var vertex = make_vertex(
+        vertex[i] = make_vertex(
       canvas_walls[i].x2, 
       canvas_walls[i].y2, 
       canvas_walls[wall1_id], 
       canvas_walls[wall2_id]
       );
+      if (i>0)  {
+          var letterNode = make_letterNode(
+          (canvas_walls[i].x2+canvas_walls[i-1].x2)/2, 
+          (canvas_walls[i].y2+canvas_walls[i-1].y2)/2,
+          i,canvas_walls[i].x2,canvas_walls[i-1].x2,canvas_walls[i].y2,canvas_walls[i-1].y2
+          );
+          vertex[i].letterNode=letterNode;
+          letterNode.v1=vertex[i-1];
+          letterNode.v2=vertex[i];
+      //canvas.add(letterNode);  
+      }
       
-      canvas.add(vertex);
-      verticies.push(vertex);
+      canvas.add(vertex[i]);
+      verticies.push(vertex[i]);
     
     } 
+    //each needs a letternode or movement wont be smooth
+    var letterNode = make_letterNode(
+          (canvas_walls[i-1].x2+canvas_walls[0].x2)/2, 
+          (canvas_walls[i-1].y2+canvas_walls[0].y2)/2,
+          i,canvas_walls[i-1].x2,canvas_walls[0].x2,canvas_walls[i-1].y2,canvas_walls[0].y2
+          );
+    letterNode.v1=vertex[i-1];
+          letterNode.v2=vertex[0];
+
+      
     
    canvas.renderAll();
 }//end draw_walls
@@ -273,6 +304,51 @@ function make_vertex(left, top, wall1, wall2)
     
     return c;
 }
+function make_letterNode(left, top, num,x1 ,x2, y1, y2) 
+{  
+    var c = new fabric.Circle(
+    {
+        x1:x1,
+        x2:x2,
+        y1:y1,
+        y2:y2,
+        left: left - VERTEX_RADIUS,
+        top: top - VERTEX_RADIUS,
+        strokeWidth: 2,
+        radius: VERTEX_RADIUS,
+        fill: '#fff',
+        stroke: '#666',
+        name: 'circle',
+        selectable: false
+    });
+
+    var char3='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(num-1);
+    var text = new fabric.Text(char3, { 
+        x1:x1,
+        x2:x2,
+        y1:y1,
+        y2:y2,
+        left: left - VERTEX_RADIUS/2.2,
+        top: top - VERTEX_RADIUS*1.20,
+        fontSize: 20, 
+        //selectable: false,
+        name: 'text'
+    });
+    c.text=text;
+    text.circle=c;
+    canvas.add(c);
+
+    canvas.add(text);
+    //canvas.sendToBack(c);
+    //canvas.sendToFront(text);
+
+    text.hasBorders = false;
+    text.hasControls = false;
+    c.hasBorders = false;
+    c.hasControls = false;
+    
+    return c;
+}
 
 
 function make_wall(id, coords) 
@@ -293,8 +369,58 @@ function make_wall(id, coords)
     c.selectable = false;
     return c;
 }
+function move_circle_verts(text)  {
+    top1 = text.circle.v1.top;
+    top2 = text.circle.v2.top;
+    left1 = text.circle.v1.left;
+    left2 = text.circle.v2.left;
+    diftop=Math.abs(top1-top2);
+    difleft=Math.abs(left1-left2);
 
-
+    text.circle.set({top: text.top+.2*VERTEX_RADIUS, left : text.left-VERTEX_RADIUS*.5 });
+    
+    if(diftop<30)   {
+        text.circle.v1.set({top: text.circle.top});
+        text.circle.v2.set({top: text.circle.top});
+    }
+    if(difleft<30)   {
+        text.circle.v1.set({left: text.circle.left});
+        text.circle.v2.set({left: text.circle.left});
+    }
+    move_walls_basic(text.circle.v1);
+    move_walls_basic(text.circle.v2);
+}
+function move_walls_basic(vertex) {
+    var minHeight = VERTEX_RADIUS;
+    var maxHeight = HEIGHT - VERTEX_RADIUS;
+    var minWidth = VERTEX_RADIUS;
+    var maxWidth = WIDTH - VERTEX_RADIUS;
+    var vertex_left = vertex.left;
+    var vertex_top = vertex.top;
+    
+    /* CANVAS EDGE PROTECTION FOR VERTICES */
+    //if object on left of canvas, must be hitting left edge
+    // if (vertex.left < WIDTH/2)
+    //     vertex.setLeft(Math.max(vertex.left,0));
+    // else {
+    //     vertex.setLeft(Math.min(vertex.left,WIDTH-2*VERTEX_RADIUS-2));
+    // }
+    // //if object on bottom half, must be hitting bottom edge
+    // if (vertex.top > HEIGHT/2) {
+    //     console.log("vertex top " + vertex.top);
+    //     vertex.setTop(Math.min(vertex.top, HEIGHT-2*VERTEX_RADIUS-2));
+    // }
+    // else {
+    //     vertex.setTop(Math.max(vertex.top, 0));
+    // }
+    
+    vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
+    vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
+    //vertex.letterNode.set({left : vertex.left + VERTEX_RADIUS});
+    //vertex.letterNode.text.set({left : vertex.left + VERTEX_RADIUS/2.2 + VERTEX_RADIUS});
+    vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
+    vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+}
 function move_walls_with_vertex(vertex, boundingBox)
 {            
 	var minHeight = VERTEX_RADIUS;
@@ -322,7 +448,8 @@ function move_walls_with_vertex(vertex, boundingBox)
 	
 	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
 	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
-		
+	//vertex.letterNode.set({left : vertex.left + VERTEX_RADIUS});
+    //vertex.letterNode.text.set({left : vertex.left + VERTEX_RADIUS/2.2 + VERTEX_RADIUS});
 	vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
 	vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
 	
@@ -428,15 +555,6 @@ function display_photo(canvas_object)
     }
        
     
-}
-function lock_camera(canvas_object)  {
-    if (canvas_object.name == "camera")
-    {
-        //canvas_object.set('selectable', false);
-        console.log("locking camera");
-        
-    }
-
 }
 function create_camera_icon()
 {
