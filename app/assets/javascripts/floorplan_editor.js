@@ -5,7 +5,7 @@ var Y_MARGIN = 30;
 var VERTEX_RADIUS = 12;
 var hidevar=0;
 
-   
+
 butnum=0;
 imgnum=0;
 var button = new Array();
@@ -13,6 +13,7 @@ var imgArray = new Array();
 intersections_array = [];
 verticies = [];
 vertex=[];
+letterNodes=[];
 canvas_walls = [];
 var canvas;
 var imgInstance;
@@ -35,13 +36,13 @@ function setup_canvas()
     });
     
     canvas.on('mouse:down', function(e) 
-        {
-            hidevar=1;
-        });
+    {
+        hidevar=1;
+    });
     canvas.on('mouse:move', function(e) 
-        {
-            hidevar=0;
-        });
+    {
+        hidevar=0;
+    });
     canvas.on('mouse:up', function(e) 
     {
         //hidevar=0;
@@ -65,13 +66,15 @@ function setup_canvas()
 
     });
 
-        
-         
+
+
     canvas.on('object:moving', function(e) 
     {
         if(e.target.name == 'circle')
         {      
-            
+            //vertex.letterNode.set({x1:vertex.left, y1:vertex.top});
+            e.target.text.set({left:e.target.left,top:e.target.top})
+            move_circle_verts(e.target.text);
            // e.target.text.set(left:100);     
             //move_walls_with_vertex(e.target); 
             //canvas.renderAll();
@@ -95,7 +98,7 @@ function setup_canvas()
             
             delta_x = e.target.left - e.target.old_left;
             delta_y = e.target.top - e.target.old_top;
-                        
+
             e.target.set({'x1' : e.target.get('x1') + delta_x});
             e.target.set({'x2' : e.target.get('x2') + delta_x});
             e.target.set({'y1' : e.target.get('y1') + delta_y});
@@ -109,8 +112,8 @@ function setup_canvas()
         }
     });	 
 
-    draw_floorplan();
-    
+draw_floorplan();
+
 }
 
 function draw_floorplan()
@@ -184,7 +187,7 @@ function resizeFloorplan(walls)
 
     var scaleX = canvasSizeX*1.0 / ((maxX-minX)*1.0);
     var scaleY = canvasSizeY*1.0 / ((maxY-minY)*1.0);
-  
+
     var finalScaling;
     if (scaleX > scaleY)
         finalScaling = scaleY;
@@ -220,10 +223,10 @@ function draw_walls(walls_array)
     {
         var points = 
         [
-            walls_array[i].x1,
-            walls_array[i].y1,
-            walls_array[i].x2,
-            walls_array[i].y2
+        walls_array[i].x1,
+        walls_array[i].y1,
+        walls_array[i].x2,
+        walls_array[i].y2
         ];
         var wall = make_wall(i, points);
         
@@ -247,40 +250,54 @@ function draw_walls(walls_array)
       //console.log(canvas_walls[i].x2);
       //console.log(canvas_walls[i].y2);
       
-        vertex[i] = make_vertex(
-      canvas_walls[i].x2, 
-      canvas_walls[i].y2, 
-      canvas_walls[wall1_id], 
-      canvas_walls[wall2_id]
-      );
-      if (i>0)  {
-          var letterNode = make_letterNode(
-          (canvas_walls[i].x2+canvas_walls[i-1].x2)/2, 
-          (canvas_walls[i].y2+canvas_walls[i-1].y2)/2,
-          i,canvas_walls[i].x2,canvas_walls[i-1].x2,canvas_walls[i].y2,canvas_walls[i-1].y2
+      vertex[i] = make_vertex(
+          canvas_walls[i].x2, 
+          canvas_walls[i].y2, 
+          canvas_walls[wall1_id], 
+          canvas_walls[wall2_id]
           );
+      if (i>0)  {
+          // var letterNode = make_letterNode(
+          //     (canvas_walls[i].x2+canvas_walls[i-1].x2)/2, 
+          //     (canvas_walls[i].y2+canvas_walls[i-1].y2)/2,
+          //     i,canvas_walls[i].x2,canvas_walls[i-1].x2,canvas_walls[i].y2,canvas_walls[i-1].y2
+          //     );
+    var letterNode = make_letterNode(
+              (canvas_walls[i].x2+canvas_walls[i-1].x2)/2, 
+              (canvas_walls[i].y2+canvas_walls[i-1].y2)/2,
+              i,canvas_walls[i].x2-VERTEX_RADIUS,canvas_walls[i-1].x2-VERTEX_RADIUS,
+              canvas_walls[i].y2-VERTEX_RADIUS,canvas_walls[i-1].y2-VERTEX_RADIUS
+              );
           vertex[i].letterNode=letterNode;
           letterNode.v1=vertex[i-1];
           letterNode.v2=vertex[i];
+          letterNodes[i]=letterNode;
       //canvas.add(letterNode);  
-      }
-      
-      canvas.add(vertex[i]);
-      verticies.push(vertex[i]);
-    
-    } 
+  }
+
+  canvas.add(vertex[i]);
+  verticies.push(vertex[i]);
+
+} 
     //each needs a letternode or movement wont be smooth
     var letterNode = make_letterNode(
-          (canvas_walls[i-1].x2+canvas_walls[0].x2)/2, 
-          (canvas_walls[i-1].y2+canvas_walls[0].y2)/2,
-          i,canvas_walls[i-1].x2,canvas_walls[0].x2,canvas_walls[i-1].y2,canvas_walls[0].y2
-          );
+      (canvas_walls[i-1].x2+canvas_walls[0].x2)/2, 
+      (canvas_walls[i-1].y2+canvas_walls[0].y2)/2,
+      i,canvas_walls[0].x2-VERTEX_RADIUS,canvas_walls[i-1].x2-VERTEX_RADIUS,
+              canvas_walls[0].y2-VERTEX_RADIUS,canvas_walls[i-1].y2-VERTEX_RADIUS);
+    letterNodes[0]=letterNode;
     letterNode.v1=vertex[i-1];
-          letterNode.v2=vertex[0];
+    letterNode.v2=vertex[0];
+    vertex[0].letterNode=letterNode;
+    for (i = 0; i < canvas_walls.length-1; i++)
+    {
+        vertex[i].letterNode2=letterNodes[i+1];
+    }
+    vertex[i].letterNode2=letterNodes[0];
 
-      
+
     
-   canvas.renderAll();
+    canvas.renderAll();
 }//end draw_walls
 
 function make_vertex(left, top, wall1, wall2) 
@@ -298,7 +315,7 @@ function make_vertex(left, top, wall1, wall2)
     
     c.wall1 = wall1;
     c.wall2 = wall2;
-  
+
     c.hasBorders = false;
     c.hasControls = false;
     
@@ -316,10 +333,13 @@ function make_letterNode(left, top, num,x1 ,x2, y1, y2)
         top: top - VERTEX_RADIUS,
         strokeWidth: 2,
         radius: VERTEX_RADIUS,
+        //borderColor:'red',
         fill: '#fff',
         stroke: '#666',
         name: 'circle',
-        selectable: false
+        padding: 15
+        //selectable: false,
+        
     });
 
     var char3='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(num-1);
@@ -331,6 +351,9 @@ function make_letterNode(left, top, num,x1 ,x2, y1, y2)
         left: left - VERTEX_RADIUS/2.2,
         top: top - VERTEX_RADIUS*1.20,
         fontSize: 20, 
+        //borderColor:'red',
+        //padding: 15,
+
         //selectable: false,
         name: 'text'
     });
@@ -359,7 +382,7 @@ function make_wall(id, coords)
       stroke: 'black',
       strokeWidth: 5,
       name: 'wall'
-    });
+  });
     
     c.old_left = 0;
     c.old_top = 0;
@@ -379,17 +402,23 @@ function move_circle_verts(text)  {
 
     text.circle.set({top: text.top+.2*VERTEX_RADIUS, left : text.left-VERTEX_RADIUS*.5 });
     
-    if(diftop<30)   {
+    if(diftop<difleft)   {//<50
         text.circle.v1.set({top: text.circle.top});
         text.circle.v2.set({top: text.circle.top});
     }
-    if(difleft<30)   {
+    else   {
         text.circle.v1.set({left: text.circle.left});
         text.circle.v2.set({left: text.circle.left});
     }
-    move_walls_basic(text.circle.v1);
-    move_walls_basic(text.circle.v2);
+    //move_walls_basic(text.circle.v1);
+    //move_walls_basic(text.circle.v2);
+    move_walls_with_vertex(text.circle.v1);
+    move_walls_with_vertex(text.circle.v2);
+    text.circle.v1.setCoords();
+     text.circle.v2.setCoords();
+    
 }
+
 function move_walls_basic(vertex) {
     var minHeight = VERTEX_RADIUS;
     var maxHeight = HEIGHT - VERTEX_RADIUS;
@@ -448,16 +477,30 @@ function move_walls_with_vertex(vertex, boundingBox)
 	
 	vertex.wall1.set({'x2' : vertex.left + VERTEX_RADIUS});
 	vertex.wall1.set({'y2' : vertex.top + VERTEX_RADIUS});
-	//vertex.letterNode.set({left : vertex.left + VERTEX_RADIUS});
+    vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
+    vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
+    vertex.letterNode.set({x1:vertex.left, y1:vertex.top});
+    vertex.letterNode.set({left : (vertex.letterNode.x1+vertex.letterNode.x2)/2, top : (vertex.letterNode.y1+vertex.letterNode.y2)/2 });
+    vertex.letterNode2.set({x2:vertex.left, y2:vertex.top});
+    vertex.letterNode2.set({left : (vertex.letterNode2.x1+vertex.letterNode2.x2)/2, top : (vertex.letterNode2.y1+vertex.letterNode2.y2)/2 });
+    
     //vertex.letterNode.text.set({left : vertex.left + VERTEX_RADIUS/2.2 + VERTEX_RADIUS});
-	vertex.wall2.set({'x1' : vertex.left + VERTEX_RADIUS});
-	vertex.wall2.set({'y1' : vertex.top + VERTEX_RADIUS});
-	
+    vertex.letterNode.text.set({left : (vertex.letterNode.x1+vertex.letterNode.x2)/2+ VERTEX_RADIUS/2.2, 
+        top : (vertex.letterNode.y1+vertex.letterNode.y2)/2 - VERTEX_RADIUS/5});
+    vertex.letterNode2.text.set({left : (vertex.letterNode2.x1+vertex.letterNode2.x2)/2+ VERTEX_RADIUS/2.2, 
+        top : (vertex.letterNode2.y1+vertex.letterNode2.y2)/2 - VERTEX_RADIUS/5});
+    vertex.letterNode.setCoords();
+    vertex.letterNode2.setCoords();
+    //vertex.setCoords();
+    //vertex.setCoords();
+    //canvas.renderAll();
+    canvas.renderAll();
+
 }
 
 function move_vertecies_with_wall(wall)
 {   
-    
+
     for(i=0; i < verticies.length; i++)
     {
         if (verticies[i].wall2.id == wall.id)
@@ -477,7 +520,7 @@ function move_vertecies_with_wall(wall)
         {
             verticies[i].set({'top' : wall.get('y2') - VERTEX_RADIUS});
             verticies[i].set({'left' : wall.get('x2') - VERTEX_RADIUS});
-        
+
             verticies[i].wall2.set({'x1' : verticies[i].left + VERTEX_RADIUS});
             verticies[i].wall2.set({'y1' : verticies[i].top + VERTEX_RADIUS});
         }
@@ -486,42 +529,42 @@ function move_vertecies_with_wall(wall)
     
 }   
 
- function update_floorplan()
+function update_floorplan()
 {
   var floorplan_id = $('.floorplan_class').data('floorplan').id; 
   var fp_name = $('.floorplan_class').data('floorplan').name;
- 
-    var db_walls = [];
-	  for (i = 0; i < canvas_walls.length; i++)
-    {
-        var points = 
-        {
-          x1: canvas_walls[i].x1,
-          y1: canvas_walls[i].y1,
-          x2: canvas_walls[i].x2,
-          y2: canvas_walls[i].y2
-        };
-        db_walls.push(points);
-    }
 
-    
-  var text_box = document.getElementById("floorplan_name");
-  $.ajax({
-      type:'PUT',
-      url: '/floorplans/' + floorplan_id,
-      data:  $.param({floorplan: { name: text_box.value, walls_attributes: db_walls}}),
-      dataType: 'json'
-  });
-  
-   
-   
-    window.location.href = "/floorplans";
-     
+  var db_walls = [];
+  for (i = 0; i < canvas_walls.length; i++)
+  {
+    var points = 
+    {
+      x1: canvas_walls[i].x1,
+      y1: canvas_walls[i].y1,
+      x2: canvas_walls[i].x2,
+      y2: canvas_walls[i].y2
+  };
+  db_walls.push(points);
+}
+
+
+var text_box = document.getElementById("floorplan_name");
+$.ajax({
+  type:'PUT',
+  url: '/floorplans/' + floorplan_id,
+  data:  $.param({floorplan: { name: text_box.value, walls_attributes: db_walls}}),
+  dataType: 'json'
+});
+
+
+
+window.location.href = "/floorplans";
+
 }
 
 
 
- /*dog*/
+/*dog*/
 b=0;
 
 
@@ -553,7 +596,7 @@ function display_photo(canvas_object)
         }
         canvas.renderAll.bind(canvas);
     }
-       
+
     
 }
 function create_camera_icon()
@@ -593,29 +636,29 @@ function showPhoto()    {
     //var file = document.querySelector('input[type=file]').files[0];
     var reader = new FileReader();
     reader.onloadend = function () {
-    preview.src = reader.result;
+        preview.src = reader.result;
     }
 
     if (imgArray[butnum]) {
-       reader.readAsDataURL(imgArray[butnum]);
-    } else {
-        preview.src = "";
-    }
-    butnum++;
+     reader.readAsDataURL(imgArray[butnum]);
+ } else {
+    preview.src = "";
+}
+butnum++;
 }
 function showPhoto2()    {
     var preview = document.getElementById('loadingImage');
     //var file = document.querySelector('input[type=file]').files[0];
     var reader = new FileReader();
     reader.onloadend = function () {
-    preview.src = reader.result;
+        preview.src = reader.result;
     }
 
     if (imgArray[imgnum]) {
-       reader.readAsDataURL(imgArray[imgnum]);
-    } else {
+     reader.readAsDataURL(imgArray[imgnum]);
+ } else {
        // preview.src = "";
-    }
+   }
 
 }
 /*camera code*/
@@ -634,12 +677,12 @@ function showImage() {
 
 function wall_threshold_hit(vertex)
 {
-    
+
     var a = vertex.wall1.get('x2') - vertex.wall1.get('x1');
     var b = vertex.wall1.get('y2') - vertex.wall1.get('y1');
     var a_sqr = Math.pow(a, 2);
     var b_sqr = Math.pow(b, 2);
-        
+
     if (Math.sqrt(a_sqr + b_sqr) < WALL_THRESH)
     {
         return true;
@@ -666,14 +709,14 @@ function placeImage()   {
       //top: 100,
       //angle: 30,
       //opacity: 0.85
-    });
+  });
     /*
     canvas.setOverlayImage('http://loveshav.com/wp-content/uploads/2013/11/Alaskan-Klee-Kai-puppy-6.jpg',
         canvas.renderAll.bind(canvas), {
   width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
 */
-    console.log("placeImage()");
-    canvas.add(imgInstance);
+console.log("placeImage()");
+canvas.add(imgInstance);
 }
 function changeImage()   {
     //imgElement = document.getElementById('loadingImage');
@@ -690,8 +733,8 @@ function changeImage()   {
         canvas.renderAll.bind(canvas), {
   width: canvas.width, height: canvas.height,originX: 'left',originY: 'top'});
 */
-    console.log("changeImage()");
-    
+console.log("changeImage()");
+
     //canvas.add(imgInstance);
 }
 function removeImage()   {
@@ -707,8 +750,8 @@ function displayAsImage() {
     //canvas.remove(imgInstance);
     file =imgArray[imgnum];
     console.log(imgnum);
-  var imgURL = URL.createObjectURL(file);
-  
+    var imgURL = URL.createObjectURL(file);
+
   /*
       img = document.getElementById('loadingImage');
   
@@ -717,9 +760,9 @@ function displayAsImage() {
   //document.body.appendChild(img);
   //canvas.renderAll.bind(canvas);
   imgInstance=new fabric.Image.fromURL(imgURL, function(oImg) {
-        oImg.name="photo";
-        oImg.width=canvas.width;
-        oImg.height=canvas.height;
-      canvas.add(oImg);
-    });
+    oImg.name="photo";
+    oImg.width=canvas.width;
+    oImg.height=canvas.height;
+    canvas.add(oImg);
+});
 }
