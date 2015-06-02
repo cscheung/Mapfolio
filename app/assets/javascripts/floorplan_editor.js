@@ -1,5 +1,5 @@
-var HEIGHT = 300;
-var WIDTH = 300;
+var HEIGHT = 345;
+var WIDTH = 345;
 var X_MARGIN = 30;
 var Y_MARGIN = 30; 
 var VERTEX_RADIUS = 12;
